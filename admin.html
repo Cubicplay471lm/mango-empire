@@ -16,6 +16,7 @@
         .passport-item { background: #f9f9f9; padding: 15px; border-radius: 16px; margin-bottom: 12px; border-left: 4px solid #1f883d; }
         .passport-code { background: #e0e0e0; padding: 4px 8px; border-radius: 8px; font-family: monospace; font-size: 14px; display: inline-block; margin-top: 8px; }
         .stats { background: #e8f5e9; padding: 12px; border-radius: 16px; text-align: center; margin-bottom: 20px; font-weight: bold; }
+        .error-msg { background: #fee; color: #c33; padding: 10px; border-radius: 12px; text-align: center; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -38,85 +39,100 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    (function() {
-        const SUPABASE_URL = 'https://jj-qk6qcqvywfy615xtv8w.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_JJ-qk6qCqvwYFW615xTv8w_K3KNAZyf';
+    const SUPABASE_URL = 'https://rnozszetsxmsndhytxot.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJub3pzemV0c3htc25kaHl0eG90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MDEzNzcsImV4cCI6MjA5NjA3NzM3N30.njDuyU_XDj3QmNjqxsDUmIhiOd6IZVyUsucv-ttPsM8';
 
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        window.loadAllPassports = async function() {
-            const { data, error } = await supabaseClient.from('passports').select('*').order('issued_date', { ascending: false });
-            if (error) {
-                console.error(error);
-                document.getElementById('passportsList').innerHTML = '<p style="text-align:center;">❌ Ошибка загрузки базы</p>';
-                return;
-            }
-            
-            document.getElementById('stats').innerHTML = `📊 Всего паспортов: ${data.length}`;
-            
-            if (data.length === 0) {
-                document.getElementById('passportsList').innerHTML = '<p style="text-align:center;">📭 Нет паспортов</p>';
-                return;
-            }
-            
-            document.getElementById('passportsList').innerHTML = data.map(p => `
-                <div class="passport-item">
-                    <strong>👤 ${escapeHtml(p.full_name)}</strong><br>
-                    <div class="passport-code">🔑 ${escapeHtml(p.code)}</div>
-                    🎂 ${escapeHtml(p.birth_date || '—')}<br>
-                    📅 ${p.issued_date}<br>
-                    <button class="delete-btn" onclick="deletePassport('${escapeHtml(p.code)}')">❌ Удалить</button>
-                </div>
-            `).join('');
-        };
-
-        window.createPassport = async function() {
-            const fullName = document.getElementById('fullName').value.trim();
-            const birthDate = document.getElementById('birthDate').value.trim();
-            const code = document.getElementById('passportCode').value.trim();
-            
-            if (!fullName || !code) { alert('❌ Заполните имя и код!'); return; }
-            
-            const { error } = await supabaseClient.from('passports').insert([{
-                code: code,
-                full_name: fullName,
-                birth_date: birthDate || null,
-                issued_date: new Date().toLocaleString()
-            }]);
-            
-            if (error) { 
-                alert('Ошибка: ' + error.message); 
-                return;
-            }
-            
-            alert('✅ Паспорт создан!');
-            document.getElementById('fullName').value = '';
-            document.getElementById('birthDate').value = '';
-            document.getElementById('passportCode').value = '';
-            window.loadAllPassports();
-        };
-
-        window.deletePassport = async function(code) {
-            if (!confirm(`Удалить паспорт ${code}?`)) return;
-            const { error } = await supabaseClient.from('passports').delete().eq('code', code);
-            if (error) { alert('Ошибка удаления'); return; }
-            alert('🗑️ Паспорт удалён');
-            window.loadAllPassports();
-        };
-
-        function escapeHtml(str) {
-            if (!str) return '';
-            return String(str).replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            });
+    async function loadAllPassports() {
+        document.getElementById('stats').innerHTML = '📊 Загрузка...';
+        document.getElementById('passportsList').innerHTML = '';
+        
+        const { data, error } = await supabase
+            .from('passports')
+            .select('*')
+            .order('issued_date', { ascending: false });
+        
+        if (error) {
+            document.getElementById('stats').innerHTML = '❌ Ошибка подключения к базе';
+            document.getElementById('passportsList').innerHTML = `<div class="error-msg">Ошибка: ${error.message}<br><br>Проверьте: существует ли таблица "passports" в Supabase?</div>`;
+            console.error('Supabase error:', error);
+            return;
         }
+        
+        document.getElementById('stats').innerHTML = `📊 Всего паспортов: ${data.length}`;
+        
+        if (data.length === 0) {
+            document.getElementById('passportsList').innerHTML = '<p style="text-align:center;">📭 Нет паспортов. Создайте первый!</p>';
+            return;
+        }
+        
+        document.getElementById('passportsList').innerHTML = data.map(p => `
+            <div class="passport-item">
+                <strong>👤 ${escapeHtml(p.full_name)}</strong><br>
+                <div class="passport-code">🔑 ${escapeHtml(p.code)}</div>
+                🎂 ${escapeHtml(p.birth_date || '—')}<br>
+                📅 ${p.issued_date}<br>
+                <button class="delete-btn" onclick="deletePassport('${escapeHtml(p.code)}')">❌ Удалить</button>
+            </div>
+        `).join('');
+    }
 
-        // Загружаем список при открытии
-        window.loadAllPassports();
-    })();
+    async function createPassport() {
+        const fullName = document.getElementById('fullName').value.trim();
+        const birthDate = document.getElementById('birthDate').value.trim();
+        const code = document.getElementById('passportCode').value.trim();
+        
+        if (!fullName || !code) { 
+            alert('❌ Заполните имя и код паспорта!'); 
+            return;
+        }
+        
+        const { error } = await supabase.from('passports').insert([{
+            code: code,
+            full_name: fullName,
+            birth_date: birthDate || null,
+            issued_date: new Date().toLocaleString()
+        }]);
+        
+        if (error) { 
+            alert('❌ Ошибка: ' + error.message); 
+            console.error(error);
+            return;
+        }
+        
+        alert('✅ Паспорт создан!');
+        document.getElementById('fullName').value = '';
+        document.getElementById('birthDate').value = '';
+        document.getElementById('passportCode').value = '';
+        loadAllPassports();
+    }
+
+    async function deletePassport(code) {
+        if (!confirm(`Удалить паспорт ${code}?`)) return;
+        
+        const { error } = await supabase.from('passports').delete().eq('code', code);
+        if (error) { 
+            alert('❌ Ошибка удаления: ' + error.message); 
+            return;
+        }
+        
+        alert('🗑️ Паспорт удалён');
+        loadAllPassports();
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // Загружаем при открытии страницы
+    loadAllPassports();
 </script>
 </body>
 </html>
