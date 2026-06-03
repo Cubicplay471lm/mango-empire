@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Моя Страна - Паспорт гражданина</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 500px; margin: auto; }
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h2 { margin-top: 0; color: #333; }
+        input {
+            width: 100%;
+            padding: 14px;
+            margin: 8px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .passport {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 20px;
+            margin-top: 15px;
+            border: 2px solid gold;
+            text-align: center;
+        }
+        .badge {
+            background: gold;
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .error { background: #fee; color: #c33; padding: 10px; border-radius: 12px; margin-top: 10px; text-align: center; }
+        .success { background: #efe; color: #3c3; padding: 10px; border-radius: 12px; margin-top: 10px; text-align: center; }
+        hr { margin: 15px 0; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h2>🛂 Получить паспорт</h2>
+        <input type="text" id="playerCode" placeholder="Введите код паспорта">
+        <button onclick="getPassport()">🔍 Получить паспорт</button>
+        <div id="resultMsg"></div>
+    </div>
+
+    <div class="card" id="passportCard" style="display:none;">
+        <h2>📜 Мой паспорт</h2>
+        <div id="passportInfo"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    (function() {
+        const SUPABASE_URL = 'https://jj-qk6qcqvywfy615xtv8w.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_JJ-qk6qCqvwYFW615xTv8w_K3KNAZyf';
+
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        window.getPassport = async function() {
+            const code = document.getElementById('playerCode').value.trim();
+            const msgDiv = document.getElementById('resultMsg');
+            
+            if (!code) {
+                msgDiv.innerHTML = '<div class="error">❌ Введите код паспорта!</div>';
+                return;
+            }
+
+            const { data, error } = await supabaseClient
+                .from('passports')
+                .select('*')
+                .eq('code', code)
+                .maybeSingle();
+
+            if (error || !data) {
+                msgDiv.innerHTML = '<div class="error">❌ Паспорт с таким кодом не найден!</div>';
+                document.getElementById('passportCard').style.display = 'none';
+            } else {
+                msgDiv.innerHTML = '<div class="success">✅ Паспорт найден!</div>';
+                document.getElementById('passportInfo').innerHTML = `
+                    <div class="passport">
+                        <div class="badge">🇺🇸 ПАСПОРТ</div>
+                        <h3>${escapeHtml(data.full_name)}</h3>
+                        <p>📌 Код: <strong>${escapeHtml(data.code)}</strong></p>
+                        <p>🎂 Дата рождения: ${escapeHtml(data.birth_date || 'Не указана')}</p>
+                        <p>📅 Выдан: ${escapeHtml(data.issued_date)}</p>
+                        <hr><small>Гражданин страны</small>
+                    </div>
+                `;
+                document.getElementById('passportCard').style.display = 'block';
+            }
+        };
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+    })();
+</script>
+</body>
+</html>
