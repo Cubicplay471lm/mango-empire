@@ -59,6 +59,7 @@
         }
         .error { background: #fee; color: #c33; padding: 10px; border-radius: 12px; margin-top: 10px; text-align: center; }
         .success { background: #efe; color: #3c3; padding: 10px; border-radius: 12px; margin-top: 10px; text-align: center; }
+        .loading { text-align: center; color: #666; padding: 10px; }
         hr { margin: 15px 0; }
     </style>
 </head>
@@ -79,56 +80,60 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    (function() {
-        const SUPABASE_URL = 'https://jj-qk6qcqvywfy615xtv8w.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_JJ-qk6qCqvwYFW615xTv8w_K3KNAZyf';
+    const SUPABASE_URL = 'https://rnozszetsxmsndhytxot.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJub3pzemV0c3htc25kaHl0eG90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MDEzNzcsImV4cCI6MjA5NjA3NzM3N30.njDuyU_XDj3QmNjqxsDUmIhiOd6IZVyUsucv-ttPsM8';
 
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        window.getPassport = async function() {
-            const code = document.getElementById('playerCode').value.trim();
-            const msgDiv = document.getElementById('resultMsg');
-            
-            if (!code) {
-                msgDiv.innerHTML = '<div class="error">❌ Введите код паспорта!</div>';
-                return;
-            }
-
-            const { data, error } = await supabaseClient
-                .from('passports')
-                .select('*')
-                .eq('code', code)
-                .maybeSingle();
-
-            if (error || !data) {
-                msgDiv.innerHTML = '<div class="error">❌ Паспорт с таким кодом не найден!</div>';
-                document.getElementById('passportCard').style.display = 'none';
-            } else {
-                msgDiv.innerHTML = '<div class="success">✅ Паспорт найден!</div>';
-                document.getElementById('passportInfo').innerHTML = `
-                    <div class="passport">
-                        <div class="badge">🇺🇸 ПАСПОРТ</div>
-                        <h3>${escapeHtml(data.full_name)}</h3>
-                        <p>📌 Код: <strong>${escapeHtml(data.code)}</strong></p>
-                        <p>🎂 Дата рождения: ${escapeHtml(data.birth_date || 'Не указана')}</p>
-                        <p>📅 Выдан: ${escapeHtml(data.issued_date)}</p>
-                        <hr><small>Гражданин страны</small>
-                    </div>
-                `;
-                document.getElementById('passportCard').style.display = 'block';
-            }
-        };
-
-        function escapeHtml(str) {
-            if (!str) return '';
-            return String(str).replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            });
+    async function getPassport() {
+        const code = document.getElementById('playerCode').value.trim();
+        const msgDiv = document.getElementById('resultMsg');
+        
+        if (!code) {
+            msgDiv.innerHTML = '<div class="error">❌ Введите код паспорта!</div>';
+            return;
         }
-    })();
+        
+        msgDiv.innerHTML = '<div class="loading">🔍 Поиск...</div>';
+        document.getElementById('passportCard').style.display = 'none';
+
+        const { data, error } = await supabase
+            .from('passports')
+            .select('*')
+            .eq('code', code)
+            .maybeSingle();
+
+        if (error) {
+            msgDiv.innerHTML = `<div class="error">❌ Ошибка: ${error.message}</div>`;
+            console.error(error);
+        } else if (!data) {
+            msgDiv.innerHTML = '<div class="error">❌ Паспорт с таким кодом не найден!</div>';
+        } else {
+            msgDiv.innerHTML = '<div class="success">✅ Паспорт найден!</div>';
+            document.getElementById('passportInfo').innerHTML = `
+                <div class="passport">
+                    <div class="badge">🇺🇸 ПАСПОРТ</div>
+                    <h3>${escapeHtml(data.full_name)}</h3>
+                    <p>📌 Код: <strong>${escapeHtml(data.code)}</strong></p>
+                    <p>🎂 Дата рождения: ${escapeHtml(data.birth_date || 'Не указана')}</p>
+                    <p>📅 Выдан: ${escapeHtml(data.issued_date)}</p>
+                    <hr>
+                    <small>Гражданин страны</small>
+                </div>
+            `;
+            document.getElementById('passportCard').style.display = 'block';
+        }
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
 </script>
 </body>
 </html>
