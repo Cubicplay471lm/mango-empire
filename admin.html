@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Админ - База паспортов</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: system-ui, sans-serif; background: #1a1a2e; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: auto; }
+        .card { background: white; border-radius: 24px; padding: 24px; margin-bottom: 20px; }
+        .admin-badge { background: #dc2626; color: white; padding: 5px 15px; border-radius: 20px; display: inline-block; font-size: 12px; margin-bottom: 15px; }
+        h2 { margin-top: 0; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #e0e0e0; border-radius: 12px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #1f883d; color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        .delete-btn { background: #dc2626; margin-top: 5px; }
+        .passport-item { background: #f9f9f9; padding: 15px; border-radius: 16px; margin-bottom: 12px; border-left: 4px solid #1f883d; }
+        .passport-code { background: #e0e0e0; padding: 4px 8px; border-radius: 8px; font-family: monospace; font-size: 14px; display: inline-block; margin-top: 8px; }
+        .stats { background: #e8f5e9; padding: 12px; border-radius: 16px; text-align: center; margin-bottom: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <div class="admin-badge">👑 АДМИН ПАНЕЛЬ</div>
+        <h2>➕ Создать паспорт</h2>
+        <input type="text" id="fullName" placeholder="Полное имя">
+        <input type="text" id="birthDate" placeholder="Дата рождения">
+        <input type="text" id="passportCode" placeholder="Уникальный код (PASS123)">
+        <button onclick="createPassport()">✨ Выдать паспорт</button>
+    </div>
+
+    <div class="card">
+        <h2>📋 Все паспорта</h2>
+        <div id="stats" class="stats">Загрузка...</div>
+        <div id="passportsList"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    (function() {
+        const SUPABASE_URL = 'https://jj-qk6qcqvywfy615xtv8w.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_JJ-qk6qCqvwYFW615xTv8w_K3KNAZyf';
+
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        window.loadAllPassports = async function() {
+            const { data, error } = await supabaseClient.from('passports').select('*').order('issued_date', { ascending: false });
+            if (error) {
+                console.error(error);
+                document.getElementById('passportsList').innerHTML = '<p style="text-align:center;">❌ Ошибка загрузки базы</p>';
+                return;
+            }
+            
+            document.getElementById('stats').innerHTML = `📊 Всего паспортов: ${data.length}`;
+            
+            if (data.length === 0) {
+                document.getElementById('passportsList').innerHTML = '<p style="text-align:center;">📭 Нет паспортов</p>';
+                return;
+            }
+            
+            document.getElementById('passportsList').innerHTML = data.map(p => `
+                <div class="passport-item">
+                    <strong>👤 ${escapeHtml(p.full_name)}</strong><br>
+                    <div class="passport-code">🔑 ${escapeHtml(p.code)}</div>
+                    🎂 ${escapeHtml(p.birth_date || '—')}<br>
+                    📅 ${p.issued_date}<br>
+                    <button class="delete-btn" onclick="deletePassport('${escapeHtml(p.code)}')">❌ Удалить</button>
+                </div>
+            `).join('');
+        };
+
+        window.createPassport = async function() {
+            const fullName = document.getElementById('fullName').value.trim();
+            const birthDate = document.getElementById('birthDate').value.trim();
+            const code = document.getElementById('passportCode').value.trim();
+            
+            if (!fullName || !code) { alert('❌ Заполните имя и код!'); return; }
+            
+            const { error } = await supabaseClient.from('passports').insert([{
+                code: code,
+                full_name: fullName,
+                birth_date: birthDate || null,
+                issued_date: new Date().toLocaleString()
+            }]);
+            
+            if (error) { 
+                alert('Ошибка: ' + error.message); 
+                return;
+            }
+            
+            alert('✅ Паспорт создан!');
+            document.getElementById('fullName').value = '';
+            document.getElementById('birthDate').value = '';
+            document.getElementById('passportCode').value = '';
+            window.loadAllPassports();
+        };
+
+        window.deletePassport = async function(code) {
+            if (!confirm(`Удалить паспорт ${code}?`)) return;
+            const { error } = await supabaseClient.from('passports').delete().eq('code', code);
+            if (error) { alert('Ошибка удаления'); return; }
+            alert('🗑️ Паспорт удалён');
+            window.loadAllPassports();
+        };
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        // Загружаем список при открытии
+        window.loadAllPassports();
+    })();
+</script>
+</body>
+</html>
