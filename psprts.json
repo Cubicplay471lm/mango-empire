@@ -1,0 +1,25 @@
+{
+  "passports": [
+    {
+      "code": "1501",
+      "fullName": "Иван Петров",
+      "birthDate": "15.05.1990",
+      "issuedDate": "05.06.2024 15:30:00"
+    },
+    {
+      "code": "2302",
+      "fullName": "Мария Сидорова",
+      "birthDate": "23.11.1995",
+      "issuedDate": "05.06.2024 15:35:00"
+    }
+  ],
+  "announcements": [
+    {
+      "id": 1,
+      "title": "Важное объявление",
+      "text": "Проверка",
+      "date": "05.06.2024",
+      "active": true
+    }
+  ]
+}
