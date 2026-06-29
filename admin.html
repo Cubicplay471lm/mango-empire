@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Админ Панель - Манго Империя</title>
+    <title>Админ Панель - Карасикославия</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -13,7 +13,6 @@
         }
         .container { max-width: 1000px; margin: 0 auto; }
         
-        /* Логин форма */
         .login-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -52,7 +51,6 @@
         }
         .error-msg { color: #c33; margin-top: 12px; font-size: 14px; }
         
-        /* Основной админский интерфейс */
         .admin-content {
             display: none;
         }
@@ -64,20 +62,21 @@
         }
         h2 {
             margin-bottom: 20px;
-            border-left: 5px solid #d9a13b;
+            border-left: 5px solid #f4a460;
             padding-left: 16px;
+            color: #6b4a3a;
         }
-        h3 { margin: 20px 0 12px 0; }
-        input, textarea {
+        h3 { margin: 20px 0 12px 0; color: #8b6b4a; }
+        input, textarea, select {
             width: 100%;
             padding: 12px;
             margin: 6px 0;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #f0d5b0;
             border-radius: 16px;
             font-family: inherit;
         }
         button {
-            background: #1f883d;
+            background: #f4a460;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -89,19 +88,20 @@
         button.danger { background: #dc2626; }
         button.secondary { background: #6b7280; }
         .passport-item, .announcement-item {
-            background: #f9f9f9;
+            background: #fff8f0;
             padding: 15px;
             border-radius: 16px;
             margin-bottom: 12px;
-            border-left: 4px solid #1f883d;
+            border-left: 4px solid #f4a460;
         }
         .stats {
-            background: #e8f5e9;
+            background: #f8efe0;
             padding: 12px;
             border-radius: 16px;
             text-align: center;
             margin-bottom: 20px;
             font-weight: bold;
+            color: #6b4a3a;
         }
         .json-box {
             background: #1e1e1e;
@@ -114,15 +114,23 @@
             max-height: 300px;
         }
         .flex { display: flex; gap: 10px; flex-wrap: wrap; }
-        hr { margin: 20px 0; }
+        hr { margin: 20px 0; border-color: #f0d5b0; }
+        .role-tag {
+            display: inline-block;
+            background: #f4a460;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: white;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-<!-- Форма входа -->
 <div id="loginOverlay" class="login-overlay">
     <div class="login-card">
-        <h2>🔐 Админ панель</h2>
+        <h2>🐟 Карасикославия</h2>
         <p style="margin-bottom: 16px; color: #555;">Введите пароль для доступа</p>
         <input type="password" id="adminPassword" placeholder="Пароль" autocomplete="off">
         <button onclick="checkPassword()">Войти</button>
@@ -130,16 +138,14 @@
     </div>
 </div>
 
-<!-- Основной контент админки (скрыт до входа) -->
 <div id="adminContent" class="admin-content">
     <div class="container">
         <div class="card">
-            <h2>👑 АДМИН ПАНЕЛЬ</h2>
-            <div class="stats" id="sessionInfo">Сессия активна</div>
+            <h2>👑 АДМИН ПАНЕЛЬ - КАРАСИКОСЛАВИЯ</h2>
+            <div class="stats" id="sessionInfo">🐟 Сессия активна</div>
             <button onclick="logout()" class="secondary">🚪 Выйти из админки</button>
         </div>
 
-        <!-- Управление паспортами -->
         <div class="card">
             <h2>📋 Управление паспортами</h2>
             <div id="passportStats" class="stats">Загрузка...</div>
@@ -151,10 +157,10 @@
                 <input type="text" id="passportCode" placeholder="Код" style="flex:1">
             </div>
             <input type="text" id="birthDate" placeholder="Дата рождения">
+            <input type="text" id="roleInput" placeholder="Роль (например: Золотой карасик, Старшина и т.д.)">
             <button onclick="createPassport()">✨ Выдать паспорт</button>
         </div>
 
-        <!-- Управление объявлениями -->
         <div class="card">
             <h2>📢 Управление объявлениями</h2>
             <div id="announcementsList"></div>
@@ -165,7 +171,6 @@
             <button onclick="createAnnouncement()">📢 Опубликовать</button>
         </div>
 
-        <!-- Экспорт/импорт JSON -->
         <div class="card">
             <h2>💾 Экспорт / Импорт базы</h2>
             <div class="flex">
@@ -181,13 +186,11 @@
 </div>
 
 <script>
-    // ПАРОЛЬ (можно изменить на свой)
     const ADMIN_PASSWORD = "рыбнадзор";
     
     let db = { passports: [], announcements: [] };
     let isAdminAuthenticated = false;
 
-    // Проверка пароля
     function checkPassword() {
         const inputPass = document.getElementById('adminPassword').value;
         const errorDiv = document.getElementById('loginError');
@@ -203,7 +206,6 @@
         }
     }
 
-    // Выход
     function logout() {
         sessionStorage.removeItem('admin_auth');
         isAdminAuthenticated = false;
@@ -213,7 +215,6 @@
         document.getElementById('loginError').textContent = '';
     }
 
-    // Проверка сессии при загрузке
     function checkSession() {
         const savedAuth = sessionStorage.getItem('admin_auth');
         if (savedAuth === 'true') {
@@ -224,19 +225,18 @@
         }
     }
 
-    // Загрузка данных из localStorage
     function loadFromStorage() {
-        const saved = localStorage.getItem('country_admin_db');
+        const saved = localStorage.getItem('karasik_admin_db');
         if (saved) {
             db = JSON.parse(saved);
         } else {
             db = {
                 passports: [
-                    { code: "1501", fullName: "Иван Петров", birthDate: "15.05.1990", issuedDate: new Date().toLocaleString() },
-                    { code: "2302", fullName: "Мария Сидорова", birthDate: "23.11.1995", issuedDate: new Date().toLocaleString() }
+                    { code: "1501", fullName: "Иван Петров", birthDate: "15.05.1990", issuedDate: new Date().toLocaleString(), role: "Золотой карасик" },
+                    { code: "2302", fullName: "Мария Сидорова", birthDate: "23.11.1995", issuedDate: new Date().toLocaleString(), role: "Старшина" }
                 ],
                 announcements: [
-                    { id: 1, title: "Добро пожаловать!", text: "Сервер работает стабильно", date: new Date().toLocaleDateString(), active: true },
+                    { id: 1, title: "Добро пожаловать!", text: "Карасикославия открыта", date: new Date().toLocaleDateString(), active: true },
                     { id: 2, title: "Новый сезон", text: "Стартует через неделю", date: new Date().toLocaleDateString(), active: true }
                 ]
             };
@@ -245,7 +245,7 @@
     }
 
     function saveToStorage() {
-        localStorage.setItem('country_admin_db', JSON.stringify(db));
+        localStorage.setItem('karasik_admin_db', JSON.stringify(db));
         renderAll();
         updateJSONPreview();
     }
@@ -269,9 +269,19 @@
                 🔑 ${escapeHtml(p.code)}<br>
                 🎂 ${escapeHtml(p.birthDate || '—')}<br>
                 📅 ${p.issuedDate}<br>
+                🏷️ Роль: <span class="role-tag">${escapeHtml(p.role || '—')}</span><br>
+                <button class="secondary" onclick="editRole(${idx})" style="font-size:12px;">✏️ Изменить роль</button>
                 <button class="danger" onclick="deletePassport(${idx})">❌ Удалить</button>
             </div>
         `).join('');
+    }
+
+    function editRole(index) {
+        const newRole = prompt('Введите новую роль для этого паспорта:', db.passports[index].role || '');
+        if (newRole !== null) {
+            db.passports[index].role = newRole.trim();
+            saveToStorage();
+        }
     }
 
     function renderAnnouncements() {
@@ -297,17 +307,21 @@
         const fullName = document.getElementById('fullName').value.trim();
         const code = document.getElementById('passportCode').value.trim();
         const birthDate = document.getElementById('birthDate').value.trim();
+        const role = document.getElementById('roleInput').value.trim() || 'Обычный карасик';
+        
         if (!fullName || !code) { alert('❌ Заполните имя и код'); return; }
         if (db.passports.find(p => p.code === code)) { alert('❌ Код уже существует'); return; }
         
         db.passports.push({
             fullName, code, birthDate,
-            issuedDate: new Date().toLocaleString()
+            issuedDate: new Date().toLocaleString(),
+            role: role
         });
         saveToStorage();
         document.getElementById('fullName').value = '';
         document.getElementById('passportCode').value = '';
         document.getElementById('birthDate').value = '';
+        document.getElementById('roleInput').value = '';
         alert('✅ Паспорт создан');
     }
 
@@ -352,10 +366,10 @@
         const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = 'data.json';
+        link.download = 'karasik_data.json';
         link.click();
         URL.revokeObjectURL(link.href);
-        alert('✅ Файл скачан. Загрузите его на GitHub.');
+        alert('✅ Файл скачан');
     }
 
     function uploadJSON() {
