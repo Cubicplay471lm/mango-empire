@@ -53,20 +53,6 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        .data-box {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            padding: 16px;
-            border-radius: 12px;
-            font-family: monospace;
-            font-size: 12px;
-            overflow-x: auto;
-            max-height: 500px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-        
         .search-area {
             display: flex;
             gap: 8px;
@@ -189,12 +175,103 @@
         
         footer { text-align: center; color: #c4a88a; font-size: 0.7rem; margin-top: 28px; }
         
+        .passport-list-item {
+            background: #f8efe0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-left: 3px solid #f4a460;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .passport-list-item .pname { font-weight: bold; color: #6b4a3a; }
+        .passport-list-item .prole {
+            background: #f4a460;
+            padding: 1px 12px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            color: white;
+            font-weight: bold;
+        }
+        .passport-list-item .pcode {
+            font-family: monospace;
+            color: #b4885a;
+            font-size: 0.8rem;
+        }
+        
+        .chat-input-area {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .chat-input-area input {
+            flex: 1;
+            padding: 14px 18px;
+            border: 2px solid #f0d5b0;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        .chat-input-area input:focus {
+            outline: none;
+            border-color: #f4a460;
+        }
+        .chat-input-area button {
+            background: #f4a460;
+            border: none;
+            padding: 0 28px;
+            border-radius: 40px;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .chat-input-area button:active { transform: scale(0.96); }
+        
+        .user-badge {
+            background: #e8f5e8;
+            padding: 8px 16px;
+            border-radius: 30px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .user-badge .uname { font-weight: bold; color: #6b4a3a; }
+        .user-badge .urole {
+            background: #f4a460;
+            padding: 2px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: white;
+            font-weight: bold;
+        }
+        .user-badge .logout-btn {
+            background: #dc2626;
+            border: none;
+            padding: 4px 16px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .user-badge .login-hint {
+            color: #b4885a;
+            font-size: 0.9rem;
+        }
+        
         @media (max-width: 500px) {
             .card { padding: 16px; }
             .tabs { gap: 6px; }
             .tab-btn { padding: 8px 14px; font-size: 0.8rem; }
             .search-area { flex-direction: column; }
             .passport-card .name { font-size: 1.2rem; }
+            .passport-list-item { flex-direction: column; align-items: flex-start; gap: 4px; }
+            .chat-input-area { flex-direction: column; }
+            .chat-input-area button { padding: 14px; }
         }
     </style>
 </head>
@@ -209,7 +286,6 @@
             <button class="tab-btn active" onclick="switchTab('passports')">📋 Паспорта</button>
             <button class="tab-btn" onclick="switchTab('announcements')">📢 Новости</button>
             <button class="tab-btn" onclick="switchTab('messages')">💬 Чат</button>
-            <button class="tab-btn" onclick="switchTab('all')">📊 Все данные</button>
         </div>
         
         <!-- Паспорта -->
@@ -218,8 +294,8 @@
                 <input type="text" id="passportInput" placeholder="Введите код, например 171">
                 <button onclick="findPassport()">🔍 Найти</button>
             </div>
-            <button class="load-btn" onclick="loadPassports()">🔄 Загрузить все паспорта</button>
-            <div id="passportsResult"><div class="loading">🐟 Нажми "Загрузить все паспорта"</div></div>
+            <button class="load-btn" onclick="loadPassports()">🔄 Показать всех граждан</button>
+            <div id="passportsResult"><div class="loading">🐟 Нажми "Показать всех граждан"</div></div>
         </div>
         
         <!-- Новости -->
@@ -230,14 +306,26 @@
         
         <!-- Чат -->
         <div id="tab-messages" class="tab-content">
-            <button class="load-btn" onclick="loadMessages()">🔄 Загрузить сообщения</button>
-            <div id="messagesResult"><div class="loading">💬 Нажми "Загрузить сообщения"</div></div>
-        </div>
-        
-        <!-- Все данные -->
-        <div id="tab-all" class="tab-content">
-            <button class="load-btn" onclick="loadAllData()">🔄 Загрузить все данные</button>
-            <div id="allDataResult"><div class="loading">📊 Нажми "Загрузить все данные"</div></div>
+            <!-- Информация о пользователе -->
+            <div id="userBadge" class="user-badge">
+                <span class="login-hint">🔑 Введи код паспорта ниже, чтобы писать в чат</span>
+            </div>
+            
+            <div style="display:flex; gap:8px; margin-bottom:12px;">
+                <input type="text" id="chatLoginInput" placeholder="Код паспорта" style="flex:1; padding:10px 16px; border:2px solid #f0d5b0; border-radius:30px; font-size:0.9rem;">
+                <button onclick="loginToChat()" style="background:#1a6a8a; border:none; padding:0 20px; border-radius:30px; color:white; font-weight:bold; cursor:pointer;">🎣 Войти</button>
+            </div>
+            
+            <div id="messagesContainer">
+                <button class="load-btn" onclick="loadMessages()">🔄 Загрузить сообщения</button>
+                <div id="messagesResult"><div class="loading">💬 Нажми "Загрузить сообщения"</div></div>
+            </div>
+            
+            <!-- Поле отправки -->
+            <div class="chat-input-area">
+                <input type="text" id="messageInput" placeholder="Напиши сообщение..." disabled>
+                <button onclick="sendMessage()" id="sendBtn" disabled>📤 Отправить</button>
+            </div>
         </div>
     </div>
     <footer>🐟 Карасикославия · Данные из Firebase 🔥</footer>
@@ -245,6 +333,7 @@
 
 <script>
     const DB_URL = 'https://karasik-talk-default-rtdb.europe-west1.firebasedatabase.app';
+    let currentUser = null;
     
     window.switchTab = function(tab) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -261,12 +350,22 @@
             const res = await fetch(`${DB_URL}/all/passports.json`);
             const data = await res.json();
             if (data) {
+                const codes = Object.keys(data);
                 container.innerHTML = `
-                    <div style="color:#4a8a4a; margin-bottom:12px;">✅ Найдено паспортов: ${Object.keys(data).length}</div>
-                    <div class="data-box">${JSON.stringify(data, null, 2)}</div>
+                    <div style="color:#4a8a4a; margin-bottom:12px;">✅ Всего граждан: ${codes.length}</div>
+                    ${codes.map(code => {
+                        const p = data[code];
+                        return `
+                            <div class="passport-list-item">
+                                <span class="pname">${escapeHtml(p.fullName)}</span>
+                                <span class="prole">${escapeHtml(p.role || 'Обычный карасик')}</span>
+                                <span class="pcode">#${escapeHtml(code)}</span>
+                            </div>
+                        `;
+                    }).join('')}
                 `;
             } else {
-                container.innerHTML = '<div class="error-box">❌ Паспортов нет!</div>';
+                container.innerHTML = '<div class="error-box">❌ Граждан не найдено</div>';
             }
         } catch(e) {
             container.innerHTML = `<div class="error-box">❌ Ошибка: ${e.message}</div>`;
@@ -293,7 +392,7 @@
                     </div>
                 `;
             } else {
-                container.innerHTML = `<div class="error-box">❌ Паспорт с кодом "${code}" не найден</div>`;
+                container.innerHTML = `<div class="error-box">❌ Гражданин с кодом "${code}" не найден</div>`;
             }
         } catch(e) {
             container.innerHTML = `<div class="error-box">❌ Ошибка: ${e.message}</div>`;
@@ -308,27 +407,120 @@
             const res = await fetch(`${DB_URL}/all/announcements.json`);
             const data = await res.json();
             if (data) {
-                const items = Object.values(data).filter(a => a !== null);
-                container.innerHTML = `
-                    <div style="color:#4a8a4a; margin-bottom:12px;">✅ Найдено объявлений: ${items.length}</div>
-                    ${items.map(a => `
+                const items = Object.values(data).filter(a => a !== null && a.active !== false);
+                if (items.length > 0) {
+                    container.innerHTML = items.map(a => `
                         <div class="announcement-item">
                             <h3>📌 ${escapeHtml(a.title)}</h3>
                             <p>${escapeHtml(a.text)}</p>
                             <small>📅 ${escapeHtml(a.date || 'Недавно')}</small>
                         </div>
-                    `).join('')}
-                    <div style="margin-top:12px;"><div style="color:#6b4a3a; font-weight:bold; margin-bottom:6px;">📋 Сырые данные:</div><div class="data-box">${JSON.stringify(data, null, 2)}</div></div>
-                `;
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div class="error-box">📭 Нет активных новостей</div>';
+                }
             } else {
-                container.innerHTML = '<div class="error-box">❌ Объявлений нет!</div>';
+                container.innerHTML = '<div class="error-box">❌ Новостей нет</div>';
             }
         } catch(e) {
             container.innerHTML = `<div class="error-box">❌ Ошибка: ${e.message}</div>`;
         }
     };
     
-    // ===== СООБЩЕНИЯ =====
+    // ===== ЧАТ =====
+    
+    // Вход в чат по паспорту
+    window.loginToChat = async function() {
+        const code = document.getElementById('chatLoginInput').value.trim();
+        if (!code) {
+            alert('❌ Введите код паспорта');
+            return;
+        }
+        
+        try {
+            const res = await fetch(`${DB_URL}/all/passports/${code}.json`);
+            const data = await res.json();
+            
+            if (data) {
+                currentUser = {
+                    code: code,
+                    fullName: data.fullName || 'Неизвестный',
+                    role: data.role || 'Обычный карасик'
+                };
+                
+                document.getElementById('userBadge').innerHTML = `
+                    <span class="uname">${escapeHtml(currentUser.fullName)}</span>
+                    <span class="urole">${escapeHtml(currentUser.role)}</span>
+                    <span style="color:#b4885a; font-size:0.8rem;">#${escapeHtml(currentUser.code)}</span>
+                    <button class="logout-btn" onclick="logoutFromChat()">🚪 Выйти</button>
+                `;
+                
+                document.getElementById('messageInput').disabled = false;
+                document.getElementById('sendBtn').disabled = false;
+                document.getElementById('messageInput').placeholder = 'Напиши сообщение...';
+                document.getElementById('chatLoginInput').value = '';
+                
+                loadMessages();
+                alert(`✅ Добро пожаловать, ${currentUser.fullName}! 🐟`);
+            } else {
+                alert(`❌ Паспорт с кодом "${code}" не найден!`);
+            }
+        } catch(e) {
+            alert(`❌ Ошибка: ${e.message}`);
+        }
+    };
+    
+    window.logoutFromChat = function() {
+        currentUser = null;
+        document.getElementById('userBadge').innerHTML = `
+            <span class="login-hint">🔑 Введи код паспорта ниже, чтобы писать в чат</span>
+        `;
+        document.getElementById('messageInput').disabled = true;
+        document.getElementById('sendBtn').disabled = true;
+        document.getElementById('messageInput').placeholder = 'Войди в чат по паспорту';
+    };
+    
+    // Отправка сообщения
+    window.sendMessage = async function() {
+        if (!currentUser) {
+            alert('❌ Сначала войди в чат по паспорту!');
+            return;
+        }
+        
+        const input = document.getElementById('messageInput');
+        const text = input.value.trim();
+        if (!text) return;
+        
+        try {
+            const messagesRef = await fetch(`${DB_URL}/all/messages.json`);
+            const messages = await messagesRef.json();
+            
+            let newId = Date.now().toString();
+            const newMessage = {
+                username: currentUser.fullName,
+                role: currentUser.role,
+                text: text,
+                timestamp: Date.now()
+            };
+            
+            // Добавляем сообщение
+            const updated = messages || {};
+            updated[newId] = newMessage;
+            
+            await fetch(`${DB_URL}/all/messages.json`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updated)
+            });
+            
+            input.value = '';
+            loadMessages(); // обновляем чат
+        } catch(e) {
+            alert(`❌ Ошибка отправки: ${e.message}`);
+        }
+    };
+    
+    // Загрузка сообщений
     window.loadMessages = async function() {
         const container = document.getElementById('messagesResult');
         container.innerHTML = '🔄 Загрузка...';
@@ -337,40 +529,23 @@
             const data = await res.json();
             if (data) {
                 const items = Object.values(data).filter(m => m !== null);
-                container.innerHTML = `
-                    <div style="color:#4a8a4a; margin-bottom:12px;">✅ Найдено сообщений: ${items.length}</div>
-                    ${items.map(m => `
+                // Сортируем по времени
+                items.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+                
+                if (items.length > 0) {
+                    container.innerHTML = items.map(m => `
                         <div class="message-item">
                             <span class="msg-user">${escapeHtml(m.username)}</span>
                             ${m.role ? `<span class="msg-role">${escapeHtml(m.role)}</span>` : ''}
                             <span class="msg-time">${m.timestamp ? new Date(m.timestamp).toLocaleString() : ''}</span>
                             <div class="msg-text">${escapeHtml(m.text)}</div>
                         </div>
-                    `).join('')}
-                    <div style="margin-top:12px;"><div style="color:#6b4a3a; font-weight:bold; margin-bottom:6px;">📋 Сырые данные:</div><div class="data-box">${JSON.stringify(data, null, 2)}</div></div>
-                `;
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div class="error-box">💬 Сообщений пока нет</div>';
+                }
             } else {
-                container.innerHTML = '<div class="error-box">❌ Сообщений нет!</div>';
-            }
-        } catch(e) {
-            container.innerHTML = `<div class="error-box">❌ Ошибка: ${e.message}</div>`;
-        }
-    };
-    
-    // ===== ВСЕ ДАННЫЕ =====
-    window.loadAllData = async function() {
-        const container = document.getElementById('allDataResult');
-        container.innerHTML = '🔄 Загрузка...';
-        try {
-            const res = await fetch(`${DB_URL}/all.json`);
-            const data = await res.json();
-            if (data) {
-                container.innerHTML = `
-                    <div style="color:#4a8a4a; margin-bottom:12px;">✅ Все данные загружены!</div>
-                    <div class="data-box">${JSON.stringify(data, null, 2)}</div>
-                `;
-            } else {
-                container.innerHTML = '<div class="error-box">❌ Данных нет!</div>';
+                container.innerHTML = '<div class="error-box">❌ Сообщений нет</div>';
             }
         } catch(e) {
             container.innerHTML = `<div class="error-box">❌ Ошибка: ${e.message}</div>`;
