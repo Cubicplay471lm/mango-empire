@@ -4,16 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🐟 Karasik Talk - Карасикославия</title>
-    
-    <script type="importmap">
-        {
-            "imports": {
-                "firebase": "https://www.gstatic.com/firebasejs/12.15.0/firebase.js",
-                "firebase/": "https://www.gstatic.com/firebasejs/12.15.0/"
-            }
-        }
-    </script>
-    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -38,76 +28,7 @@
             padding-left: 16px;
             margin-bottom: 8px;
         }
-        .subtitle {
-            color: #8b6b4a;
-            margin-bottom: 20px;
-            padding-left: 16px;
-        }
-        
-        /* Вход по паспорту */
-        .login-area {
-            background: #f8efe0;
-            padding: 16px;
-            border-radius: 16px;
-            margin-bottom: 20px;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .login-area input {
-            flex: 1;
-            padding: 12px 18px;
-            border: 2px solid #f0d5b0;
-            border-radius: 30px;
-            font-size: 1rem;
-            font-family: inherit;
-            min-width: 150px;
-        }
-        .login-area input:focus {
-            outline: none;
-            border-color: #f4a460;
-        }
-        .login-area button {
-            background: #f4a460;
-            border: none;
-            padding: 12px 28px;
-            border-radius: 30px;
-            color: white;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-        .login-area button:active { transform: scale(0.96); }
-        
-        .user-info {
-            background: #e8f5e8;
-            padding: 10px 16px;
-            border-radius: 12px;
-            margin-bottom: 16px;
-            display: none;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .user-info .name { font-weight: bold; color: #6b4a3a; }
-        .user-info .role-tag {
-            background: #f4a460;
-            padding: 2px 14px;
-            border-radius: 20px;
-            color: white;
-            font-weight: bold;
-            font-size: 0.8rem;
-        }
-        .user-info .logout-btn {
-            background: #dc2626;
-            border: none;
-            padding: 4px 16px;
-            border-radius: 20px;
-            color: white;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
+        .subtitle { color: #8b6b4a; padding-left: 16px; margin-bottom: 20px; }
         
         .tabs {
             display: flex;
@@ -132,13 +53,54 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        /* Паспорт */
+        .data-box {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 16px;
+            border-radius: 12px;
+            font-family: monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+        .search-area {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .search-area input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 2px solid #f0d5b0;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        .search-area input:focus {
+            outline: none;
+            border-color: #f4a460;
+        }
+        .search-area button {
+            background: #f4a460;
+            border: none;
+            padding: 0 24px;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        
         .passport-card {
             background: linear-gradient(140deg, #fff8f0, #ffe8d0);
             border-radius: 32px;
             padding: 20px;
             border: 2px solid #f4a460;
-            margin-top: 16px;
+            margin-top: 12px;
         }
         .passport-card .badge {
             background: #f4a460;
@@ -173,7 +135,6 @@
             font-weight: bold;
         }
         
-        /* Новости */
         .announcement-item {
             background: #fff8f0;
             border-radius: 16px;
@@ -185,61 +146,37 @@
         .announcement-item p { color: #6b5a4a; }
         .announcement-item small { color: #b89a7a; font-size: 0.7rem; }
         
-        /* Чат */
-        .chat-box {
-            height: 400px;
-            overflow-y: auto;
-            padding: 16px;
-            background: #faf6f0;
-            border-radius: 20px;
-            border: 2px solid #f0d5b0;
-            margin-bottom: 16px;
-        }
-        .message {
-            padding: 10px 16px;
-            margin-bottom: 8px;
+        .message-item {
+            background: #f8f0e8;
             border-radius: 16px;
-            background: white;
-            border-left: 4px solid #f4a460;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-left: 4px solid #1a6a8a;
         }
-        .message .username { font-weight: bold; color: #6b4a3a; margin-right: 8px; }
-        .message .role-tag {
-            display: inline-block;
+        .message-item .msg-user { font-weight: bold; color: #6b4a3a; }
+        .message-item .msg-role {
             background: #f4a460;
             padding: 1px 10px;
             border-radius: 12px;
             font-size: 0.7rem;
             color: white;
             font-weight: bold;
-            margin-right: 8px;
+            margin-left: 6px;
         }
-        .message .time { font-size: 0.65rem; color: #b89a7a; float: right; }
-        .message .text { margin-top: 4px; color: #4a3a2a; }
+        .message-item .msg-time { font-size: 0.65rem; color: #b89a7a; float: right; }
+        .message-item .msg-text { margin-top: 4px; color: #4a3a2a; }
         
-        .input-area {
-            display: flex;
-            gap: 12px;
-        }
-        .input-area input {
-            flex: 1;
-            padding: 14px 18px;
-            border: 2px solid #f0d5b0;
-            border-radius: 40px;
-            font-size: 1rem;
-            font-family: inherit;
-        }
-        .input-area input:focus { outline: none; border-color: #f4a460; }
-        .input-area button {
-            background: #f4a460;
+        .load-btn {
+            background: #1a6a8a;
             border: none;
-            padding: 0 28px;
-            border-radius: 40px;
+            padding: 10px 20px;
+            border-radius: 30px;
             color: white;
-            font-weight: 600;
-            font-size: 1rem;
+            font-weight: bold;
             cursor: pointer;
+            margin-bottom: 12px;
         }
-        .input-area button:active { transform: scale(0.96); background: #d4884a; }
+        .load-btn:hover { background: #0a4a6a; }
         
         .error-box {
             background: #fff1f0;
@@ -248,22 +185,15 @@
             color: #b34e3a;
             border: 1px solid #ffc6be;
         }
-        .success-tag {
-            background: #e8f5e8;
-            border-radius: 16px;
-            padding: 12px 18px;
-            color: #4a8a4a;
-            font-weight: 500;
-            margin-top: 12px;
-        }
-        .loading { text-align: center; padding: 30px; color: #c4885a; }
+        .loading { text-align: center; padding: 20px; color: #c4885a; }
+        
         footer { text-align: center; color: #c4a88a; font-size: 0.7rem; margin-top: 28px; }
         
         @media (max-width: 500px) {
             .card { padding: 16px; }
-            .login-area { flex-direction: column; }
-            .login-area input { width: 100%; }
-            .input-area { flex-direction: column; }
+            .tabs { gap: 6px; }
+            .tab-btn { padding: 8px 14px; font-size: 0.8rem; }
+            .search-area { flex-direction: column; }
             .passport-card .name { font-size: 1.2rem; }
         }
     </style>
@@ -275,298 +205,182 @@
         <h1>🐟 Karasik Talk</h1>
         <div class="subtitle">🇺🇸 Карасикославия · Страна мирных карасей</div>
         
-        <!-- Вход по паспорту -->
-        <div class="login-area">
-            <input type="text" id="passportCodeInput" placeholder="Введите код паспорта (например 171)">
-            <button onclick="loginByPassport()">🎣 Войти по паспорту</button>
-        </div>
-        
-        <!-- Информация о пользователе -->
-        <div id="userInfo" class="user-info">
-            <span class="name" id="userName">Имя</span>
-            <span class="role-tag" id="userRole">Роль</span>
-            <span style="color:#6b4a3a; font-size:0.8rem;">код: <span id="userCode">000</span></span>
-            <button class="logout-btn" onclick="logout()">🚪 Выйти</button>
-        </div>
-        
-        <!-- Вкладки -->
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('passports')">📋 Паспорта</button>
             <button class="tab-btn" onclick="switchTab('announcements')">📢 Новости</button>
-            <button class="tab-btn" onclick="switchTab('chat')">💬 Чат</button>
+            <button class="tab-btn" onclick="switchTab('messages')">💬 Чат</button>
+            <button class="tab-btn" onclick="switchTab('all')">📊 Все данные</button>
         </div>
         
-        <!-- Вкладка: Паспорта -->
+        <!-- Паспорта -->
         <div id="tab-passports" class="tab-content active">
-            <div class="search-area" style="display:flex; gap:8px; margin-bottom:12px;">
-                <input type="text" id="searchPassportInput" placeholder="Найти паспорт по коду">
-                <button onclick="findPassport()" style="background:#f4a460; border:none; padding:0 24px; border-radius:40px; color:white; font-weight:bold; cursor:pointer;">🔍</button>
+            <div class="search-area">
+                <input type="text" id="passportInput" placeholder="Введите код, например 171">
+                <button onclick="findPassport()">🔍 Найти</button>
             </div>
-            <div id="passportResult"></div>
+            <button class="load-btn" onclick="loadPassports()">🔄 Загрузить все паспорта</button>
+            <div id="passportsResult"><div class="loading">🐟 Нажми "Загрузить все паспорта"</div></div>
         </div>
         
-        <!-- Вкладка: Новости -->
+        <!-- Новости -->
         <div id="tab-announcements" class="tab-content">
-            <div id="announcementsList"><div class="loading">🐟 Загрузка новостей...</div></div>
+            <button class="load-btn" onclick="loadAnnouncements()">🔄 Загрузить новости</button>
+            <div id="announcementsResult"><div class="loading">📢 Нажми "Загрузить новости"</div></div>
         </div>
         
-        <!-- Вкладка: Чат -->
-        <div id="tab-chat" class="tab-content">
-            <div id="chatBox" class="chat-box"><div class="loading">💬 Войдите по паспорту, чтобы писать в чат</div></div>
-            <div class="input-area">
-                <input type="text" id="messageInput" placeholder="Напиши сообщение..." onkeypress="if(event.key==='Enter') sendMessage()" disabled>
-                <button onclick="sendMessage()" id="sendBtn" disabled>📤 Отправить</button>
-            </div>
+        <!-- Чат -->
+        <div id="tab-messages" class="tab-content">
+            <button class="load-btn" onclick="loadMessages()">🔄 Загрузить сообщения</button>
+            <div id="messagesResult"><div class="loading">💬 Нажми "Загрузить сообщения"</div></div>
+        </div>
+        
+        <!-- Все данные -->
+        <div id="tab-all" class="tab-content">
+            <button class="load-btn" onclick="loadAllData()">🔄 Загрузить все данные</button>
+            <div id="allDataResult"><div class="loading">📊 Нажми "Загрузить все данные"</div></div>
         </div>
     </div>
-    <footer>🐟 Карасикославия · Всё работает на Firebase 🔥</footer>
+    <footer>🐟 Карасикославия · Данные из Firebase 🔥</footer>
 </div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-    import { 
-        getDatabase, ref, get, set, push, onValue, onChildAdded, serverTimestamp, update, remove 
-    } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+<script>
+    const DB_URL = 'https://karasik-talk-default-rtdb.europe-west1.firebasedatabase.app';
     
-    const firebaseConfig = {
-        apiKey: "AIzaSyCCyxK7YqIPmgYfhfU4FtcVS9IVuxNWh78",
-        authDomain: "karasik-talk.firebaseapp.com",
-        projectId: "karasik-talk",
-        storageBucket: "karasik-talk.firebasestorage.app",
-        messagingSenderId: "537134768449",
-        appId: "1:537134768449:web:26f564477daa20e4d241c0",
-        measurementId: "G-Y3QQCBM7DV"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-    
-    // ===== ТЕКУЩИЙ ПОЛЬЗОВАТЕЛЬ =====
-    let currentUser = null; // { code, fullName, role, birthDate }
-    
-    // ===== ВХОД ПО ПАСПОРТУ =====
-    window.loginByPassport = async function() {
-        const code = document.getElementById('passportCodeInput').value.trim();
-        if (!code) {
-            alert('Введите код паспорта!');
-            return;
-        }
-        
-        const passportRef = ref(database, `passports/${code}`);
-        const snapshot = await get(passportRef);
-        
-        if (!snapshot.exists()) {
-            alert(`❌ Паспорт с кодом "${code}" не найден!`);
-            return;
-        }
-        
-        const data = snapshot.val();
-        currentUser = {
-            code: code,
-            fullName: data.fullName || 'Неизвестный',
-            role: data.role || 'Обычный карасик',
-            birthDate: data.birthDate || '—'
-        };
-        
-        // Показываем информацию о пользователе
-        document.getElementById('userInfo').style.display = 'flex';
-        document.getElementById('userName').textContent = currentUser.fullName;
-        document.getElementById('userRole').textContent = currentUser.role;
-        document.getElementById('userCode').textContent = currentUser.code;
-        
-        // Активируем чат
-        document.getElementById('messageInput').disabled = false;
-        document.getElementById('sendBtn').disabled = false;
-        document.getElementById('messageInput').placeholder = 'Напиши сообщение...';
-        
-        // Показываем паспорт
-        showPassport(currentUser);
-        
-        // Загружаем чат
-        loadChat();
-        
-        alert(`✅ Добро пожаловать, ${currentUser.fullName}! 🐟`);
-    };
-    
-    window.logout = function() {
-        currentUser = null;
-        document.getElementById('userInfo').style.display = 'none';
-        document.getElementById('messageInput').disabled = true;
-        document.getElementById('sendBtn').disabled = true;
-        document.getElementById('messageInput').placeholder = 'Войдите по паспорту, чтобы писать в чат';
-        document.getElementById('passportCodeInput').value = '';
-        document.getElementById('passportResult').innerHTML = '';
-        document.getElementById('chatBox').innerHTML = '<div class="loading">💬 Войдите по паспорту, чтобы писать в чат</div>';
-        document.getElementById('passportResult').innerHTML = '';
-    };
-    
-    // ===== ПОКАЗАТЬ ПАСПОРТ =====
-    function showPassport(passport) {
-        const container = document.getElementById('passportResult');
-        container.innerHTML = `
-            <div class="passport-card">
-                <div class="badge">🇺🇸 УДОСТОВЕРЕНИЕ ЛИЧНОСТИ</div>
-                <div class="name">${escapeHtml(passport.fullName)}</div>
-                <div class="detail">
-                    <span class="label">🎫 Паспортный код</span>
-                    <span style="font-weight:bold;">${escapeHtml(passport.code)}</span>
-                </div>
-                <div class="detail">
-                    <span class="label">📅 Дата рождения</span>
-                    <span>${escapeHtml(passport.birthDate)}</span>
-                </div>
-                <div class="detail">
-                    <span class="label">🏷️ Роль</span>
-                    <span><span class="role-tag">${escapeHtml(passport.role)}</span></span>
-                </div>
-                <div style="margin-top:16px; text-align:center; font-size:0.8rem; color:#c4885a;">
-                    🐟 Карасикославия · Страна мирных карасей
-                </div>
-            </div>
-        `;
-    }
-    
-    window.findPassport = async function() {
-        const code = document.getElementById('searchPassportInput').value.trim();
-        if (!code) {
-            document.getElementById('passportResult').innerHTML = '<div class="error-box">🔎 Введите код паспорта</div>';
-            return;
-        }
-        
-        const passportRef = ref(database, `passports/${code}`);
-        const snapshot = await get(passportRef);
-        
-        if (!snapshot.exists()) {
-            document.getElementById('passportResult').innerHTML = `<div class="error-box">❌ Паспорт с кодом "${code}" не найден</div>`;
-            return;
-        }
-        
-        const data = snapshot.val();
-        showPassport({
-            code: code,
-            fullName: data.fullName || 'Неизвестный',
-            role: data.role || 'Обычный карасик',
-            birthDate: data.birthDate || '—'
-        });
-    };
-    
-    // ===== НОВОСТИ =====
-    function loadAnnouncements() {
-        const announcementsRef = ref(database, 'announcements');
-        onValue(announcementsRef, (snapshot) => {
-            const container = document.getElementById('announcementsList');
-            if (!snapshot.exists()) {
-                container.innerHTML = '<div class="announcement-item"><h3>🐟 Нет новостей</h3><p>Следите за обновлениями</p></div>';
-                return;
-            }
-            
-            const data = snapshot.val();
-            const announcements = Object.values(data).filter(a => a.active !== false);
-            
-            if (announcements.length === 0) {
-                container.innerHTML = '<div class="announcement-item"><h3>🐟 Нет активных новостей</h3></div>';
-                return;
-            }
-            
-            container.innerHTML = announcements.map(a => `
-                <div class="announcement-item">
-                    <h3>📌 ${escapeHtml(a.title)}</h3>
-                    <p>${escapeHtml(a.text)}</p>
-                    <small>📅 ${escapeHtml(a.date || 'Недавно')}</small>
-                </div>
-            `).join('');
-        });
-    }
-    
-    // ===== ЧАТ =====
-    function loadChat() {
-        const chatBox = document.getElementById('chatBox');
-        const messagesRef = ref(database, 'messages');
-        
-        // Очищаем старые сообщения (но оставляем загрузку)
-        chatBox.innerHTML = '';
-        
-        onChildAdded(messagesRef, (snapshot) => {
-            const data = snapshot.val();
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'message';
-            
-            const roleTag = data.role ? `<span class="role-tag">${escapeHtml(data.role)}</span>` : '';
-            const time = data.timestamp ? new Date(data.timestamp).toLocaleTimeString() : '';
-            
-            msgDiv.innerHTML = `
-                <span class="username">${escapeHtml(data.username)}</span>
-                ${roleTag}
-                <span class="time">${time}</span>
-                <div class="text">${escapeHtml(data.text)}</div>
-            `;
-            
-            chatBox.appendChild(msgDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        });
-    }
-    
-    window.sendMessage = function() {
-        if (!currentUser) {
-            alert('Сначала войдите по паспорту!');
-            return;
-        }
-        
-        const input = document.getElementById('messageInput');
-        const text = input.value.trim();
-        if (!text) return;
-        
-        const messagesRef = ref(database, 'messages');
-        push(messagesRef, {
-            username: currentUser.fullName,
-            role: currentUser.role,
-            text: text,
-            timestamp: serverTimestamp()
-        });
-        
-        input.value = '';
-    };
-    
-    // ===== ВКЛАДКИ =====
     window.switchTab = function(tab) {
-        // Скрываем все
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        
-        // Показываем выбранную
         document.getElementById(`tab-${tab}`).classList.add('active');
         document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
     };
     
-    // ===== UTILS =====
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, m => {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-    
-    // ===== ЗАГРУЗКА =====
-    loadAnnouncements();
-    
-    // Автовход по сохранённому коду
-    const savedCode = localStorage.getItem('karasik_passport_code');
-    if (savedCode) {
-        document.getElementById('passportCodeInput').value = savedCode;
-        loginByPassport();
-    }
-    
-    // Сохраняем код при входе
-    const origLogin = window.loginByPassport;
-    window.loginByPassport = async function() {
-        await origLogin();
-        if (currentUser) {
-            localStorage.setItem('karasik_passport_code', currentUser.code);
+    // ===== ПАСПОРТА =====
+    window.loadPassports = async function() {
+        const container = document.getElementById('passportsResult');
+        container.innerHTML = '🔄 Загрузка...';
+        try {
+            const res = await fetch(`${DB_URL}/all/passports.json`);
+            const data = await res.json();
+            if (data) {
+                container.innerHTML = `
+                    <div style="color:#4a8a4a; margin-bottom:12px;">✅ Найдено паспортов: ${Object.keys(data).length}</div>
+                    <div class="data-box">${JSON.stringify(data, null, 2)}</div>
+                `;
+            } else {
+                container.innerHTML = '<div class="error-box">❌ Паспортов нет!</div>';
+            }
+        } catch(e) {
+            container.innerHTML = `<div class="error-box">❌ Ошибка: ${e.message}</div>`;
         }
     };
+    
+    window.findPassport = async function() {
+        const code = document.getElementById('passportInput').value.trim();
+        const container = document.getElementById('passportsResult');
+        if (!code) { container.innerHTML = '<div class="error-box">🔎 Введите код</div>'; return; }
+        container.innerHTML = '🔄 Поиск...';
+        try {
+            const res = await fetch(`${DB_URL}/all/passports/${code}.json`);
+            const data = await res.json();
+            if (data) {
+                container.innerHTML = `
+                    <div class="passport-card">
+                        <div class="badge">🇺🇸 УДОСТОВЕРЕНИЕ ЛИЧНОСТИ</div>
+                        <div class="name">${escapeHtml(data.fullName)}</div>
+                        <div class="detail"><span class="label">🎫 Код</span><span style="font-weight:bold;">${escapeHtml(code)}</span></div>
+                        <div class="detail"><span class="label">📅 Дата рождения</span><span>${escapeHtml(data.birthDate)}</span></div>
+                        <div class="detail"><span class="label">🏷️ Роль</span><span><span class="role-tag">${escapeHtml(data.role || 'Обычный карасик')}</span></span></div>
+                        <div style="margin-top:16px; text-align:center; font-size:0.8rem; color:#c4885a;">🐟 Карасикославия</div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `<div class="error-box">❌ Паспорт с кодом "${code}" не найден</div>`;
+            }
+        } catch(e) {
+            container.innerHTML = `<div class="error-box">❌ Ошибка: ${e.message}</div>`;
+        }
+    };
+    
+    // ===== НОВОСТИ =====
+    window.loadAnnouncements = async function() {
+        const container = document.getElementById('announcementsResult');
+        container.innerHTML = '🔄 Загрузка...';
+        try {
+            const res = await fetch(`${DB_URL}/all/announcements.json`);
+            const data = await res.json();
+            if (data) {
+                const items = Object.values(data).filter(a => a !== null);
+                container.innerHTML = `
+                    <div style="color:#4a8a4a; margin-bottom:12px;">✅ Найдено объявлений: ${items.length}</div>
+                    ${items.map(a => `
+                        <div class="announcement-item">
+                            <h3>📌 ${escapeHtml(a.title)}</h3>
+                            <p>${escapeHtml(a.text)}</p>
+                            <small>📅 ${escapeHtml(a.date || 'Недавно')}</small>
+                        </div>
+                    `).join('')}
+                    <div style="margin-top:12px;"><div style="color:#6b4a3a; font-weight:bold; margin-bottom:6px;">📋 Сырые данные:</div><div class="data-box">${JSON.stringify(data, null, 2)}</div></div>
+                `;
+            } else {
+                container.innerHTML = '<div class="error-box">❌ Объявлений нет!</div>';
+            }
+        } catch(e) {
+            container.innerHTML = `<div class="error-box">❌ Ошибка: ${e.message}</div>`;
+        }
+    };
+    
+    // ===== СООБЩЕНИЯ =====
+    window.loadMessages = async function() {
+        const container = document.getElementById('messagesResult');
+        container.innerHTML = '🔄 Загрузка...';
+        try {
+            const res = await fetch(`${DB_URL}/all/messages.json`);
+            const data = await res.json();
+            if (data) {
+                const items = Object.values(data).filter(m => m !== null);
+                container.innerHTML = `
+                    <div style="color:#4a8a4a; margin-bottom:12px;">✅ Найдено сообщений: ${items.length}</div>
+                    ${items.map(m => `
+                        <div class="message-item">
+                            <span class="msg-user">${escapeHtml(m.username)}</span>
+                            ${m.role ? `<span class="msg-role">${escapeHtml(m.role)}</span>` : ''}
+                            <span class="msg-time">${m.timestamp ? new Date(m.timestamp).toLocaleString() : ''}</span>
+                            <div class="msg-text">${escapeHtml(m.text)}</div>
+                        </div>
+                    `).join('')}
+                    <div style="margin-top:12px;"><div style="color:#6b4a3a; font-weight:bold; margin-bottom:6px;">📋 Сырые данные:</div><div class="data-box">${JSON.stringify(data, null, 2)}</div></div>
+                `;
+            } else {
+                container.innerHTML = '<div class="error-box">❌ Сообщений нет!</div>';
+            }
+        } catch(e) {
+            container.innerHTML = `<div class="error-box">❌ Ошибка: ${e.message}</div>`;
+        }
+    };
+    
+    // ===== ВСЕ ДАННЫЕ =====
+    window.loadAllData = async function() {
+        const container = document.getElementById('allDataResult');
+        container.innerHTML = '🔄 Загрузка...';
+        try {
+            const res = await fetch(`${DB_URL}/all.json`);
+            const data = await res.json();
+            if (data) {
+                container.innerHTML = `
+                    <div style="color:#4a8a4a; margin-bottom:12px;">✅ Все данные загружены!</div>
+                    <div class="data-box">${JSON.stringify(data, null, 2)}</div>
+                `;
+            } else {
+                container.innerHTML = '<div class="error-box">❌ Данных нет!</div>';
+            }
+        } catch(e) {
+            container.innerHTML = `<div class="error-box">❌ Ошибка: ${e.message}</div>`;
+        }
+    };
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
+    }
 </script>
 </body>
 </html>
