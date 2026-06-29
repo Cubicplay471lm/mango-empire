@@ -40,7 +40,7 @@
             font-size: 16px;
         }
         .login-card button {
-            background: #1f4e3f;
+            background: #f4a460;
             width: 100%;
             padding: 14px;
             color: white;
@@ -87,6 +87,7 @@
         }
         button.danger { background: #dc2626; }
         button.secondary { background: #6b7280; }
+        button.primary { background: #1a6a8a; }
         .passport-item, .announcement-item {
             background: #fff8f0;
             padding: 15px;
@@ -124,6 +125,14 @@
             color: white;
             font-weight: bold;
         }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 16px;
+            color: #856404;
+        }
     </style>
 </head>
 <body>
@@ -143,7 +152,12 @@
         <div class="card">
             <h2>👑 АДМИН ПАНЕЛЬ - КАРАСИКОСЛАВИЯ</h2>
             <div class="stats" id="sessionInfo">🐟 Сессия активна</div>
-            <button onclick="logout()" class="secondary">🚪 Выйти из админки</button>
+            <div class="flex">
+                <button onclick="loadFromFile()" class="primary">📥 Загрузить из psprts.json</button>
+                <button onclick="downloadJSON()">📥 Скачать обновленный psprts.json</button>
+                <button onclick="logout()" class="secondary">🚪 Выйти из админки</button>
+            </div>
+            <div class="warning">⚠️ Внимание! Все изменения нужно скачать и загрузить на GitHub в файл psprts.json</div>
         </div>
 
         <div class="card">
@@ -158,7 +172,7 @@
             </div>
             <input type="text" id="birthDate" placeholder="Дата рождения">
             <input type="text" id="roleInput" placeholder="Роль (например: Золотой карасик, Старшина и т.д.)">
-            <button onclick="createPassport()">✨ Выдать паспорт</button>
+            <button onclick="createPassport()" class="primary">✨ Выдать паспорт</button>
         </div>
 
         <div class="card">
@@ -168,18 +182,14 @@
             <h3>➕ Создать объявление</h3>
             <input type="text" id="annTitle" placeholder="Заголовок">
             <textarea id="annText" rows="3" placeholder="Текст объявления"></textarea>
-            <button onclick="createAnnouncement()">📢 Опубликовать</button>
+            <button onclick="createAnnouncement()" class="primary">📢 Опубликовать</button>
         </div>
 
         <div class="card">
-            <h2>💾 Экспорт / Импорт базы</h2>
-            <div class="flex">
-                <button onclick="downloadJSON()">📥 Скачать data.json</button>
-                <input type="file" id="uploadFile" accept=".json" style="display:none;">
-                <button onclick="document.getElementById('uploadFile').click()">📤 Загрузить data.json</button>
-            </div>
+            <h2>💾 Экспорт данных</h2>
+            <button onclick="downloadJSON()" style="width:100%;">📥 Скачать psprts.json</button>
             <hr>
-            <h3>Текущие данные (скопируйте для резервной копии):</h3>
+            <h3>Текущие данные:</h3>
             <pre id="jsonPreview" class="json-box"></pre>
         </div>
     </div>
@@ -187,6 +197,7 @@
 
 <script>
     const ADMIN_PASSWORD = "рыбнадзор";
+    const DATA_URL = 'https://raw.githubusercontent.com/Cubicplay471lm/mango-empire/refs/heads/main/psprts.json';
     
     let db = { passports: [], announcements: [] };
     let isAdminAuthenticated = false;
@@ -200,7 +211,7 @@
             sessionStorage.setItem('admin_auth', 'true');
             document.getElementById('loginOverlay').style.display = 'none';
             document.getElementById('adminContent').style.display = 'block';
-            loadFromStorage();
+            loadFromFile();
         } else {
             errorDiv.textContent = '❌ Неверный пароль';
         }
@@ -221,38 +232,43 @@
             isAdminAuthenticated = true;
             document.getElementById('loginOverlay').style.display = 'none';
             document.getElementById('adminContent').style.display = 'block';
-            loadFromStorage();
+            loadFromFile();
         }
     }
 
-    function loadFromStorage() {
-        const saved = localStorage.getItem('karasik_admin_db');
-        if (saved) {
-            db = JSON.parse(saved);
-        } else {
+    async function loadFromFile() {
+        try {
+            const response = await fetch(`${DATA_URL}?t=${Date.now()}`);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            
+            db.passports = Array.isArray(data.passports) ? data.passports : [];
+            db.announcements = Array.isArray(data.announcements) ? data.announcements : [];
+            
+            renderAll();
+            alert('✅ Данные загружены из psprts.json');
+        } catch (error) {
+            console.error('Ошибка загрузки:', error);
+            alert('❌ Не удалось загрузить данные. Проверь интернет или файл на GitHub.');
+            // Загружаем дефолтные данные
             db = {
                 passports: [
-                    { code: "1501", fullName: "Иван Петров", birthDate: "15.05.1990", issuedDate: new Date().toLocaleString(), role: "Золотой карасик" },
-                    { code: "2302", fullName: "Мария Сидорова", birthDate: "23.11.1995", issuedDate: new Date().toLocaleString(), role: "Старшина" }
+                    { code: "171", fullName: "Лев", birthDate: "17.08.2014", issuedDate: new Date().toLocaleString(), role: "Главный программист" },
+                    { code: "1402", fullName: "Борис", birthDate: "14.88.6752", issuedDate: new Date().toLocaleString(), role: "Рыбнадзор" },
+                    { code: "6703", fullName: "Даня", birthDate: "67.52.1488", issuedDate: new Date().toLocaleString(), role: "Глист" }
                 ],
                 announcements: [
-                    { id: 1, title: "Добро пожаловать!", text: "Карасикославия открыта", date: new Date().toLocaleDateString(), active: true },
-                    { id: 2, title: "Новый сезон", text: "Стартует через неделю", date: new Date().toLocaleDateString(), active: true }
+                    { id: 1, title: "Добавление первых пользователей", text: "Даниил Глист, Борис и Лев добавлены в Карасикославию! 🐟", date: new Date().toLocaleDateString(), active: true }
                 ]
             };
+            renderAll();
         }
-        renderAll();
-    }
-
-    function saveToStorage() {
-        localStorage.setItem('karasik_admin_db', JSON.stringify(db));
-        renderAll();
-        updateJSONPreview();
     }
 
     function renderAll() {
         renderPassports();
         renderAnnouncements();
+        updateJSONPreview();
     }
 
     function renderPassports() {
@@ -269,7 +285,7 @@
                 🔑 ${escapeHtml(p.code)}<br>
                 🎂 ${escapeHtml(p.birthDate || '—')}<br>
                 📅 ${p.issuedDate}<br>
-                🏷️ Роль: <span class="role-tag">${escapeHtml(p.role || '—')}</span><br>
+                🏷️ Роль: <span class="role-tag">${escapeHtml(p.role || 'Обычный карасик')}</span><br>
                 <button class="secondary" onclick="editRole(${idx})" style="font-size:12px;">✏️ Изменить роль</button>
                 <button class="danger" onclick="deletePassport(${idx})">❌ Удалить</button>
             </div>
@@ -277,10 +293,10 @@
     }
 
     function editRole(index) {
-        const newRole = prompt('Введите новую роль для этого паспорта:', db.passports[index].role || '');
+        const newRole = prompt('Введите новую роль для этого паспорта:', db.passports[index].role || 'Обычный карасик');
         if (newRole !== null) {
             db.passports[index].role = newRole.trim();
-            saveToStorage();
+            renderAll();
         }
     }
 
@@ -317,18 +333,19 @@
             issuedDate: new Date().toLocaleString(),
             role: role
         });
-        saveToStorage();
+        renderAll();
         document.getElementById('fullName').value = '';
         document.getElementById('passportCode').value = '';
         document.getElementById('birthDate').value = '';
         document.getElementById('roleInput').value = '';
-        alert('✅ Паспорт создан');
+        alert('✅ Паспорт создан! Не забудь скачать обновленный файл.');
     }
 
     function deletePassport(index) {
         if (!confirm('Удалить паспорт?')) return;
         db.passports.splice(index, 1);
-        saveToStorage();
+        renderAll();
+        alert('✅ Паспорт удален! Не забудь скачать обновленный файл.');
     }
 
     function createAnnouncement() {
@@ -341,21 +358,22 @@
             date: new Date().toLocaleDateString(),
             active: true
         });
-        saveToStorage();
+        renderAll();
         document.getElementById('annTitle').value = '';
         document.getElementById('annText').value = '';
-        alert('✅ Объявление добавлено');
+        alert('✅ Объявление добавлено! Не забудь скачать обновленный файл.');
     }
 
     function toggleAnnouncement(index) {
         db.announcements[index].active = !db.announcements[index].active;
-        saveToStorage();
+        renderAll();
     }
 
     function deleteAnnouncement(index) {
         if (!confirm('Удалить объявление?')) return;
         db.announcements.splice(index, 1);
-        saveToStorage();
+        renderAll();
+        alert('✅ Объявление удалено! Не забудь скачать обновленный файл.');
     }
 
     function downloadJSON() {
@@ -366,28 +384,10 @@
         const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = 'karasik_data.json';
+        link.download = 'psprts.json';
         link.click();
         URL.revokeObjectURL(link.href);
-        alert('✅ Файл скачан');
-    }
-
-    function uploadJSON() {
-        const file = document.getElementById('uploadFile').files[0];
-        if (!file) { alert('Выберите файл'); return; }
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const newData = JSON.parse(e.target.result);
-                if (newData.passports && newData.announcements) {
-                    db = newData;
-                    saveToStorage();
-                    alert('✅ База обновлена!');
-                } else alert('❌ Неверный формат');
-            } catch(err) { alert('Ошибка парсинга'); }
-        };
-        reader.readAsText(file);
-        document.getElementById('uploadFile').value = '';
+        alert('✅ Файл скачан! Загрузи его на GitHub в папку репозитория.');
     }
 
     function updateJSONPreview() {
@@ -400,7 +400,6 @@
         return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
     }
 
-    document.getElementById('uploadFile').addEventListener('change', uploadJSON);
     checkSession();
 </script>
 </body>
