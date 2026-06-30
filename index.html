@@ -30,6 +30,62 @@
         }
         .subtitle { color: #8b6b4a; padding-left: 16px; margin-bottom: 20px; }
         
+        .login-area {
+            background: #f8efe0;
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+        }
+        .login-area .flex-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .login-area input {
+            flex: 1;
+            padding: 10px 16px;
+            border: 2px solid #f0d5b0;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            min-width: 120px;
+        }
+        .login-area input:focus {
+            outline: none;
+            border-color: #f4a460;
+        }
+        .login-area button {
+            background: #f4a460;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .login-area button.secondary { background: #1a6a8a; }
+        .login-area button.danger { background: #dc2626; }
+        
+        .user-info {
+            background: #e8f5e8;
+            padding: 10px 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .user-info .uname { font-weight: bold; color: #6b4a3a; }
+        .user-info .logout-btn {
+            background: #dc2626;
+            border: none;
+            padding: 4px 16px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
         .tabs {
             display: flex;
             gap: 12px;
@@ -53,84 +109,21 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        .search-area {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-        .search-area input {
-            flex: 1;
-            padding: 12px 18px;
-            border: 2px solid #f0d5b0;
-            border-radius: 30px;
-            font-size: 1rem;
-            font-family: inherit;
-        }
-        .search-area input:focus {
-            outline: none;
-            border-color: #f4a460;
-        }
-        .search-area button {
-            background: #f4a460;
-            border: none;
-            padding: 0 24px;
-            border-radius: 30px;
-            color: white;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-        
-        .passport-card {
-            background: linear-gradient(140deg, #fff8f0, #ffe8d0);
-            border-radius: 32px;
-            padding: 20px;
-            border: 2px solid #f4a460;
-            margin-top: 12px;
-        }
-        .passport-card .badge {
-            background: #f4a460;
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 0.75rem;
-            color: #4a3a2a;
-            margin-bottom: 18px;
-        }
-        .passport-card .name {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #6b4a3a;
-        }
-        .passport-card .detail {
+        .chat-list-item {
+            background: #f8efe0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-left: 3px solid #f4a460;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             flex-wrap: wrap;
-            border-bottom: 1px dashed #e8c8a8;
-            padding: 12px 0;
+            cursor: pointer;
         }
-        .passport-card .label { font-weight: 600; color: #b4885a; }
-        .passport-card .role-tag {
-            display: inline-block;
-            background: #f4a460;
-            padding: 2px 14px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: white;
-            font-weight: bold;
-        }
-        
-        .announcement-item {
-            background: #fff8f0;
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 12px;
-            border-left: 4px solid #f4a460;
-        }
-        .announcement-item h3 { color: #c4884a; margin-bottom: 6px; }
-        .announcement-item p { color: #6b5a4a; }
-        .announcement-item small { color: #b89a7a; font-size: 0.7rem; }
+        .chat-list-item:hover { background: #f0e8d8; }
+        .chat-list-item .cname { font-weight: bold; color: #6b4a3a; }
+        .chat-list-item .cmembers { font-size: 0.8rem; color: #b89a7a; }
         
         .message-item {
             background: #f8f0e8;
@@ -140,45 +133,22 @@
             border-left: 4px solid #1a6a8a;
         }
         .message-item .msg-user { font-weight: bold; color: #6b4a3a; }
-        .message-item .msg-role {
-            background: #f4a460;
-            padding: 1px 10px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            color: white;
-            font-weight: bold;
-            margin-left: 6px;
-        }
         .message-item .msg-time { font-size: 0.65rem; color: #b89a7a; float: right; }
         .message-item .msg-text { margin-top: 4px; color: #4a3a2a; }
         
-        .load-btn {
-            background: #1a6a8a;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 30px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 12px;
-        }
-        .load-btn:hover { background: #0a4a6a; }
-        
-        .error-box {
-            background: #fff1f0;
-            border-radius: 16px;
+        .chat-box {
+            height: 400px;
+            overflow-y: auto;
             padding: 16px;
-            color: #b34e3a;
-            border: 1px solid #ffc6be;
+            background: #faf6f0;
+            border-radius: 20px;
+            border: 2px solid #f0d5b0;
+            margin-bottom: 16px;
         }
-        .loading { text-align: center; padding: 20px; color: #c4885a; }
-        
-        footer { text-align: center; color: #c4a88a; font-size: 0.7rem; margin-top: 28px; }
         
         .chat-input-area {
             display: flex;
             gap: 12px;
-            margin-top: 16px;
         }
         .chat-input-area input {
             flex: 1;
@@ -202,40 +172,52 @@
             font-size: 1rem;
             cursor: pointer;
         }
-        .chat-input-area button:active { transform: scale(0.96); }
         
-        .user-badge {
-            background: #e8f5e8;
-            padding: 8px 16px;
-            border-radius: 30px;
-            margin-bottom: 12px;
+        .error-box {
+            background: #fff1f0;
+            border-radius: 16px;
+            padding: 16px;
+            color: #b34e3a;
+            border: 1px solid #ffc6be;
+        }
+        .success-box {
+            background: #d4edda;
+            border-radius: 16px;
+            padding: 12px 16px;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .loading { text-align: center; padding: 20px; color: #c4885a; }
+        
+        .create-chat-area {
+            background: #f8efe0;
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+        }
+        .create-chat-area .flex-row {
             display: flex;
-            align-items: center;
-            gap: 12px;
+            gap: 10px;
             flex-wrap: wrap;
         }
-        .user-badge .uname { font-weight: bold; color: #6b4a3a; }
-        .user-badge .urole {
-            background: #f4a460;
-            padding: 2px 14px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+        .create-chat-area input {
+            flex: 1;
+            padding: 10px 16px;
+            border: 2px solid #f0d5b0;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            min-width: 120px;
+        }
+        .create-chat-area button {
+            background: #4a8a4a;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 30px;
             color: white;
             font-weight: bold;
-        }
-        .user-badge .logout-btn {
-            background: #dc2626;
-            border: none;
-            padding: 4px 16px;
-            border-radius: 20px;
-            color: white;
             cursor: pointer;
-            font-size: 0.8rem;
         }
-        .user-badge .login-hint {
-            color: #b4885a;
-            font-size: 0.9rem;
-        }
+        
         .auto-update-badge {
             background: #4a8a4a;
             color: white;
@@ -243,8 +225,6 @@
             border-radius: 20px;
             font-size: 0.7rem;
             font-weight: bold;
-            display: inline-block;
-            margin-left: 12px;
             animation: pulse 2s infinite;
         }
         @keyframes pulse {
@@ -252,12 +232,12 @@
             50% { opacity: 0.5; }
         }
         
+        footer { text-align: center; color: #c4a88a; font-size: 0.7rem; margin-top: 28px; }
+        
         @media (max-width: 500px) {
             .card { padding: 16px; }
-            .tabs { gap: 6px; }
-            .tab-btn { padding: 8px 14px; font-size: 0.8rem; }
-            .search-area { flex-direction: column; }
-            .passport-card .name { font-size: 1.2rem; }
+            .login-area .flex-row { flex-direction: column; }
+            .create-chat-area .flex-row { flex-direction: column; }
             .chat-input-area { flex-direction: column; }
             .chat-input-area button { padding: 14px; }
         }
@@ -267,127 +247,422 @@
 
 <div class="container">
     <div class="card">
-        <h1>🐟 Karasik Talk <span class="auto-update-badge">🔄 LIVE</span></h1>
+        <h1>🐟 Karasik Talk</h1>
         <div class="subtitle">🇺🇸 Карасикославия · Страна мирных карасей</div>
         
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('passports')">📋 Паспорта</button>
-            <button class="tab-btn" onclick="switchTab('announcements')">📢 Новости</button>
-            <button class="tab-btn" onclick="switchTab('messages')">💬 Чат</button>
+        <!-- Логин / Регистрация -->
+        <div class="login-area" id="loginArea">
+            <div class="flex-row">
+                <input type="text" id="loginInput" placeholder="Логин">
+                <input type="password" id="passwordInput" placeholder="Пароль">
+                <button onclick="registerUser()">📝 Регистрация</button>
+                <button onclick="loginUser()" class="secondary">🔑 Войти</button>
+            </div>
+            <div id="authStatus"></div>
         </div>
         
-        <!-- Паспорта -->
-        <div id="tab-passports" class="tab-content active">
-            <div class="search-area">
-                <input type="text" id="passportInput" placeholder="Введите код паспорта">
-                <button onclick="findPassport()">🔍 Найти</button>
+        <!-- Информация о пользователе -->
+        <div id="userInfo" class="user-info">
+            <span class="uname" id="currentUserName">Имя</span>
+            <span style="color:#6b4a3a; font-size:0.8rem;" id="currentUserLogin">@логин</span>
+            <button class="logout-btn" onclick="logout()">🚪 Выйти</button>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('chats')">💬 Чаты</button>
+            <button class="tab-btn" onclick="switchTab('announcements')">📢 Новости</button>
+            <button class="tab-btn" onclick="switchTab('passports')">📋 Паспорта</button>
+        </div>
+        
+        <!-- Чаты -->
+        <div id="tab-chats" class="tab-content active">
+            <div class="create-chat-area">
+                <div class="flex-row">
+                    <input type="text" id="chatNameInput" placeholder="Название чата">
+                    <input type="text" id="chatMemberInput" placeholder="Добавить пользователя (логин)">
+                    <button onclick="createChat()">➕ Создать чат</button>
+                </div>
             </div>
-            <div id="passportsResult"><div class="loading">🔑 Введите код паспорта для поиска</div></div>
+            <div id="chatsList"><div class="loading">💬 Загрузка чатов...</div></div>
+            
+            <div id="chatView" style="display:none; margin-top:16px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap;">
+                    <h3 id="currentChatName" style="color:#6b4a3a;">Чат</h3>
+                    <button onclick="leaveChat()" class="danger" style="font-size:0.8rem; padding:6px 16px;">🚪 Покинуть</button>
+                </div>
+                <div id="chatMessages" class="chat-box"><div class="loading">💬 Загрузка сообщений...</div></div>
+                <div class="chat-input-area">
+                    <input type="text" id="messageInput" placeholder="Напиши сообщение..." disabled>
+                    <button onclick="sendChatMessage()" id="sendBtn" disabled>📤 Отправить</button>
+                </div>
+            </div>
         </div>
         
         <!-- Новости -->
         <div id="tab-announcements" class="tab-content">
-            <button class="load-btn" onclick="loadAnnouncements()">🔄 Загрузить новости</button>
+            <button class="load-btn" onclick="loadAnnouncements()" style="background:#1a6a8a; border:none; padding:10px 20px; border-radius:30px; color:white; font-weight:bold; cursor:pointer; margin-bottom:12px;">🔄 Загрузить новости</button>
             <div id="announcementsResult"><div class="loading">📢 Нажми "Загрузить новости"</div></div>
         </div>
         
-        <!-- Чат -->
-        <div id="tab-messages" class="tab-content">
-            <div id="userBadge" class="user-badge">
-                <span class="login-hint">🔑 Введи код паспорта ниже, чтобы писать в чат</span>
-            </div>
-            
-            <div style="display:flex; gap:8px; margin-bottom:12px;">
-                <input type="text" id="chatLoginInput" placeholder="Код паспорта" style="flex:1; padding:10px 16px; border:2px solid #f0d5b0; border-radius:30px; font-size:0.9rem;">
-                <button onclick="loginToChat()" style="background:#1a6a8a; border:none; padding:0 20px; border-radius:30px; color:white; font-weight:bold; cursor:pointer;">🎣 Войти</button>
-            </div>
-            
-            <div id="messagesContainer">
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
-                    <span style="color:#6b4a3a; font-size:0.9rem;">💬 Сообщения обновляются автоматически</span>
-                    <span style="color:#4a8a4a; font-size:0.8rem;" id="updateStatus">🟢 в реальном времени</span>
-                </div>
-                <div id="messagesResult"><div class="loading">💬 Загрузка сообщений...</div></div>
-            </div>
-            
-            <div class="chat-input-area">
-                <input type="text" id="messageInput" placeholder="Войди в чат по паспорту" disabled>
-                <button onclick="sendMessage()" id="sendBtn" disabled>📤 Отправить</button>
-            </div>
+        <!-- Паспорта -->
+        <div id="tab-passports" class="tab-content">
+            <button class="load-btn" onclick="loadPassports()" style="background:#1a6a8a; border:none; padding:10px 20px; border-radius:30px; color:white; font-weight:bold; cursor:pointer; margin-bottom:12px;">🔄 Показать всех граждан</button>
+            <div id="passportsResult"><div class="loading">📋 Нажми "Показать всех граждан"</div></div>
         </div>
     </div>
-    <footer>🐟 Карасикославия · Данные из Firebase 🔥</footer>
+    <footer>🐟 Карасикославия · Всё в Firebase 🔥</footer>
 </div>
 
 <script>
     const DB_URL = 'https://karasik-talk-default-rtdb.europe-west1.firebasedatabase.app';
     let currentUser = null;
-    let updateInterval = null;
-    let lastMessageCount = 0;
+    let currentChatId = null;
+    let autoUpdateInterval = null;
     
-    window.switchTab = function(tab) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById(`tab-${tab}`).classList.add('active');
-        document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
+    // ===== РЕГИСТРАЦИЯ =====
+    window.registerUser = async function() {
+        const login = document.getElementById('loginInput').value.trim();
+        const password = document.getElementById('passwordInput').value.trim();
+        const status = document.getElementById('authStatus');
         
-        if (tab === 'messages') {
-            startAutoUpdate();
-        } else {
+        if (!login || !password) {
+            status.innerHTML = '<div class="error-box">❌ Заполните логин и пароль</div>';
+            return;
+        }
+        if (login.length < 3) {
+            status.innerHTML = '<div class="error-box">❌ Логин должен быть минимум 3 символа</div>';
+            return;
+        }
+        if (password.length < 4) {
+            status.innerHTML = '<div class="error-box">❌ Пароль должен быть минимум 4 символа</div>';
+            return;
+        }
+        
+        try {
+            const res = await fetch(`${DB_URL}/all/users/${login}.json`);
+            const existing = await res.json();
+            
+            if (existing) {
+                status.innerHTML = '<div class="error-box">❌ Пользователь уже существует</div>';
+                return;
+            }
+            
+            await fetch(`${DB_URL}/all/users/${login}.json`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    password: password,
+                    createdAt: new Date().toISOString(),
+                    chats: []
+                })
+            });
+            
+            status.innerHTML = '<div class="success-box">✅ Регистрация успешна! Теперь войдите.</div>';
+            document.getElementById('loginInput').value = '';
+            document.getElementById('passwordInput').value = '';
+        } catch(e) {
+            status.innerHTML = `<div class="error-box">❌ Ошибка: ${e.message}</div>`;
+        }
+    };
+    
+    // ===== ЛОГИН =====
+    window.loginUser = async function() {
+        const login = document.getElementById('loginInput').value.trim();
+        const password = document.getElementById('passwordInput').value.trim();
+        const status = document.getElementById('authStatus');
+        
+        if (!login || !password) {
+            status.innerHTML = '<div class="error-box">❌ Введите логин и пароль</div>';
+            return;
+        }
+        
+        try {
+            const res = await fetch(`${DB_URL}/all/users/${login}.json`);
+            const userData = await res.json();
+            
+            if (!userData) {
+                status.innerHTML = '<div class="error-box">❌ Пользователь не найден</div>';
+                return;
+            }
+            
+            if (userData.password !== password) {
+                status.innerHTML = '<div class="error-box">❌ Неверный пароль</div>';
+                return;
+            }
+            
+            currentUser = { login, ...userData };
+            document.getElementById('userInfo').style.display = 'flex';
+            document.getElementById('currentUserName').textContent = login;
+            document.getElementById('currentUserLogin').textContent = `@${login}`;
+            document.getElementById('loginArea').style.display = 'none';
+            status.innerHTML = '';
+            
+            loadChats();
+        } catch(e) {
+            status.innerHTML = `<div class="error-box">❌ Ошибка: ${e.message}</div>`;
+        }
+    };
+    
+    // ===== ВЫХОД =====
+    window.logout = function() {
+        currentUser = null;
+        currentChatId = null;
+        document.getElementById('userInfo').style.display = 'none';
+        document.getElementById('loginArea').style.display = 'block';
+        document.getElementById('chatsList').innerHTML = '<div class="loading">💬 Войдите, чтобы видеть чаты</div>';
+        document.getElementById('chatView').style.display = 'none';
+        stopAutoUpdate();
+    };
+    
+    // ===== ЗАГРУЗКА ЧАТОВ =====
+    async function loadChats() {
+        if (!currentUser) return;
+        const container = document.getElementById('chatsList');
+        container.innerHTML = '🔄 Загрузка...';
+        
+        try {
+            const res = await fetch(`${DB_URL}/all/chats.json`);
+            const allChats = await res.json();
+            
+            if (!allChats) {
+                container.innerHTML = '<div class="loading">💬 Нет чатов. Создай первый!</div>';
+                return;
+            }
+            
+            const userChats = [];
+            for (const [id, chat] of Object.entries(allChats)) {
+                if (chat.members && chat.members.includes(currentUser.login)) {
+                    userChats.push({ id, ...chat });
+                }
+            }
+            
+            if (userChats.length === 0) {
+                container.innerHTML = '<div class="loading">💬 Ты не участвуешь ни в одном чате</div>';
+                return;
+            }
+            
+            container.innerHTML = userChats.map(chat => `
+                <div class="chat-list-item" onclick="openChat('${chat.id}')">
+                    <span class="cname">${escapeHtml(chat.name)}</span>
+                    <span class="cmembers">👥 ${chat.members ? chat.members.join(', ') : ''}</span>
+                </div>
+            `).join('');
+        } catch(e) {
+            container.innerHTML = `<div class="error-box">❌ Ошибка: ${e.message}</div>`;
+        }
+    }
+    
+    // ===== СОЗДАНИЕ ЧАТА =====
+    window.createChat = async function() {
+        if (!currentUser) {
+            alert('❌ Сначала войдите!');
+            return;
+        }
+        
+        const name = document.getElementById('chatNameInput').value.trim();
+        const member = document.getElementById('chatMemberInput').value.trim();
+        
+        if (!name) {
+            alert('❌ Введите название чата');
+            return;
+        }
+        
+        if (!member) {
+            alert('❌ Введите логин пользователя для добавления');
+            return;
+        }
+        
+        try {
+            // Проверяем, существует ли пользователь
+            const userRes = await fetch(`${DB_URL}/all/users/${member}.json`);
+            const userData = await userRes.json();
+            
+            if (!userData) {
+                alert(`❌ Пользователь "${member}" не найден`);
+                return;
+            }
+            
+            const chatId = Date.now().toString();
+            const chatData = {
+                name: name,
+                members: [currentUser.login, member],
+                createdBy: currentUser.login,
+                createdAt: new Date().toISOString(),
+                messages: {}
+            };
+            
+            await fetch(`${DB_URL}/all/chats/${chatId}.json`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(chatData)
+            });
+            
+            // Добавляем чат в список пользователей
+            const userChats = currentUser.chats || [];
+            userChats.push(chatId);
+            await fetch(`${DB_URL}/all/users/${currentUser.login}/chats.json`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userChats)
+            });
+            
+            const memberChats = userData.chats || [];
+            memberChats.push(chatId);
+            await fetch(`${DB_URL}/all/users/${member}/chats.json`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(memberChats)
+            });
+            
+            document.getElementById('chatNameInput').value = '';
+            document.getElementById('chatMemberInput').value = '';
+            
+            loadChats();
+            alert(`✅ Чат "${name}" создан!`);
+        } catch(e) {
+            alert(`❌ Ошибка: ${e.message}`);
+        }
+    };
+    
+    // ===== ОТКРЫТИЕ ЧАТА =====
+    window.openChat = function(chatId) {
+        currentChatId = chatId;
+        document.getElementById('chatView').style.display = 'block';
+        document.getElementById('messageInput').disabled = false;
+        document.getElementById('sendBtn').disabled = false;
+        
+        loadChatMessages(chatId);
+        startAutoUpdate(chatId);
+    };
+    
+    // ===== ЗАГРУЗКА СООБЩЕНИЙ ЧАТА =====
+    async function loadChatMessages(chatId) {
+        const container = document.getElementById('chatMessages');
+        const nameEl = document.getElementById('currentChatName');
+        container.innerHTML = '🔄 Загрузка...';
+        
+        try {
+            const res = await fetch(`${DB_URL}/all/chats/${chatId}.json`);
+            const chatData = await res.json();
+            
+            if (!chatData) {
+                container.innerHTML = '<div class="error-box">❌ Чат не найден</div>';
+                return;
+            }
+            
+            nameEl.textContent = chatData.name || 'Чат';
+            
+            const messages = chatData.messages || {};
+            const keys = Object.keys(messages);
+            
+            if (keys.length === 0) {
+                container.innerHTML = '<div class="loading">💬 Сообщений пока нет</div>';
+                return;
+            }
+            
+            const sortedKeys = keys.sort((a, b) => (messages[a].timestamp || 0) - (messages[b].timestamp || 0));
+            
+            container.innerHTML = sortedKeys.map(id => {
+                const m = messages[id];
+                const time = m.timestamp ? new Date(m.timestamp).toLocaleString() : '';
+                return `
+                    <div class="message-item">
+                        <span class="msg-user">${escapeHtml(m.from)}</span>
+                        <span class="msg-time">${time}</span>
+                        <div class="msg-text">${escapeHtml(m.text)}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.scrollTop = container.scrollHeight;
+        } catch(e) {
+            container.innerHTML = `<div class="error-box">❌ Ошибка: ${e.message}</div>`;
+        }
+    }
+    
+    // ===== ОТПРАВКА СООБЩЕНИЯ В ЧАТ =====
+    window.sendChatMessage = async function() {
+        if (!currentUser || !currentChatId) {
+            alert('❌ Сначала войдите и выберите чат');
+            return;
+        }
+        
+        const input = document.getElementById('messageInput');
+        const text = input.value.trim();
+        if (!text) return;
+        
+        try {
+            const res = await fetch(`${DB_URL}/all/chats/${currentChatId}.json`);
+            const chatData = await res.json();
+            
+            if (!chatData) {
+                alert('❌ Чат не найден');
+                return;
+            }
+            
+            const messages = chatData.messages || {};
+            const id = Date.now().toString();
+            messages[id] = {
+                from: currentUser.login,
+                text: text,
+                timestamp: Date.now()
+            };
+            
+            await fetch(`${DB_URL}/all/chats/${currentChatId}/messages.json`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(messages)
+            });
+            
+            input.value = '';
+            loadChatMessages(currentChatId);
+        } catch(e) {
+            alert(`❌ Ошибка: ${e.message}`);
+        }
+    };
+    
+    // ===== ПОКИНУТЬ ЧАТ =====
+    window.leaveChat = async function() {
+        if (!currentUser || !currentChatId) return;
+        if (!confirm('Покинуть чат?')) return;
+        
+        try {
+            // Удаляем чат из списка пользователя
+            const userChats = currentUser.chats || [];
+            const updated = userChats.filter(id => id !== currentChatId);
+            await fetch(`${DB_URL}/all/users/${currentUser.login}/chats.json`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updated)
+            });
+            
+            currentChatId = null;
+            document.getElementById('chatView').style.display = 'none';
+            document.getElementById('messageInput').disabled = true;
+            document.getElementById('sendBtn').disabled = true;
             stopAutoUpdate();
+            loadChats();
+        } catch(e) {
+            alert(`❌ Ошибка: ${e.message}`);
         }
     };
     
     // ===== АВТООБНОВЛЕНИЕ =====
-    function startAutoUpdate() {
-        if (updateInterval) return;
-        loadMessages();
-        updateInterval = setInterval(() => {
-            loadMessages(true);
-        }, 5000);
-        console.log('🔄 Автообновление чата запущено');
+    function startAutoUpdate(chatId) {
+        if (autoUpdateInterval) stopAutoUpdate();
+        autoUpdateInterval = setInterval(() => {
+            if (currentChatId === chatId) {
+                loadChatMessages(chatId);
+            }
+        }, 3000);
     }
     
     function stopAutoUpdate() {
-        if (updateInterval) {
-            clearInterval(updateInterval);
-            updateInterval = null;
-            console.log('⏹️ Автообновление чата остановлено');
+        if (autoUpdateInterval) {
+            clearInterval(autoUpdateInterval);
+            autoUpdateInterval = null;
         }
     }
-    
-    // ===== ПАСПОРТА (ТОЛЬКО ПОИСК) =====
-    window.findPassport = async function() {
-        const code = document.getElementById('passportInput').value.trim();
-        const container = document.getElementById('passportsResult');
-        if (!code) { 
-            container.innerHTML = '<div class="error-box">🔎 Введите код паспорта</div>'; 
-            return; 
-        }
-        container.innerHTML = '🔄 Поиск...';
-        try {
-            const res = await fetch(`${DB_URL}/all/passports/${code}.json`);
-            const data = await res.json();
-            console.log(`🔍 Поиск паспорта ${code}:`, data);
-            if (data) {
-                container.innerHTML = `
-                    <div class="passport-card">
-                        <div class="badge">🇺🇸 УДОСТОВЕРЕНИЕ ЛИЧНОСТИ</div>
-                        <div class="name">${escapeHtml(data.fullName)}</div>
-                        <div class="detail"><span class="label">🎫 Код</span><span style="font-weight:bold;">${escapeHtml(code)}</span></div>
-                        <div class="detail"><span class="label">📅 Дата рождения</span><span>${escapeHtml(data.birthDate)}</span></div>
-                        <div class="detail"><span class="label">🏷️ Роль</span><span><span class="role-tag">${escapeHtml(data.role || 'Обычный карасик')}</span></span></div>
-                        <div style="margin-top:16px; text-align:center; font-size:0.8rem; color:#c4885a;">🐟 Карасикославия</div>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = `<div class="error-box">❌ Паспорт с кодом "${escapeHtml(code)}" не найден</div>`;
-            }
-        } catch(e) {
-            console.error('❌ Ошибка поиска:', e);
-            container.innerHTML = `<div class="error-box">❌ Ошибка: ${e.message}</div>`;
-        }
-    };
     
     // ===== НОВОСТИ =====
     window.loadAnnouncements = async function() {
@@ -400,10 +675,10 @@
                 const items = Object.values(data).filter(a => a !== null && a.active !== false);
                 if (items.length > 0) {
                     container.innerHTML = items.map(a => `
-                        <div class="announcement-item">
-                            <h3>📌 ${escapeHtml(a.title)}</h3>
-                            <p>${escapeHtml(a.text)}</p>
-                            <small>📅 ${escapeHtml(a.date || 'Недавно')}</small>
+                        <div class="announcement-item" style="background:#fff8f0; border-radius:16px; padding:16px; margin-bottom:12px; border-left:4px solid #f4a460;">
+                            <h3 style="color:#c4884a; margin-bottom:6px;">📌 ${escapeHtml(a.title)}</h3>
+                            <p style="color:#6b5a4a;">${escapeHtml(a.text)}</p>
+                            <small style="color:#b89a7a; font-size:0.7rem;">📅 ${escapeHtml(a.date || 'Недавно')}</small>
                         </div>
                     `).join('');
                 } else {
@@ -417,131 +692,42 @@
         }
     };
     
-    // ===== ЧАТ =====
-    
-    window.loginToChat = async function() {
-        const code = document.getElementById('chatLoginInput').value.trim();
-        if (!code) {
-            alert('❌ Введите код паспорта');
-            return;
-        }
-        
+    // ===== ПАСПОРТА =====
+    window.loadPassports = async function() {
+        const container = document.getElementById('passportsResult');
+        container.innerHTML = '🔄 Загрузка...';
         try {
-            const res = await fetch(`${DB_URL}/all/passports/${code}.json`);
+            const res = await fetch(`${DB_URL}/all/passports.json`);
             const data = await res.json();
-            
             if (data) {
-                currentUser = {
-                    code: code,
-                    fullName: data.fullName || 'Неизвестный',
-                    role: data.role || 'Обычный карасик'
-                };
-                
-                document.getElementById('userBadge').innerHTML = `
-                    <span class="uname">${escapeHtml(currentUser.fullName)}</span>
-                    <span class="urole">${escapeHtml(currentUser.role)}</span>
-                    <span style="color:#b4885a; font-size:0.8rem;">#${escapeHtml(currentUser.code)}</span>
-                    <button class="logout-btn" onclick="logoutFromChat()">🚪 Выйти</button>
+                const codes = Object.keys(data);
+                container.innerHTML = `
+                    <div style="color:#4a8a4a; margin-bottom:12px;">✅ Всего граждан: ${codes.length}</div>
+                    ${codes.map(code => {
+                        const p = data[code];
+                        return `
+                            <div class="passport-list-item" style="background:#f8efe0; border-radius:12px; padding:12px 16px; margin-bottom:8px; border-left:3px solid #f4a460; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+                                <span style="font-weight:bold; color:#6b4a3a;">${escapeHtml(p.fullName)}</span>
+                                <span style="background:#f4a460; padding:1px 12px; border-radius:12px; font-size:0.7rem; color:white; font-weight:bold;">${escapeHtml(p.role || 'Обычный карасик')}</span>
+                                <span style="font-family:monospace; color:#b4885a; font-size:0.8rem;">#${escapeHtml(code)}</span>
+                            </div>
+                        `;
+                    }).join('')}
                 `;
-                
-                document.getElementById('messageInput').disabled = false;
-                document.getElementById('sendBtn').disabled = false;
-                document.getElementById('messageInput').placeholder = 'Напиши сообщение...';
-                document.getElementById('chatLoginInput').value = '';
-                
-                startAutoUpdate();
-                alert(`✅ Добро пожаловать, ${currentUser.fullName}! 🐟`);
             } else {
-                alert(`❌ Паспорт с кодом "${code}" не найден!`);
+                container.innerHTML = '<div class="error-box">❌ Граждан не найдено</div>';
             }
         } catch(e) {
-            alert(`❌ Ошибка: ${e.message}`);
+            container.innerHTML = `<div class="error-box">❌ Ошибка: ${e.message}</div>`;
         }
     };
     
-    window.logoutFromChat = function() {
-        currentUser = null;
-        document.getElementById('userBadge').innerHTML = `
-            <span class="login-hint">🔑 Введи код паспорта ниже, чтобы писать в чат</span>
-        `;
-        document.getElementById('messageInput').disabled = true;
-        document.getElementById('sendBtn').disabled = true;
-        document.getElementById('messageInput').placeholder = 'Войди в чат по паспорту';
-        stopAutoUpdate();
-    };
-    
-    window.sendMessage = async function() {
-        if (!currentUser) {
-            alert('❌ Сначала войди в чат по паспорту!');
-            return;
-        }
-        
-        const input = document.getElementById('messageInput');
-        const text = input.value.trim();
-        if (!text) return;
-        
-        try {
-            const messagesRef = await fetch(`${DB_URL}/all/messages.json`);
-            const messages = await messagesRef.json();
-            
-            let newId = Date.now().toString();
-            const newMessage = {
-                username: currentUser.fullName,
-                role: currentUser.role,
-                text: text,
-                timestamp: Date.now()
-            };
-            
-            const updated = messages || {};
-            updated[newId] = newMessage;
-            
-            await fetch(`${DB_URL}/all/messages.json`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updated)
-            });
-            
-            input.value = '';
-            loadMessages(true);
-        } catch(e) {
-            alert(`❌ Ошибка отправки: ${e.message}`);
-        }
-    };
-    
-    window.loadMessages = async function(silent = false) {
-        const container = document.getElementById('messagesResult');
-        if (!silent) container.innerHTML = '🔄 Загрузка...';
-        
-        try {
-            const res = await fetch(`${DB_URL}/all/messages.json`);
-            const data = await res.json();
-            if (data) {
-                const items = Object.values(data).filter(m => m !== null);
-                items.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
-                
-                if (silent && items.length === lastMessageCount) {
-                    return;
-                }
-                lastMessageCount = items.length;
-                
-                if (items.length > 0) {
-                    container.innerHTML = items.map(m => `
-                        <div class="message-item">
-                            <span class="msg-user">${escapeHtml(m.username)}</span>
-                            ${m.role ? `<span class="msg-role">${escapeHtml(m.role)}</span>` : ''}
-                            <span class="msg-time">${m.timestamp ? new Date(m.timestamp).toLocaleString() : ''}</span>
-                            <div class="msg-text">${escapeHtml(m.text)}</div>
-                        </div>
-                    `).join('');
-                } else {
-                    container.innerHTML = '<div class="error-box">💬 Сообщений пока нет</div>';
-                }
-            } else {
-                container.innerHTML = '<div class="error-box">❌ Сообщений нет</div>';
-            }
-        } catch(e) {
-            if (!silent) container.innerHTML = `<div class="error-box">❌ Ошибка: ${e.message}</div>`;
-        }
+    // ===== ВКЛАДКИ =====
+    window.switchTab = function(tab) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(`tab-${tab}`).classList.add('active');
+        document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
     };
     
     function escapeHtml(str) {
@@ -549,9 +735,10 @@
         return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
     }
     
-    // ===== ЗАПУСК =====
-    if (document.getElementById('tab-messages').classList.contains('active')) {
-        startAutoUpdate();
+    // ===== АВТОВХОД =====
+    const savedLogin = localStorage.getItem('karasik_login');
+    if (savedLogin) {
+        document.getElementById('loginInput').value = savedLogin;
     }
 </script>
 </body>
