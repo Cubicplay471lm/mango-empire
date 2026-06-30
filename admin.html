@@ -126,15 +126,6 @@
             color: white;
             font-weight: bold;
         }
-        .passport-tag {
-            display: inline-block;
-            background: #1a6a8a;
-            padding: 2px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: white;
-            font-weight: bold;
-        }
         .warning {
             background: #fff3cd;
             border: 1px solid #ffc107;
@@ -153,19 +144,6 @@
         }
         .loading-spinner { text-align: center; padding: 20px; color: #6b4a3a; }
         
-        .clear-btn {
-            background: #dc2626;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 30px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            margin-left: 12px;
-            font-size: 0.9rem;
-        }
-        .clear-btn:hover { background: #b71c1c; }
-        
         .header-flex {
             display: flex;
             justify-content: space-between;
@@ -180,32 +158,37 @@
             margin-bottom: 8px;
             border-left: 3px solid #1a6a8a;
         }
-        .user-item .ulogin { font-weight: bold; color: #1a4a6a; }
-        .user-item .upassport { 
+        .user-item .ulogin { font-weight: bold; color: #1a4a6a; font-size: 1.1rem; }
+        .user-item .upassport {
+            display: inline-block;
             background: #f4a460;
-            padding: 1px 12px;
-            border-radius: 12px;
+            padding: 2px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: white;
+            font-weight: bold;
+        }
+        .user-item .urole {
+            display: inline-block;
+            background: #4a8a4a;
+            padding: 2px 12px;
+            border-radius: 20px;
             font-size: 0.7rem;
             color: white;
             font-weight: bold;
         }
-        
-        .passport-item {
-            background: #fff8f0;
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin-bottom: 8px;
-            border-left: 3px solid #f4a460;
-        }
-        .passport-item .pname { font-weight: bold; color: #6b4a3a; }
-        .passport-item .powner {
-            font-size: 0.8rem;
+        .user-item .nopassport { color: #b89a7a; font-size: 0.8rem; }
+        .user-item .upassword {
+            font-size: 0.7rem;
             color: #6b8a9a;
+            font-family: monospace;
+            background: #f0f0f0;
+            padding: 1px 8px;
+            border-radius: 10px;
         }
         
         @media (max-width: 600px) {
             .header-flex { flex-direction: column; align-items: flex-start; gap: 10px; }
-            .clear-btn { margin-left: 0; }
         }
     </style>
 </head>
@@ -226,14 +209,14 @@
         <!-- Главная -->
         <div class="card">
             <h2>👑 АДМИН ПАНЕЛЬ - КАРАСИКОСЛАВИЯ</h2>
-            <div class="stats" id="sessionInfo">🐟 Работает с Firebase 🔥</div>
+            <div class="stats">🐟 Все данные в Firebase 🔥</div>
             <div class="flex">
                 <button onclick="window.loadFromFirebase()" class="primary">📥 Загрузить данные</button>
                 <button onclick="window.saveToFirebase()" class="success">💾 Сохранить в Firebase</button>
                 <button onclick="window.fullWipe()" class="danger">🗑️ Полная очистка</button>
                 <button onclick="window.logout()" class="secondary">🚪 Выйти</button>
             </div>
-            <div class="warning">⚠️ Сначала создай пользователя, потом выдай ему паспорт!</div>
+            <div class="warning">⚠️ Все пользователи, паспорта и чаты хранятся только в Firebase</div>
             <div id="statusMsg"></div>
         </div>
 
@@ -245,29 +228,13 @@
             
             <h3>➕ Создать пользователя</h3>
             <div class="flex">
-                <input type="text" id="newUserLogin" placeholder="Логин" style="flex:2">
-                <input type="password" id="newUserPassword" placeholder="Пароль" style="flex:2">
+                <input type="text" id="newUserLogin" placeholder="Логин" style="flex:1">
+                <input type="password" id="newUserPassword" placeholder="Пароль" style="flex:1">
             </div>
-            <button onclick="window.createUser()" class="primary">👤 Создать</button>
-        </div>
-
-        <!-- Паспорта -->
-        <div class="card">
-            <h2>📋 Паспорта</h2>
-            <div id="passportStats" class="stats">Загрузка...</div>
-            <div id="passportsList"><div class="loading-spinner">🔄 Загрузка...</div></div>
-            
-            <h3>➕ Выдать паспорт пользователю</h3>
-            <div class="flex">
-                <input type="text" id="passportCode" placeholder="Код паспорта" style="flex:1">
-                <select id="passportOwner" style="flex:2;">
-                    <option value="">— Выберите пользователя —</option>
-                </select>
-            </div>
-            <input type="text" id="fullName" placeholder="Полное имя">
-            <input type="text" id="birthDate" placeholder="Дата рождения">
-            <input type="text" id="roleInput" placeholder="Роль (например: Золотой карасик)">
-            <button onclick="window.createPassport()" class="primary">✨ Выдать паспорт</button>
+            <input type="text" id="newUserFullName" placeholder="Полное имя (паспорт)">
+            <input type="text" id="newUserRole" placeholder="Роль (например: Золотой карасик)">
+            <input type="text" id="newUserBirthDate" placeholder="Дата рождения">
+            <button onclick="window.createUser()" class="primary">👤 Создать пользователя с паспортом</button>
         </div>
 
         <!-- Объявления -->
@@ -285,7 +252,7 @@
         <div class="card">
             <div class="header-flex">
                 <h2 style="margin-bottom:0;">💬 Чаты</h2>
-                <button onclick="window.clearAllChats()" class="clear-btn">🗑️ Удалить все чаты</button>
+                <button onclick="window.clearAllChats()" class="danger" style="font-size:0.9rem; padding:8px 20px;">🗑️ Удалить все чаты</button>
             </div>
             <div id="chatsStats" class="stats">Загрузка...</div>
             <div id="chatsList"><div class="loading-spinner">🔄 Загрузка...</div></div>
@@ -296,7 +263,7 @@
             <h2>💾 Данные</h2>
             <button onclick="window.downloadJSON()" style="width:100%;">📥 Скачать all.json</button>
             <hr>
-            <h3>Текущие данные:</h3>
+            <h3>Текущие данные (из Firebase):</h3>
             <pre id="jsonPreview" class="json-box">Загрузка...</pre>
         </div>
     </div>
@@ -306,36 +273,60 @@
     (function() {
         const ADMIN_PASSWORD = "рыбнадзор";
         const DB_URL = 'https://karasik-talk-default-rtdb.europe-west1.firebasedatabase.app';
-        let db = { all: { users: {}, chats: {}, passports: {}, announcements: {} } };
+        let db = { all: { users: {}, chats: {}, announcements: {} } };
         
-        // ===== LOCALSTORAGE =====
-        function saveToLocalStorage() {
+        // ===== ЗАГРУЗКА ИЗ FIREBASE =====
+        window.loadFromFirebase = async function() {
             try {
-                localStorage.setItem('karasik_admin_db', JSON.stringify(db.all));
-            } catch (e) {}
-        }
-        
-        function loadFromLocalStorage() {
-            try {
-                const saved = localStorage.getItem('karasik_admin_db');
-                if (saved) {
-                    db.all = JSON.parse(saved);
-                    return true;
-                }
-            } catch (e) {}
-            return false;
-        }
-        
-        function autoSave() {
-            saveToLocalStorage();
-            const msg = document.getElementById('statusMsg');
-            if (msg) {
-                msg.innerHTML = '<div class="success-msg">💾 Автосохранение в localStorage</div>';
-                setTimeout(() => msg.innerHTML = '', 2000);
+                document.getElementById('statusMsg').innerHTML = '<div class="loading-spinner">🔄 Загрузка из Firebase...</div>';
+                
+                const res = await fetch(`${DB_URL}/all.json`);
+                const data = await res.json();
+                db.all = data || { users: {}, chats: {}, announcements: {} };
+                
+                renderAll();
+                document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Загружено из Firebase!</div>';
+                setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
+            } catch (e) {
+                document.getElementById('statusMsg').innerHTML = `<div class="warning">❌ ${e.message}</div>`;
             }
-        }
+        };
         
-        // ===== ВХОД =====
+        // ===== СОХРАНЕНИЕ В FIREBASE =====
+        window.saveToFirebase = async function() {
+            try {
+                document.getElementById('statusMsg').innerHTML = '<div class="loading-spinner">💾 Сохранение в Firebase...</div>';
+                
+                await fetch(`${DB_URL}/all.json`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(db.all)
+                });
+                
+                document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Сохранено в Firebase!</div>';
+                setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
+            } catch (e) {
+                document.getElementById('statusMsg').innerHTML = `<div class="warning">❌ ${e.message}</div>`;
+            }
+        };
+        
+        // ===== ПОЛНАЯ ОЧИСТКА =====
+        window.fullWipe = async function() {
+            if (!confirm('🗑️ УДАЛИТЬ ВСЕ ДАННЫЕ НАВСЕГДА?')) return;
+            if (!confirm('ЕЩЁ РАЗ: ВСЁ БУДЕТ УДАЛЕНО!')) return;
+            
+            try {
+                await fetch(`${DB_URL}/all.json`, { method: 'DELETE' });
+                db.all = { users: {}, chats: {}, announcements: {} };
+                renderAll();
+                document.getElementById('statusMsg').innerHTML = '<div class="success-msg">🗑️ ВСЁ УДАЛЕНО!</div>';
+                setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
+            } catch (e) {
+                document.getElementById('statusMsg').innerHTML = `<div class="warning">❌ ${e.message}</div>`;
+            }
+        };
+        
+        // ===== ВХОД В АДМИНКУ =====
         window.checkPassword = function() {
             const inputPass = document.getElementById('adminPassword').value;
             const errorDiv = document.getElementById('loginError');
@@ -357,94 +348,12 @@
             document.getElementById('loginError').textContent = '';
         };
         
-        // ===== ЗАГРУЗКА =====
-        window.loadFromFirebase = async function() {
-            try {
-                document.getElementById('statusMsg').innerHTML = '<div class="loading-spinner">🔄 Загрузка...</div>';
-                
-                if (loadFromLocalStorage()) {
-                    renderAll();
-                    updateOwnerSelect();
-                    document.getElementById('statusMsg').innerHTML = '<div class="success-msg">📥 Загружено из localStorage</div>';
-                    setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
-                    return;
-                }
-                
-                const res = await fetch(`${DB_URL}/all.json`);
-                const data = await res.json();
-                db.all = data || { users: {}, chats: {}, passports: {}, announcements: {} };
-                saveToLocalStorage();
-                renderAll();
-                updateOwnerSelect();
-                document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Загружено из Firebase</div>';
-                setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
-            } catch (e) {
-                document.getElementById('statusMsg').innerHTML = `<div class="warning">❌ ${e.message}</div>`;
-            }
-        };
-        
-        // ===== СОХРАНЕНИЕ В FIREBASE =====
-        window.saveToFirebase = async function() {
-            try {
-                document.getElementById('statusMsg').innerHTML = '<div class="loading-spinner">💾 Сохранение...</div>';
-                await fetch(`${DB_URL}/all.json`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(db.all)
-                });
-                saveToLocalStorage();
-                document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Сохранено в Firebase и localStorage</div>';
-                setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
-            } catch (e) {
-                document.getElementById('statusMsg').innerHTML = `<div class="warning">❌ ${e.message}</div>`;
-            }
-        };
-        
-        // ===== ПОЛНАЯ ОЧИСТКА =====
-        window.fullWipe = async function() {
-            if (!confirm('🗑️ УДАЛИТЬ ВСЕ ДАННЫЕ НАВСЕГДА?')) return;
-            if (!confirm('ЕЩЁ РАЗ: ВСЁ БУДЕТ УДАЛЕНО!')) return;
-            
-            try {
-                await fetch(`${DB_URL}/all.json`, { method: 'DELETE' });
-                db.all = { users: {}, chats: {}, passports: {}, announcements: {} };
-                renderAll();
-                updateOwnerSelect();
-                autoSave();
-                document.getElementById('statusMsg').innerHTML = '<div class="success-msg">🗑️ ВСЁ УДАЛЕНО!</div>';
-                setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
-            } catch (e) {
-                document.getElementById('statusMsg').innerHTML = `<div class="warning">❌ ${e.message}</div>`;
-            }
-        };
-        
-        // ===== ОБНОВЛЕНИЕ СПИСКА ПОЛЬЗОВАТЕЛЕЙ В SELECT =====
-        function updateOwnerSelect() {
-            const select = document.getElementById('passportOwner');
-            const users = db.all.users || {};
-            const keys = Object.keys(users);
-            
-            // Сохраняем выбранное значение
-            const currentValue = select.value;
-            
-            select.innerHTML = '<option value="">— Выберите пользователя —</option>';
-            keys.forEach(login => {
-                const option = document.createElement('option');
-                option.value = login;
-                option.textContent = login;
-                if (login === currentValue) option.selected = true;
-                select.appendChild(option);
-            });
-        }
-        
         // ===== ОТОБРАЖЕНИЕ =====
         function renderAll() {
             renderUsers();
-            renderPassports();
             renderAnnouncements();
             renderChats();
             updateJSONPreview();
-            updateOwnerSelect();
         }
         
         // --- ПОЛЬЗОВАТЕЛИ ---
@@ -462,158 +371,105 @@
             
             list.innerHTML = keys.map(login => {
                 const u = users[login];
-                const passportCode = u.passport || '—';
-                const passportInfo = passportCode !== '—' 
-                    ? `<span class="passport-tag">🎫 ${passportCode}</span>` 
-                    : '<span style="color:#b89a7a; font-size:0.8rem;">нет паспорта</span>';
+                const hasPassport = u.passport && u.passport.fullName;
+                
+                let passportHtml = '';
+                if (hasPassport) {
+                    passportHtml = `
+                        <div style="margin-top:4px;">
+                            <span class="upassport">🎫 ${escapeHtml(u.passport.fullName)}</span>
+                            <span class="urole">${escapeHtml(u.passport.role || 'Обычный карасик')}</span>
+                            ${u.passport.birthDate ? `<span style="font-size:0.7rem; color:#6b8a9a;">📅 ${escapeHtml(u.passport.birthDate)}</span>` : ''}
+                        </div>
+                    `;
+                } else {
+                    passportHtml = `<div class="nopassport">❌ Нет паспорта</div>`;
+                }
                 
                 return `
                     <div class="user-item">
                         <span class="ulogin">👤 ${escapeHtml(login)}</span>
                         <span style="float:right;">
-                            ${passportInfo}
+                            <span class="upassword">🔑 ${escapeHtml(u.password || '—')}</span>
                             <button class="danger" onclick="window.deleteUser('${login}')" style="font-size:11px; padding:2px 12px;">❌</button>
                         </span>
+                        ${passportHtml}
                         <div style="font-size:0.8rem; color:#6b8a9a; margin-top:4px;">
                             💬 Чатов: ${u.chats ? u.chats.length : 0}
                             ${u.createdAt ? `| 📅 ${new Date(u.createdAt).toLocaleDateString()}` : ''}
+                            <button class="secondary" onclick="window.editPassport('${login}')" style="font-size:10px; padding:2px 12px;">✏️ Редактировать паспорт</button>
                         </div>
                     </div>
                 `;
             }).join('');
         }
         
+        window.editPassport = function(login) {
+            const user = db.all.users[login];
+            if (!user) return;
+            
+            const fullName = prompt('Полное имя:', user.passport?.fullName || '');
+            const role = prompt('Роль:', user.passport?.role || 'Обычный карасик');
+            const birthDate = prompt('Дата рождения:', user.passport?.birthDate || '');
+            
+            if (fullName !== null) {
+                if (!user.passport) user.passport = {};
+                user.passport.fullName = fullName || 'Неизвестный';
+                user.passport.role = role || 'Обычный карасик';
+                user.passport.birthDate = birthDate || '';
+                renderAll();
+                document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Паспорт обновлён</div>';
+                setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
+            }
+        };
+        
         window.deleteUser = function(login) {
             if (!confirm(`Удалить пользователя ${login}?`)) return;
-            
-            // Если у пользователя есть паспорт - удаляем его тоже
-            const user = db.all.users[login];
-            if (user && user.passport) {
-                delete db.all.passports[user.passport];
-            }
-            
             delete db.all.users[login];
             renderAll();
-            autoSave();
-            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Пользователь и его паспорт удалены</div>';
+            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Пользователь удалён</div>';
             setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
         };
         
         window.createUser = function() {
             const login = document.getElementById('newUserLogin').value.trim();
             const password = document.getElementById('newUserPassword').value.trim();
-            if (!login || !password) { alert('❌ Заполните логин и пароль'); return; }
-            if (db.all.users[login]) { alert('❌ Пользователь уже существует'); return; }
+            const fullName = document.getElementById('newUserFullName').value.trim();
+            const role = document.getElementById('newUserRole').value.trim() || 'Обычный карасик';
+            const birthDate = document.getElementById('newUserBirthDate').value.trim();
             
-            db.all.users[login] = { 
-                password, 
-                createdAt: new Date().toISOString(), 
-                chats: [],
-                passport: null
+            if (!login || !password) {
+                alert('❌ Заполните логин и пароль');
+                return;
+            }
+            if (db.all.users[login]) {
+                alert('❌ Пользователь уже существует');
+                return;
+            }
+            if (!fullName) {
+                alert('❌ Заполните полное имя (паспорт)');
+                return;
+            }
+            
+            db.all.users[login] = {
+                password: password,
+                passport: {
+                    fullName: fullName,
+                    role: role,
+                    birthDate: birthDate || ''
+                },
+                createdAt: new Date().toISOString(),
+                chats: []
             };
             
             document.getElementById('newUserLogin').value = '';
             document.getElementById('newUserPassword').value = '';
-            renderAll();
-            autoSave();
-            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Пользователь создан! Теперь выдай ему паспорт.</div>';
-            setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
-        };
-        
-        // --- ПАСПОРТА ---
-        function renderPassports() {
-            const stats = document.getElementById('passportStats');
-            const list = document.getElementById('passportsList');
-            const passports = db.all.passports || {};
-            const keys = Object.keys(passports);
-            stats.innerHTML = `📋 Всего паспортов: ${keys.length}`;
-            
-            if (keys.length === 0) {
-                list.innerHTML = '<p style="text-align:center;">📭 Нет паспортов</p>';
-                return;
-            }
-            
-            list.innerHTML = keys.map(code => {
-                const p = passports[code];
-                const owner = p.owner ? `<span style="color:#1a6a8a;">👤 ${escapeHtml(p.owner)}</span>` : '<span style="color:#b89a7a;">не привязан</span>';
-                return `
-                    <div class="passport-item">
-                        <span class="pname">👤 ${escapeHtml(p.fullName)}</span>
-                        <span style="float:right;">
-                            <span class="role-tag">${escapeHtml(p.role || 'Обычный карасик')}</span>
-                            <span class="passport-tag">🎫 ${escapeHtml(code)}</span>
-                            <button class="danger" onclick="window.deletePassport('${code}')" style="font-size:11px; padding:2px 12px;">❌</button>
-                        </span>
-                        <div class="powner">Владелец: ${owner}</div>
-                        <div style="font-size:0.8rem; color:#6b8a9a;">📅 ${p.birthDate || '—'} | Выдан: ${p.issuedDate || '—'}</div>
-                    </div>
-                `;
-            }).join('');
-        }
-        
-        window.deletePassport = function(code) {
-            if (!confirm(`Удалить паспорт ${code}?`)) return;
-            
-            // Удаляем привязку у пользователя
-            const passport = db.all.passports[code];
-            if (passport && passport.owner) {
-                const user = db.all.users[passport.owner];
-                if (user) {
-                    user.passport = null;
-                }
-            }
-            
-            delete db.all.passports[code];
-            renderAll();
-            autoSave();
-            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Паспорт удалён</div>';
-            setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
-        };
-        
-        window.createPassport = function() {
-            const code = document.getElementById('passportCode').value.trim();
-            const owner = document.getElementById('passportOwner').value;
-            const fullName = document.getElementById('fullName').value.trim();
-            const birthDate = document.getElementById('birthDate').value.trim();
-            const role = document.getElementById('roleInput').value.trim() || 'Обычный карасик';
-            
-            if (!code) { alert('❌ Введите код паспорта'); return; }
-            if (!owner) { alert('❌ Выберите пользователя'); return; }
-            if (!fullName) { alert('❌ Введите полное имя'); return; }
-            
-            if (db.all.passports[code]) { alert('❌ Код уже существует'); return; }
-            if (!db.all.users[owner]) { alert('❌ Пользователь не найден'); return; }
-            
-            // Проверяем, нет ли уже паспорта у пользователя
-            const user = db.all.users[owner];
-            if (user.passport) {
-                if (!confirm(`⚠️ У пользователя ${owner} уже есть паспорт ${user.passport}. Заменить?`)) {
-                    return;
-                }
-                // Удаляем старый паспорт
-                delete db.all.passports[user.passport];
-            }
-            
-            // Создаём паспорт
-            db.all.passports[code] = {
-                fullName,
-                birthDate,
-                role,
-                issuedDate: new Date().toLocaleString(),
-                owner: owner
-            };
-            
-            // Привязываем к пользователю
-            user.passport = code;
-            
-            document.getElementById('passportCode').value = '';
-            document.getElementById('fullName').value = '';
-            document.getElementById('birthDate').value = '';
-            document.getElementById('roleInput').value = '';
+            document.getElementById('newUserFullName').value = '';
+            document.getElementById('newUserRole').value = '';
+            document.getElementById('newUserBirthDate').value = '';
             
             renderAll();
-            autoSave();
-            document.getElementById('statusMsg').innerHTML = `<div class="success-msg">✅ Паспорт ${code} выдан пользователю ${owner}!</div>`;
+            document.getElementById('statusMsg').innerHTML = `<div class="success-msg">✅ Пользователь ${login} создан с паспортом! Сохрани в Firebase.</div>`;
             setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
         };
         
@@ -649,34 +505,34 @@
             if (!ann) return;
             ann.active = ann.active === false ? true : false;
             renderAll();
-            autoSave();
         };
         
         window.deleteAnnouncement = function(id) {
             if (!confirm('Удалить объявление?')) return;
             delete db.all.announcements[id];
             renderAll();
-            autoSave();
         };
         
         window.createAnnouncement = function() {
             const title = document.getElementById('annTitle').value.trim();
             const text = document.getElementById('annText').value.trim();
-            if (!title || !text) { alert('❌ Заполните заголовок и текст'); return; }
+            if (!title || !text) {
+                alert('❌ Заполните заголовок и текст');
+                return;
+            }
             
             const id = Date.now().toString();
-            db.all.announcements[id] = { 
-                title, 
-                text, 
-                date: new Date().toLocaleDateString(), 
-                active: true 
+            db.all.announcements[id] = {
+                title,
+                text,
+                date: new Date().toLocaleDateString(),
+                active: true
             };
             
             document.getElementById('annTitle').value = '';
             document.getElementById('annText').value = '';
             renderAll();
-            autoSave();
-            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Объявление создано</div>';
+            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Объявление создано! Сохрани в Firebase.</div>';
             setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
         };
         
@@ -715,7 +571,6 @@
             if (!confirm(`Удалить чат?`)) return;
             delete db.all.chats[id];
             renderAll();
-            autoSave();
         };
         
         window.clearAllChats = function() {
@@ -723,7 +578,6 @@
             if (!confirm('ЕЩЁ РАЗ: ВСЕ ЧАТЫ БУДУТ УДАЛЕНЫ!')) return;
             db.all.chats = {};
             renderAll();
-            autoSave();
             document.getElementById('statusMsg').innerHTML = '<div class="success-msg">🗑️ Все чаты удалены!</div>';
             setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
         };
