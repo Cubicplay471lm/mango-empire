@@ -309,6 +309,8 @@
                 <input type="text" id="passportInput" placeholder="Введите код, например 171">
                 <button onclick="findPassport()">🔍 Найти</button>
             </div>
+            <button class="load-btn" onclick="loadPassports()">🔄 Показать всех граждан</button>
+            <div id="passportsResult"><div class="loading">🐟 Нажми "Показать всех граждан"</div></div>
         </div>
         
         <!-- Новости -->
@@ -357,7 +359,6 @@
         document.getElementById(`tab-${tab}`).classList.add('active');
         document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
         
-        // Если переключились на чат - запускаем автообновление
         if (tab === 'messages') {
             startAutoUpdate();
         } else {
@@ -368,10 +369,10 @@
     // ===== АВТООБНОВЛЕНИЕ =====
     function startAutoUpdate() {
         if (updateInterval) return;
-        loadMessages(); // сразу загружаем
+        loadMessages();
         updateInterval = setInterval(() => {
-            loadMessages(true); // тихое обновление
-        }, 5000); // каждые 5 секунд
+            loadMessages(true);
+        }, 5000);
         console.log('🔄 Автообновление чата запущено');
     }
     
@@ -390,7 +391,8 @@
         try {
             const res = await fetch(`${DB_URL}/all/passports.json`);
             const data = await res.json();
-            if (data) {
+            console.log('📋 Загружены паспорта:', data);
+            if (data && Object.keys(data).length > 0) {
                 const codes = Object.keys(data);
                 container.innerHTML = `
                     <div style="color:#4a8a4a; margin-bottom:12px;">✅ Всего граждан: ${codes.length}</div>
@@ -406,9 +408,10 @@
                     }).join('')}
                 `;
             } else {
-                container.innerHTML = '<div class="error-box">❌ Граждан не найдено</div>';
+                container.innerHTML = '<div class="error-box">❌ Граждан не найдено. Добавь паспорта в админке.</div>';
             }
         } catch(e) {
+            console.error('❌ Ошибка загрузки паспортов:', e);
             container.innerHTML = `<div class="error-box">❌ Ошибка: ${e.message}</div>`;
         }
     };
@@ -421,6 +424,7 @@
         try {
             const res = await fetch(`${DB_URL}/all/passports/${code}.json`);
             const data = await res.json();
+            console.log(`🔍 Поиск паспорта ${code}:`, data);
             if (data) {
                 container.innerHTML = `
                     <div class="passport-card">
@@ -436,6 +440,7 @@
                 container.innerHTML = `<div class="error-box">❌ Гражданин с кодом "${code}" не найден</div>`;
             }
         } catch(e) {
+            console.error('❌ Ошибка поиска:', e);
             container.innerHTML = `<div class="error-box">❌ Ошибка: ${e.message}</div>`;
         }
     };
@@ -570,9 +575,8 @@
                 const items = Object.values(data).filter(m => m !== null);
                 items.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
                 
-                // Проверяем, изменилось ли количество сообщений
                 if (silent && items.length === lastMessageCount) {
-                    return; // ничего не изменилось
+                    return;
                 }
                 lastMessageCount = items.length;
                 
@@ -602,7 +606,6 @@
     }
     
     // ===== ЗАПУСК =====
-    // Автоматически запускаем чат, если открыта вкладка messages
     if (document.getElementById('tab-messages').classList.contains('active')) {
         startAutoUpdate();
     }
