@@ -175,32 +175,6 @@
         
         footer { text-align: center; color: #c4a88a; font-size: 0.7rem; margin-top: 28px; }
         
-        .passport-list-item {
-            background: #f8efe0;
-            border-radius: 12px;
-            padding: 12px 16px;
-            margin-bottom: 8px;
-            border-left: 3px solid #f4a460;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .passport-list-item .pname { font-weight: bold; color: #6b4a3a; }
-        .passport-list-item .prole {
-            background: #f4a460;
-            padding: 1px 12px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            color: white;
-            font-weight: bold;
-        }
-        .passport-list-item .pcode {
-            font-family: monospace;
-            color: #b4885a;
-            font-size: 0.8rem;
-        }
-        
         .chat-input-area {
             display: flex;
             gap: 12px;
@@ -284,7 +258,6 @@
             .tab-btn { padding: 8px 14px; font-size: 0.8rem; }
             .search-area { flex-direction: column; }
             .passport-card .name { font-size: 1.2rem; }
-            .passport-list-item { flex-direction: column; align-items: flex-start; gap: 4px; }
             .chat-input-area { flex-direction: column; }
             .chat-input-area button { padding: 14px; }
         }
@@ -306,11 +279,10 @@
         <!-- Паспорта -->
         <div id="tab-passports" class="tab-content active">
             <div class="search-area">
-                <input type="text" id="passportInput" placeholder="Введите код, например 171">
+                <input type="text" id="passportInput" placeholder="Введите код паспорта">
                 <button onclick="findPassport()">🔍 Найти</button>
             </div>
-            <button class="load-btn" onclick="loadPassports()">🔄 Показать всех граждан</button>
-            <div id="passportsResult"><div class="loading">🐟 Нажми "Показать всех граждан"</div></div>
+            <div id="passportsResult"><div class="loading">🔑 Введите код паспорта для поиска</div></div>
         </div>
         
         <!-- Новости -->
@@ -384,42 +356,14 @@
         }
     }
     
-    // ===== ПАСПОРТА =====
-    window.loadPassports = async function() {
-        const container = document.getElementById('passportsResult');
-        container.innerHTML = '🔄 Загрузка...';
-        try {
-            const res = await fetch(`${DB_URL}/all/passports.json`);
-            const data = await res.json();
-            console.log('📋 Загружены паспорта:', data);
-            if (data && Object.keys(data).length > 0) {
-                const codes = Object.keys(data);
-                container.innerHTML = `
-                    <div style="color:#4a8a4a; margin-bottom:12px;">✅ Всего граждан: ${codes.length}</div>
-                    ${codes.map(code => {
-                        const p = data[code];
-                        return `
-                            <div class="passport-list-item">
-                                <span class="pname">${escapeHtml(p.fullName)}</span>
-                                <span class="prole">${escapeHtml(p.role || 'Обычный карасик')}</span>
-                                <span class="pcode">#${escapeHtml(code)}</span>
-                            </div>
-                        `;
-                    }).join('')}
-                `;
-            } else {
-                container.innerHTML = '<div class="error-box">❌ Граждан не найдено. Добавь паспорта в админке.</div>';
-            }
-        } catch(e) {
-            console.error('❌ Ошибка загрузки паспортов:', e);
-            container.innerHTML = `<div class="error-box">❌ Ошибка: ${e.message}</div>`;
-        }
-    };
-    
+    // ===== ПАСПОРТА (ТОЛЬКО ПОИСК) =====
     window.findPassport = async function() {
         const code = document.getElementById('passportInput').value.trim();
         const container = document.getElementById('passportsResult');
-        if (!code) { container.innerHTML = '<div class="error-box">🔎 Введите код</div>'; return; }
+        if (!code) { 
+            container.innerHTML = '<div class="error-box">🔎 Введите код паспорта</div>'; 
+            return; 
+        }
         container.innerHTML = '🔄 Поиск...';
         try {
             const res = await fetch(`${DB_URL}/all/passports/${code}.json`);
@@ -437,7 +381,7 @@
                     </div>
                 `;
             } else {
-                container.innerHTML = `<div class="error-box">❌ Гражданин с кодом "${code}" не найден</div>`;
+                container.innerHTML = `<div class="error-box">❌ Паспорт с кодом "${escapeHtml(code)}" не найден</div>`;
             }
         } catch(e) {
             console.error('❌ Ошибка поиска:', e);
