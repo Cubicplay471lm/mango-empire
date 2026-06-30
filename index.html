@@ -198,3 +198,137 @@
                     password: password,
                     passport: null,
                     createdAt: new Date().toISOString(),
+                    chats: []
+                })
+            });
+            
+            status.innerHTML = '<div class="success-box">✅ Регистрация успешна! Теперь войдите.</div>';
+            document.getElementById('loginInput').value = '';
+            document.getElementById('passwordInput').value = '';
+        } catch(e) {
+            status.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
+        }
+    };
+    
+    // ===== ЛОГИН =====
+    window.loginUser = async function() {
+        const login = document.getElementById('loginInput').value.trim();
+        const password = document.getElementById('passwordInput').value.trim();
+        const status = document.getElementById('authStatus');
+        
+        if (!login || !password) {
+            status.innerHTML = '<div class="error-box">❌ Введите логин и пароль</div>';
+            return;
+        }
+        
+        try {
+            const res = await fetch(`${DB_URL}/all/users/${login}.json`);
+            const userData = await res.json();
+            
+            if (!userData) {
+                status.innerHTML = '<div class="error-box">❌ Пользователь не найден</div>';
+                return;
+            }
+            
+            if (userData.password !== password) {
+                status.innerHTML = '<div class="error-box">❌ Неверный пароль</div>';
+                return;
+            }
+            
+            currentUser = { login, ...userData };
+            
+            // Сохраняем логин в localStorage для автовхода
+            localStorage.setItem('karasik_user_login', login);
+            
+            document.getElementById('userInfo').style.display = 'flex';
+            document.getElementById('loginArea').style.display = 'none';
+            status.innerHTML = '';
+            
+            // Отображаем паспорт
+            showPassport();
+        } catch(e) {
+            status.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
+        }
+    };
+    
+    // ===== ВЫХОД =====
+    window.logout = function() {
+        currentUser = null;
+        localStorage.removeItem('karasik_user_login');
+        document.getElementById('userInfo').style.display = 'none';
+        document.getElementById('loginArea').style.display = 'block';
+        document.getElementById('passportDisplay').style.display = 'none';
+    };
+    
+    // ===== ОТОБРАЖЕНИЕ ПАСПОРТА =====
+    function showPassport() {
+        const container = document.getElementById('passportDisplay');
+        
+        if (!currentUser || !currentUser.passport || !currentUser.passport.fullName) {
+            container.style.display = 'block';
+            container.innerHTML = `
+                <div style="background:#fff3cd; border-radius:16px; padding:16px; color:#856404; border:1px solid #ffc107;">
+                    ⚠️ У вас нет паспорта. Обратитесь к администратору.
+                </div>
+            `;
+            return;
+        }
+        
+        const p = currentUser.passport;
+        container.style.display = 'block';
+        container.innerHTML = `
+            <div class="passport-card">
+                <div class="badge">🇺🇸 УДОСТОВЕРЕНИЕ ЛИЧНОСТИ</div>
+                <div class="name">${escapeHtml(p.fullName)}</div>
+                <div class="detail">
+                    <span class="label">👤 Логин</span>
+                    <span>${escapeHtml(currentUser.login)}</span>
+                </div>
+                <div class="detail">
+                    <span class="label">🏷️ Роль</span>
+                    <span><span class="role-tag">${escapeHtml(p.role || 'Обычный карасик')}</span></span>
+                </div>
+                <div class="detail">
+                    <span class="label">📅 Дата рождения</span>
+                    <span>${escapeHtml(p.birthDate || '—')}</span>
+                </div>
+                <div style="margin-top:16px; text-align:center; font-size:0.8rem; color:#c4885a;">
+                    🐟 Карасикославия
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('userName').textContent = p.fullName || currentUser.login;
+        document.getElementById('userRole').textContent = p.role || 'Обычный карасик';
+        document.getElementById('userLogin').textContent = `@${currentUser.login}`;
+    }
+    
+    // ===== АВТОВХОД =====
+    async function autoLogin() {
+        const savedLogin = localStorage.getItem('karasik_user_login');
+        if (savedLogin) {
+            document.getElementById('loginInput').value = savedLogin;
+            // Пробуем войти без пароля (запоминаем пользователя)
+            try {
+                const res = await fetch(`${DB_URL}/all/users/${savedLogin}.json`);
+                const userData = await res.json();
+                if (userData) {
+                    currentUser = { login: savedLogin, ...userData };
+                    document.getElementById('userInfo').style.display = 'flex';
+                    document.getElementById('loginArea').style.display = 'none';
+                    showPassport();
+                }
+            } catch(e) {}
+        }
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
+    }
+    
+    // Запуск
+    autoLogin();
+</script>
+</body>
+</html>
