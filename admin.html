@@ -6,11 +6,16 @@
     <title>👑 Админ - Карасикославия</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: system-ui, sans-serif; background: #0a1f1a; padding: 20px; }
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+            background: #0a1f1a;
+            padding: 20px;
+        }
         .container { max-width: 1000px; margin: 0 auto; }
         
         .login-overlay {
-            position: fixed; top: 0; left: 0;
+            position: fixed;
+            top: 0; left: 0;
             width: 100%; height: 100%;
             background: rgba(0,0,0,0.9);
             display: flex;
@@ -82,15 +87,15 @@
         button.secondary { background: #6b7280; }
         button.primary { background: #1a6a8a; }
         button.success { background: #4a8a4a; }
+        button.warning-btn { background: #ff8c00; }
         
-        .passport-item, .announcement-item, .message-item {
+        .item {
             background: #fff8f0;
             padding: 15px;
             border-radius: 16px;
             margin-bottom: 12px;
             border-left: 4px solid #f4a460;
         }
-        .message-item { border-left-color: #1a6a8a; }
         .stats {
             background: #f8efe0;
             padding: 12px;
@@ -176,6 +181,16 @@
             50% { opacity: 0.5; }
         }
         
+        .user-item {
+            background: #e8f4fd;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            border-left: 3px solid #1a6a8a;
+        }
+        .user-item .ulogin { font-weight: bold; color: #1a4a6a; }
+        .user-item .uchats { font-size: 0.8rem; color: #6b8a9a; }
+        
         @media (max-width: 600px) {
             .header-flex { flex-direction: column; align-items: flex-start; gap: 10px; }
             .clear-btn { margin-left: 0; }
@@ -196,65 +211,74 @@
 
 <div id="adminContent" class="admin-content">
     <div class="container">
+        <!-- Главная -->
         <div class="card">
             <h2>👑 АДМИН ПАНЕЛЬ - КАРАСИКОСЛАВИЯ</h2>
             <div class="stats" id="sessionInfo">🐟 Работает с Firebase 🔥</div>
             <div class="flex">
-                <button onclick="window.loadAllData()" class="primary">📥 Загрузить все данные</button>
-                <button onclick="window.saveAllData()" class="success">💾 Сохранить всё</button>
+                <button onclick="window.loadFromFirebase()" class="primary">📥 Загрузить данные</button>
+                <button onclick="window.fullWipe()" class="danger">🗑️ Полная очистка</button>
                 <button onclick="window.logout()" class="secondary">🚪 Выйти</button>
             </div>
-            <div class="warning">⚠️ Все данные хранятся в Firebase</div>
+            <div class="warning">⚠️ Все данные хранятся в папке "all" в Firebase</div>
             <div id="statusMsg"></div>
         </div>
 
+        <!-- Пользователи -->
         <div class="card">
-            <h2>📋 Управление паспортами</h2>
+            <h2>👥 Пользователи</h2>
+            <div id="usersStats" class="stats">Загрузка...</div>
+            <div id="usersList"><div class="loading-spinner">🔄 Загрузка...</div></div>
+            
+            <h3>➕ Создать пользователя</h3>
+            <div class="flex">
+                <input type="text" id="newUserLogin" placeholder="Логин" style="flex:2">
+                <input type="password" id="newUserPassword" placeholder="Пароль" style="flex:2">
+            </div>
+            <button onclick="window.createUser()" class="primary">👤 Создать</button>
+        </div>
+
+        <!-- Паспорта -->
+        <div class="card">
+            <h2>📋 Паспорта</h2>
             <div id="passportStats" class="stats">Загрузка...</div>
             <div id="passportsList"><div class="loading-spinner">🔄 Загрузка...</div></div>
             
-            <h3>➕ Создать новый паспорт</h3>
+            <h3>➕ Создать паспорт</h3>
             <div class="flex">
                 <input type="text" id="fullName" placeholder="Полное имя" style="flex:2">
                 <input type="text" id="passportCode" placeholder="Код" style="flex:1">
             </div>
             <input type="text" id="birthDate" placeholder="Дата рождения">
-            <input type="text" id="roleInput" placeholder="Роль (например: Золотой карасик)">
-            <button onclick="window.createPassport()" class="primary">✨ Выдать паспорт</button>
+            <input type="text" id="roleInput" placeholder="Роль">
+            <button onclick="window.createPassport()" class="primary">✨ Выдать</button>
         </div>
 
+        <!-- Объявления -->
         <div class="card">
-            <h2>📢 Управление объявлениями</h2>
+            <h2>📢 Объявления</h2>
             <div id="announcementsList"><div class="loading-spinner">🔄 Загрузка...</div></div>
             
             <h3>➕ Создать объявление</h3>
             <input type="text" id="annTitle" placeholder="Заголовок">
-            <textarea id="annText" rows="3" placeholder="Текст объявления"></textarea>
+            <textarea id="annText" rows="3" placeholder="Текст"></textarea>
             <button onclick="window.createAnnouncement()" class="primary">📢 Опубликовать</button>
         </div>
 
+        <!-- Чаты -->
         <div class="card">
             <div class="header-flex">
-                <h2 style="margin-bottom:0;">💬 Сообщения чата</h2>
-                <button onclick="window.clearAllMessages()" class="clear-btn">🗑️ Очистить все</button>
+                <h2 style="margin-bottom:0;">💬 Чаты</h2>
+                <button onclick="window.clearAllChats()" class="clear-btn">🗑️ Удалить все чаты</button>
             </div>
-            <div style="margin-top:8px; margin-bottom:16px;">
-                <span class="auto-update-badge">🔄 Автообновление</span>
-                <span style="color:#6b4a3a; font-size:0.8rem; margin-left:8px;">каждые 5 секунд</span>
-            </div>
-            <div id="messagesStats" class="stats">Загрузка...</div>
-            <div id="messagesList"><div class="loading-spinner">🔄 Загрузка...</div></div>
-            
-            <h3>➕ Отправить сообщение</h3>
-            <input type="text" id="msgUsername" placeholder="Имя" value="Админ">
-            <input type="text" id="msgRole" placeholder="Роль" value="Карасик-админ">
-            <textarea id="msgText" rows="2" placeholder="Текст"></textarea>
-            <button onclick="window.createMessage()" class="primary">💬 Отправить</button>
+            <div id="chatsStats" class="stats">Загрузка...</div>
+            <div id="chatsList"><div class="loading-spinner">🔄 Загрузка...</div></div>
         </div>
 
+        <!-- JSON -->
         <div class="card">
-            <h2>💾 Экспорт данных</h2>
-            <button onclick="window.downloadJSON()" style="width:100%;">📥 Скачать все данные</button>
+            <h2>💾 Данные</h2>
+            <button onclick="window.downloadJSON()" style="width:100%;">📥 Скачать all.json</button>
             <hr>
             <h3>Текущие данные:</h3>
             <pre id="jsonPreview" class="json-box">Загрузка...</pre>
@@ -264,18 +288,10 @@
 
 <script>
     (function() {
-        const ADMIN_PASSWORD = "201400";
+        const ADMIN_PASSWORD = "рыбнадзор";
         const DB_URL = 'https://karasik-talk-default-rtdb.europe-west1.firebasedatabase.app';
+        let db = { all: { users: {}, chats: {}, passports: {}, announcements: {} } };
         
-        let allData = {
-            passports: {},
-            announcements: {},
-            messages: {}
-        };
-        
-        let autoUpdateInterval = null;
-        
-        // ===== ВХОД =====
         window.checkPassword = function() {
             const inputPass = document.getElementById('adminPassword').value;
             const errorDiv = document.getElementById('loginError');
@@ -283,7 +299,7 @@
                 sessionStorage.setItem('admin_auth', 'true');
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('adminContent').style.display = 'block';
-                window.loadAllData();
+                window.loadFromFirebase();
             } else {
                 errorDiv.textContent = '❌ Неверный пароль';
             }
@@ -291,174 +307,173 @@
         
         window.logout = function() {
             sessionStorage.removeItem('admin_auth');
-            stopAutoUpdate();
             document.getElementById('loginOverlay').style.display = 'flex';
             document.getElementById('adminContent').style.display = 'none';
             document.getElementById('adminPassword').value = '';
             document.getElementById('loginError').textContent = '';
         };
         
-        // ===== ЗАГРУЗКА ВСЕХ ДАННЫХ =====
-        window.loadAllData = async function() {
+        // ===== ЗАГРУЗКА =====
+        window.loadFromFirebase = async function() {
             try {
                 document.getElementById('statusMsg').innerHTML = '<div class="loading-spinner">🔄 Загрузка...</div>';
-                
-                // Загружаем всё по отдельности
-                const [passportsRes, announcementsRes, messagesRes] = await Promise.all([
-                    fetch(`${DB_URL}/all/passports.json`),
-                    fetch(`${DB_URL}/all/announcements.json`),
-                    fetch(`${DB_URL}/all/messages.json`)
-                ]);
-                
-                const passports = await passportsRes.json();
-                const announcements = await announcementsRes.json();
-                const messages = await messagesRes.json();
-                
-                allData.passports = passports || {};
-                allData.announcements = announcements || {};
-                allData.messages = messages || {};
-                
+                const res = await fetch(`${DB_URL}/all.json`);
+                const data = await res.json();
+                db.all = data || { users: {}, chats: {}, passports: {}, announcements: {} };
                 renderAll();
-                startAutoUpdate();
-                
-                document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Все данные загружены!</div>';
+                document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Загружено!</div>';
                 setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
-            } catch (error) {
-                console.error('❌ Ошибка загрузки:', error);
-                document.getElementById('statusMsg').innerHTML = `<div class="warning">❌ Ошибка: ${error.message}</div>`;
+            } catch (e) {
+                document.getElementById('statusMsg').innerHTML = `<div class="warning">❌ ${e.message}</div>`;
             }
         };
         
-        // ===== СОХРАНЕНИЕ ВСЕХ ДАННЫХ =====
-        window.saveAllData = async function() {
+        // ===== ПОЛНАЯ ОЧИСТКА =====
+        window.fullWipe = async function() {
+            if (!confirm('🗑️ УДАЛИТЬ ВСЕ ДАННЫЕ НАВСЕГДА?')) return;
+            if (!confirm('ЕЩЁ РАЗ: ВСЁ БУДЕТ УДАЛЕНО!')) return;
+            
             try {
-                document.getElementById('statusMsg').innerHTML = '<div class="loading-spinner">💾 Сохранение...</div>';
-                
-                await Promise.all([
-                    fetch(`${DB_URL}/all/passports.json`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(allData.passports)
-                    }),
-                    fetch(`${DB_URL}/all/announcements.json`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(allData.announcements)
-                    }),
-                    fetch(`${DB_URL}/all/messages.json`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(allData.messages)
-                    })
-                ]);
-                
-                document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Всё сохранено в Firebase!</div>';
+                await fetch(`${DB_URL}/all.json`, { method: 'DELETE' });
+                db.all = { users: {}, chats: {}, passports: {}, announcements: {} };
+                renderAll();
+                document.getElementById('statusMsg').innerHTML = '<div class="success-msg">🗑️ ВСЁ УДАЛЕНО!</div>';
                 setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
-            } catch (error) {
-                console.error('❌ Ошибка сохранения:', error);
-                document.getElementById('statusMsg').innerHTML = `<div class="warning">❌ Ошибка: ${error.message}</div>`;
+            } catch (e) {
+                document.getElementById('statusMsg').innerHTML = `<div class="warning">❌ ${e.message}</div>`;
             }
         };
-        
-        // ===== АВТООБНОВЛЕНИЕ =====
-        function startAutoUpdate() {
-            if (autoUpdateInterval) return;
-            autoUpdateInterval = setInterval(async () => {
-                try {
-                    const res = await fetch(`${DB_URL}/all/messages.json`);
-                    const messages = await res.json();
-                    if (messages) {
-                        allData.messages = messages;
-                        renderMessages();
-                    }
-                } catch (e) {
-                    console.log('⏹️ Автообновление: ошибка', e);
-                }
-            }, 5000);
-            console.log('🔄 Автообновление запущено');
-        }
-        
-        function stopAutoUpdate() {
-            if (autoUpdateInterval) {
-                clearInterval(autoUpdateInterval);
-                autoUpdateInterval = null;
-                console.log('⏹️ Автообновление остановлено');
-            }
-        }
         
         // ===== ОТОБРАЖЕНИЕ =====
         function renderAll() {
+            renderUsers();
             renderPassports();
             renderAnnouncements();
-            renderMessages();
+            renderChats();
             updateJSONPreview();
         }
         
-        function renderPassports() {
-            const statsDiv = document.getElementById('passportStats');
-            const listDiv = document.getElementById('passportsList');
-            const passports = allData.passports || {};
-            const keys = Object.keys(passports);
-            statsDiv.innerHTML = `📊 Всего паспортов: ${keys.length}`;
+        // --- ПОЛЬЗОВАТЕЛИ ---
+        function renderUsers() {
+            const stats = document.getElementById('usersStats');
+            const list = document.getElementById('usersList');
+            const users = db.all.users || {};
+            const keys = Object.keys(users);
+            stats.innerHTML = `👥 Всего пользователей: ${keys.length}`;
             
             if (keys.length === 0) {
-                listDiv.innerHTML = '<p style="text-align:center;">📭 Нет паспортов</p>';
+                list.innerHTML = '<p style="text-align:center;">👤 Нет пользователей</p>';
                 return;
             }
             
-            listDiv.innerHTML = keys.map(code => {
-                const p = passports[code];
+            list.innerHTML = keys.map(login => {
+                const u = users[login];
                 return `
-                    <div class="passport-item">
-                        <strong>👤 ${escapeHtml(p.fullName)}</strong><br>
-                        🔑 ${escapeHtml(code)}<br>
-                        🎂 ${escapeHtml(p.birthDate || '—')}<br>
-                        🏷️ Роль: <span class="role-tag">${escapeHtml(p.role || 'Обычный карасик')}</span><br>
-                        <button class="secondary" onclick="window.editRole('${code}')" style="font-size:12px;">✏️ Изменить роль</button>
-                        <button class="danger" onclick="window.deletePassport('${code}')">❌ Удалить</button>
+                    <div class="user-item">
+                        <span class="ulogin">👤 ${escapeHtml(login)}</span>
+                        <span style="float:right;">
+                            <span class="uchats">📅 ${u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}</span>
+                            <button class="danger" onclick="window.deleteUser('${login}')" style="font-size:11px; padding:2px 12px;">❌</button>
+                        </span>
+                        <div style="font-size:0.8rem; color:#6b8a9a; margin-top:4px;">
+                            💬 Чатов: ${u.chats ? u.chats.length : 0}
+                        </div>
                     </div>
                 `;
             }).join('');
         }
         
-        window.editRole = function(code) {
-            const passport = allData.passports[code];
-            if (!passport) return;
-            const newRole = prompt('Введите новую роль:', passport.role || 'Обычный карасик');
-            if (newRole !== null) {
-                passport.role = newRole.trim();
-                renderPassports();
-                document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Роль изменена!</div>';
-                setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 2000);
-            }
+        window.deleteUser = async function(login) {
+            if (!confirm(`Удалить пользователя ${login}?`)) return;
+            delete db.all.users[login];
+            renderAll();
+            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Пользователь удалён</div>';
+            setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
         };
         
-        window.deletePassport = function(code) {
-            if (!confirm(`Удалить паспорт ${code}?`)) return;
-            delete allData.passports[code];
-            renderPassports();
-            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Паспорт удален!</div>';
-            setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 2000);
+        window.createUser = async function() {
+            const login = document.getElementById('newUserLogin').value.trim();
+            const password = document.getElementById('newUserPassword').value.trim();
+            if (!login || !password) { alert('❌ Заполните логин и пароль'); return; }
+            if (db.all.users[login]) { alert('❌ Пользователь уже существует'); return; }
+            
+            db.all.users[login] = { password, createdAt: new Date().toISOString(), chats: [] };
+            document.getElementById('newUserLogin').value = '';
+            document.getElementById('newUserPassword').value = '';
+            renderAll();
+            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Пользователь создан</div>';
+            setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
         };
         
-        function renderAnnouncements() {
-            const listDiv = document.getElementById('announcementsList');
-            const announcements = allData.announcements || {};
-            const keys = Object.keys(announcements);
+        // --- ПАСПОРТА ---
+        function renderPassports() {
+            const stats = document.getElementById('passportStats');
+            const list = document.getElementById('passportsList');
+            const passports = db.all.passports || {};
+            const keys = Object.keys(passports);
+            stats.innerHTML = `📋 Всего паспортов: ${keys.length}`;
             
             if (keys.length === 0) {
-                listDiv.innerHTML = '<p style="text-align:center;">📭 Нет объявлений</p>';
+                list.innerHTML = '<p style="text-align:center;">📭 Нет паспортов</p>';
                 return;
             }
             
-            listDiv.innerHTML = keys.map(id => {
+            list.innerHTML = keys.map(code => {
+                const p = passports[code];
+                return `
+                    <div class="item">
+                        <strong>👤 ${escapeHtml(p.fullName)}</strong><br>
+                        🔑 ${escapeHtml(code)}<br>
+                        🎂 ${escapeHtml(p.birthDate || '—')}<br>
+                        🏷️ <span class="role-tag">${escapeHtml(p.role || 'Обычный карасик')}</span>
+                        <button class="danger" onclick="window.deletePassport('${code}')" style="font-size:11px; padding:2px 12px; margin-left:8px;">❌</button>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        window.deletePassport = function(code) {
+            if (!confirm(`Удалить паспорт ${code}?`)) return;
+            delete db.all.passports[code];
+            renderAll();
+        };
+        
+        window.createPassport = function() {
+            const fullName = document.getElementById('fullName').value.trim();
+            const code = document.getElementById('passportCode').value.trim();
+            const birthDate = document.getElementById('birthDate').value.trim();
+            const role = document.getElementById('roleInput').value.trim() || 'Обычный карасик';
+            
+            if (!fullName || !code) { alert('❌ Заполните имя и код'); return; }
+            if (db.all.passports[code]) { alert('❌ Код уже существует'); return; }
+            
+            db.all.passports[code] = { fullName, birthDate, role, issuedDate: new Date().toLocaleString() };
+            document.getElementById('fullName').value = '';
+            document.getElementById('passportCode').value = '';
+            document.getElementById('birthDate').value = '';
+            document.getElementById('roleInput').value = '';
+            renderAll();
+        };
+        
+        // --- ОБЪЯВЛЕНИЯ ---
+        function renderAnnouncements() {
+            const list = document.getElementById('announcementsList');
+            const announcements = db.all.announcements || {};
+            const keys = Object.keys(announcements);
+            
+            if (keys.length === 0) {
+                list.innerHTML = '<p style="text-align:center;">📭 Нет объявлений</p>';
+                return;
+            }
+            
+            list.innerHTML = keys.map(id => {
                 const a = announcements[id];
                 return `
-                    <div class="announcement-item">
+                    <div class="item">
                         <strong>📌 ${escapeHtml(a.title)}</strong>
                         <span style="float:right;">
-                            <button class="secondary" onclick="window.toggleAnnouncement('${id}')" style="font-size:12px;">${a.active !== false ? '🔘 Скрыть' : '✅ Показать'}</button>
-                            <button class="danger" onclick="window.deleteAnnouncement('${id}')" style="font-size:12px;">🗑️</button>
+                            <button class="secondary" onclick="window.toggleAnnouncement('${id}')" style="font-size:11px;">${a.active !== false ? '🔘 Скрыть' : '✅ Показать'}</button>
+                            <button class="danger" onclick="window.deleteAnnouncement('${id}')" style="font-size:11px;">🗑️</button>
                         </span>
                         <p style="margin:8px 0;">${escapeHtml(a.text)}</p>
                         <small>📅 ${a.date || 'Недавно'} | ${a.active !== false ? '🟢 Активно' : '⚫ Скрыто'}</small>
@@ -468,167 +483,88 @@
         }
         
         window.toggleAnnouncement = function(id) {
-            const ann = allData.announcements[id];
+            const ann = db.all.announcements[id];
             if (!ann) return;
             ann.active = ann.active === false ? true : false;
-            renderAnnouncements();
-            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Обновлено!</div>';
-            setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 2000);
+            renderAll();
         };
         
         window.deleteAnnouncement = function(id) {
             if (!confirm('Удалить объявление?')) return;
-            delete allData.announcements[id];
-            renderAnnouncements();
-            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Объявление удалено!</div>';
-            setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 2000);
-        };
-        
-        function renderMessages() {
-            const statsDiv = document.getElementById('messagesStats');
-            const listDiv = document.getElementById('messagesList');
-            const messages = allData.messages || {};
-            const keys = Object.keys(messages);
-            
-            statsDiv.innerHTML = `💬 Всего сообщений: ${keys.length}`;
-            
-            if (keys.length === 0) {
-                listDiv.innerHTML = '<p style="text-align:center;">💬 Нет сообщений</p>';
-                return;
-            }
-            
-            const sortedKeys = keys.sort((a, b) => {
-                return (messages[a].timestamp || 0) - (messages[b].timestamp || 0);
-            });
-            
-            listDiv.innerHTML = sortedKeys.map(id => {
-                const m = messages[id];
-                const time = m.timestamp ? new Date(m.timestamp).toLocaleString() : '—';
-                return `
-                    <div class="message-item">
-                        <span class="msg-user">👤 ${escapeHtml(m.username)}</span>
-                        <span class="role-tag">${escapeHtml(m.role || 'Обычный карасик')}</span>
-                        <span class="msg-time">📅 ${time}</span>
-                        <div class="msg-text">${escapeHtml(m.text)}</div>
-                        <button class="danger" onclick="window.deleteMessage('${id}')" style="font-size:12px; margin-top:6px;">🗑️ Удалить</button>
-                    </div>
-                `;
-            }).join('');
-        }
-        
-        window.deleteMessage = function(id) {
-            if (!confirm('Удалить сообщение?')) return;
-            delete allData.messages[id];
-            renderMessages();
-            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Сообщение удалено!</div>';
-            setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 2000);
-        };
-        
-        window.clearAllMessages = function() {
-            if (!confirm('⚠️ Удалить ВСЕ сообщения?')) return;
-            if (!confirm('🗑️ Точно?')) return;
-            
-            allData.messages = {};
-            renderMessages();
-            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">🗑️ Все сообщения удалены!</div>';
-            setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
-        };
-        
-        // ===== СОЗДАНИЕ =====
-        window.createPassport = function() {
-            const fullName = document.getElementById('fullName').value.trim();
-            const code = document.getElementById('passportCode').value.trim();
-            const birthDate = document.getElementById('birthDate').value.trim();
-            const role = document.getElementById('roleInput').value.trim() || 'Обычный карасик';
-            
-            if (!fullName || !code) {
-                alert('❌ Заполните имя и код');
-                return;
-            }
-            if (allData.passports[code]) {
-                alert('❌ Код уже существует');
-                return;
-            }
-            
-            allData.passports[code] = {
-                fullName,
-                birthDate,
-                role,
-                issuedDate: new Date().toLocaleString()
-            };
-            
-            document.getElementById('fullName').value = '';
-            document.getElementById('passportCode').value = '';
-            document.getElementById('birthDate').value = '';
-            document.getElementById('roleInput').value = '';
-            
-            renderPassports();
-            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Паспорт создан!</div>';
-            setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 2000);
+            delete db.all.announcements[id];
+            renderAll();
         };
         
         window.createAnnouncement = function() {
             const title = document.getElementById('annTitle').value.trim();
             const text = document.getElementById('annText').value.trim();
-            if (!title || !text) {
-                alert('❌ Заполните заголовок и текст');
-                return;
-            }
+            if (!title || !text) { alert('❌ Заполните заголовок и текст'); return; }
             
             const id = Date.now().toString();
-            allData.announcements[id] = {
-                title,
-                text,
-                date: new Date().toLocaleDateString(),
-                active: true
-            };
-            
+            db.all.announcements[id] = { title, text, date: new Date().toLocaleDateString(), active: true };
             document.getElementById('annTitle').value = '';
             document.getElementById('annText').value = '';
-            
-            renderAnnouncements();
-            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Объявление создано!</div>';
-            setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 2000);
+            renderAll();
         };
         
-        window.createMessage = function() {
-            const username = document.getElementById('msgUsername').value.trim() || 'Админ';
-            const role = document.getElementById('msgRole').value.trim() || 'Карасик-админ';
-            const text = document.getElementById('msgText').value.trim();
+        // --- ЧАТЫ ---
+        function renderChats() {
+            const stats = document.getElementById('chatsStats');
+            const list = document.getElementById('chatsList');
+            const chats = db.all.chats || {};
+            const keys = Object.keys(chats);
+            stats.innerHTML = `💬 Всего чатов: ${keys.length}`;
             
-            if (!text) {
-                alert('❌ Напишите текст');
+            if (keys.length === 0) {
+                list.innerHTML = '<p style="text-align:center;">💬 Нет чатов</p>';
                 return;
             }
             
-            const id = Date.now().toString();
-            allData.messages[id] = {
-                username,
-                role,
-                text,
-                timestamp: Date.now()
-            };
-            
-            document.getElementById('msgText').value = '';
-            
-            renderMessages();
-            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Сообщение отправлено!</div>';
-            setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 2000);
+            list.innerHTML = keys.map(id => {
+                const c = chats[id];
+                return `
+                    <div class="item" style="border-left-color:#1a6a8a;">
+                        <strong>💬 ${escapeHtml(c.name)}</strong>
+                        <span style="float:right;">
+                            <button class="danger" onclick="window.deleteChat('${id}')" style="font-size:11px; padding:2px 12px;">🗑️</button>
+                        </span>
+                        <div style="font-size:0.8rem; color:#6b8a9a;">
+                            👥 ${c.members ? c.members.join(', ') : '—'}
+                            <span style="margin-left:12px;">📅 ${c.createdAt ? new Date(c.createdAt).toLocaleDateString() : '—'}</span>
+                            <span style="margin-left:12px;">💬 ${c.messages ? Object.keys(c.messages).length : 0} сообщений</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        window.deleteChat = function(id) {
+            if (!confirm(`Удалить чат?`)) return;
+            delete db.all.chats[id];
+            renderAll();
         };
         
-        // ===== ЭКСПОРТ =====
+        window.clearAllChats = async function() {
+            if (!confirm('🗑️ УДАЛИТЬ ВСЕ ЧАТЫ?')) return;
+            if (!confirm('ЕЩЁ РАЗ: ВСЕ ЧАТЫ БУДУТ УДАЛЕНЫ!')) return;
+            db.all.chats = {};
+            renderAll();
+            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">🗑️ Все чаты удалены!</div>';
+            setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
+        };
+        
+        // --- JSON ---
         window.downloadJSON = function() {
-            const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
+            const blob = new Blob([JSON.stringify(db.all, null, 2)], { type: 'application/json' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = 'all_data.json';
+            link.download = 'all.json';
             link.click();
             URL.revokeObjectURL(link.href);
-            alert('✅ Файл скачан!');
         };
         
         function updateJSONPreview() {
-            document.getElementById('jsonPreview').textContent = JSON.stringify(allData, null, 2);
+            document.getElementById('jsonPreview').textContent = JSON.stringify(db.all, null, 2);
         }
         
         function escapeHtml(str) {
@@ -636,11 +572,10 @@
             return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
         }
         
-        // ===== АВТОВХОД =====
         if (sessionStorage.getItem('admin_auth') === 'true') {
             document.getElementById('loginOverlay').style.display = 'none';
             document.getElementById('adminContent').style.display = 'block';
-            window.loadAllData();
+            window.loadFromFirebase();
         }
     })();
 </script>
