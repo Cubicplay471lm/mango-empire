@@ -302,8 +302,8 @@
         // ===== АВТООБНОВЛЕНИЕ =====
         function startAutoUpdate() {
             if (autoUpdateInterval) return;
-            autoUpdateInterval = setInterval(() => {
-                renderMessages();
+            autoUpdateInterval = setInterval(async () => {
+                await renderMessages();
             }, 5000);
             console.log('🔄 Автообновление сообщений запущено');
         }
@@ -316,21 +316,55 @@
             }
         }
         
-        // ===== ЗАГРУЗКА =====
+        // ===== ЗАГРУЗКА СООБЩЕНИЙ ИЗ /all/messages.json =====
+        async function loadMessagesFromFirebase() {
+            try {
+                const res = await fetch(`${DB_URL}/all/messages.json`);
+                const data = await res.json();
+                return data || {};
+            } catch (error) {
+                console.error('❌ Ошибка загрузки сообщений:', error);
+                return {};
+            }
+        }
+        
+        // ===== СОХРАНЕНИЕ СООБЩЕНИЙ В /all/messages.json =====
+        async function saveMessagesToFirebase(messages) {
+            try {
+                await fetch(`${DB_URL}/all/messages.json`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(messages)
+                });
+                return true;
+            } catch (error) {
+                console.error('❌ Ошибка сохранения сообщений:', error);
+                return false;
+            }
+        }
+        
+        // ===== ЗАГРУЗКА ВСЕХ ДАННЫХ =====
         window.loadFromFirebase = async function() {
             try {
                 document.getElementById('statusMsg').innerHTML = '<div class="loading-spinner">🔄 Загрузка из Firebase...</div>';
                 
-                const res = await fetch(`${DB_URL}/all.json`);
-                const data = await res.json();
+                // Загружаем паспорта и объявления
+                const [passportsRes, announcementsRes] = await Promise.all([
+                    fetch(`${DB_URL}/all/passports.json`),
+                    fetch(`${DB_URL}/all/announcements.json`)
+                ]);
                 
-                if (data) {
-                    db.all = data;
-                } else {
-                    db.all = { passports: {}, announcements: {}, messages: {} };
-                }
+                const passports = await passportsRes.json();
+                const announcements = await announcementsRes.json();
                 
-                renderAll();
+                db.all.passports = passports || {};
+                db.all.announcements = announcements || {};
+                
+                renderPassports();
+                renderAnnouncements();
+                await renderMessages();
+                updateJSONPreview();
+                
                 startAutoUpdate();
                 document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Данные загружены из Firebase!</div>';
                 setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
@@ -339,52 +373,33 @@
             }
         };
         
-        // ===== СОХРАНЕНИЕ =====
+        // ===== СОХРАНЕНИЕ ВСЕХ ДАННЫХ (кроме сообщений) =====
         window.saveToFirebase = async function() {
             try {
                 document.getElementById('statusMsg').innerHTML = '<div class="loading-spinner">💾 Сохранение в Firebase...</div>';
                 
-                await fetch(`${DB_URL}/all.json`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(db.all)
-                });
+                // Сохраняем только паспорта и объявления
+                await Promise.all([
+                    fetch(`${DB_URL}/all/passports.json`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(db.all.passports)
+                    }),
+                    fetch(`${DB_URL}/all/announcements.json`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(db.all.announcements)
+                    })
+                ]);
                 
-                document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Все данные сохранены в Firebase!</div>';
+                document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Паспорта и объявления сохранены!</div>';
                 setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
             } catch (error) {
                 document.getElementById('statusMsg').innerHTML = `<div class="warning">❌ Ошибка: ${error.message}</div>`;
             }
         };
         
-        // ===== ОЧИСТКА ВСЕХ СООБЩЕНИЙ =====
-        window.clearAllMessages = async function() {
-            if (!confirm('⚠️ Ты уверен, что хочешь УДАЛИТЬ ВСЕ СООБЩЕНИЯ в чате? Это нельзя отменить!')) {
-                return;
-            }
-            
-            if (!confirm('🗑️ ЕЩЁ РАЗ: Удалить все сообщения навсегда?')) {
-                return;
-            }
-            
-            try {
-                db.all.messages = {};
-                renderAll();
-                document.getElementById('statusMsg').innerHTML = '<div class="success-msg">🗑️ Все сообщения удалены! Сохрани изменения.</div>';
-                setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
-            } catch (error) {
-                document.getElementById('statusMsg').innerHTML = `<div class="warning">❌ Ошибка: ${error.message}</div>`;
-            }
-        };
-        
-        // ===== ОТОБРАЖЕНИЕ =====
-        function renderAll() {
-            renderPassports();
-            renderAnnouncements();
-            renderMessages();
-            updateJSONPreview();
-        }
-        
+        // ===== ОТОБРАЖЕНИЕ ПАСПОРТОВ =====
         function renderPassports() {
             const statsDiv = document.getElementById('passportStats');
             const listDiv = document.getElementById('passportsList');
@@ -418,7 +433,7 @@
             const newRole = prompt('Введите новую роль:', passport.role || 'Обычный карасик');
             if (newRole !== null) {
                 passport.role = newRole.trim();
-                renderAll();
+                renderPassports();
                 document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Роль изменена! Сохрани изменения.</div>';
                 setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
             }
@@ -427,11 +442,12 @@
         window.deletePassport = function(code) {
             if (!confirm(`Удалить паспорт ${code}?`)) return;
             delete db.all.passports[code];
-            renderAll();
+            renderPassports();
             document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Паспорт удален! Сохрани изменения.</div>';
             setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
         };
         
+        // ===== ОТОБРАЖЕНИЕ ОБЪЯВЛЕНИЙ =====
         function renderAnnouncements() {
             const listDiv = document.getElementById('announcementsList');
             const announcements = db.all.announcements || {};
@@ -462,7 +478,7 @@
             const ann = db.all.announcements[id];
             if (!ann) return;
             ann.active = ann.active === false ? true : false;
-            renderAll();
+            renderAnnouncements();
             document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Обновлено! Сохрани изменения.</div>';
             setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
         };
@@ -470,15 +486,17 @@
         window.deleteAnnouncement = function(id) {
             if (!confirm('Удалить объявление?')) return;
             delete db.all.announcements[id];
-            renderAll();
+            renderAnnouncements();
             document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Объявление удалено! Сохрани изменения.</div>';
             setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
         };
         
-        function renderMessages() {
+        // ===== ОТОБРАЖЕНИЕ СООБЩЕНИЙ (из Firebase) =====
+        async function renderMessages() {
             const statsDiv = document.getElementById('messagesStats');
             const listDiv = document.getElementById('messagesList');
-            const messages = db.all.messages || {};
+            
+            const messages = await loadMessagesFromFirebase();
             const keys = Object.keys(messages);
             
             statsDiv.innerHTML = `💬 Всего сообщений: ${keys.length} ${keys.length > 0 ? '| 🟢 Автообновление' : ''}`;
@@ -503,21 +521,46 @@
                         <span class="role-tag">${escapeHtml(m.role || 'Обычный карасик')}</span>
                         <span class="msg-time">📅 ${time}</span>
                         <div class="msg-text">${escapeHtml(m.text)}</div>
-                        <button class="danger" onclick="window.deleteMessage('${id}')" style="font-size:12px; margin-top:6px;">🗑️ Удалить</button>
+                        <button class="danger" onclick="window.deleteMessageFromFB('${id}')" style="font-size:12px; margin-top:6px;">🗑️ Удалить</button>
                     </div>
                 `;
             }).join('');
         }
         
-        window.deleteMessage = function(id) {
+        // ===== УДАЛЕНИЕ СООБЩЕНИЯ =====
+        window.deleteMessageFromFB = async function(id) {
             if (!confirm('Удалить сообщение?')) return;
-            delete db.all.messages[id];
-            renderAll();
-            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Сообщение удалено! Сохрани изменения.</div>';
+            
+            const messages = await loadMessagesFromFirebase();
+            delete messages[id];
+            await saveMessagesToFirebase(messages);
+            
+            await renderMessages();
+            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Сообщение удалено!</div>';
             setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
         };
         
-        // ===== СОЗДАНИЕ =====
+        // ===== ОЧИСТКА ВСЕХ СООБЩЕНИЙ =====
+        window.clearAllMessages = async function() {
+            if (!confirm('⚠️ Ты уверен, что хочешь УДАЛИТЬ ВСЕ СООБЩЕНИЯ в чате? Это нельзя отменить!')) {
+                return;
+            }
+            
+            if (!confirm('🗑️ ЕЩЁ РАЗ: Удалить все сообщения навсегда?')) {
+                return;
+            }
+            
+            try {
+                await saveMessagesToFirebase({});
+                await renderMessages();
+                document.getElementById('statusMsg').innerHTML = '<div class="success-msg">🗑️ Все сообщения удалены из Firebase!</div>';
+                setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
+            } catch (error) {
+                document.getElementById('statusMsg').innerHTML = `<div class="warning">❌ Ошибка: ${error.message}</div>`;
+            }
+        };
+        
+        // ===== СОЗДАНИЕ ПАСПОРТА =====
         window.createPassport = function() {
             const fullName = document.getElementById('fullName').value.trim();
             const code = document.getElementById('passportCode').value.trim();
@@ -545,11 +588,12 @@
             document.getElementById('birthDate').value = '';
             document.getElementById('roleInput').value = '';
             
-            renderAll();
+            renderPassports();
             document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Паспорт создан! Сохрани изменения.</div>';
             setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
         };
         
+        // ===== СОЗДАНИЕ ОБЪЯВЛЕНИЯ =====
         window.createAnnouncement = function() {
             const title = document.getElementById('annTitle').value.trim();
             const text = document.getElementById('annText').value.trim();
@@ -569,12 +613,13 @@
             document.getElementById('annTitle').value = '';
             document.getElementById('annText').value = '';
             
-            renderAll();
+            renderAnnouncements();
             document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Объявление создано! Сохрани изменения.</div>';
             setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
         };
         
-        window.createMessage = function() {
+        // ===== ОТПРАВКА СООБЩЕНИЯ =====
+        window.createMessage = async function() {
             const username = document.getElementById('msgUsername').value.trim() || 'Админ';
             const role = document.getElementById('msgRole').value.trim() || 'Карасик-админ';
             const text = document.getElementById('msgText').value.trim();
@@ -584,34 +629,46 @@
                 return;
             }
             
+            const messages = await loadMessagesFromFirebase();
             const id = Date.now().toString();
-            db.all.messages[id] = {
+            messages[id] = {
                 username,
                 role,
                 text,
                 timestamp: Date.now()
             };
             
+            await saveMessagesToFirebase(messages);
             document.getElementById('msgText').value = '';
             
-            renderAll();
-            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Сообщение отправлено! Сохрани изменения.</div>';
+            await renderMessages();
+            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Сообщение отправлено в Firebase!</div>';
             setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
         };
         
         // ===== ЭКСПОРТ =====
         window.downloadJSON = function() {
-            const blob = new Blob([JSON.stringify(db.all, null, 2)], { type: 'application/json' });
+            const data = {
+                passports: db.all.passports,
+                announcements: db.all.announcements,
+                messages: {} // сообщения не включаем, они в отдельном файле
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             link.download = 'all.json';
             link.click();
             URL.revokeObjectURL(link.href);
-            alert('✅ Файл скачан!');
+            alert('✅ Файл скачан! (Сообщения не включены)');
         };
         
         function updateJSONPreview() {
-            document.getElementById('jsonPreview').textContent = JSON.stringify(db.all, null, 2);
+            const data = {
+                passports: db.all.passports,
+                announcements: db.all.announcements,
+                messages: {} // сообщения не показываем
+            };
+            document.getElementById('jsonPreview').textContent = JSON.stringify(data, null, 2);
         }
         
         function escapeHtml(str) {
