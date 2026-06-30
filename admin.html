@@ -87,14 +87,16 @@
         button.secondary { background: #6b7280; }
         button.primary { background: #1a6a8a; }
         button.success { background: #4a8a4a; }
+        button.warning-btn { background: #ff8c00; }
         
-        .passport-item, .announcement-item {
+        .passport-item, .announcement-item, .message-item {
             background: #fff8f0;
             padding: 15px;
             border-radius: 16px;
             margin-bottom: 12px;
             border-left: 4px solid #f4a460;
         }
+        .message-item { border-left-color: #1a6a8a; }
         .stats {
             background: #f8efe0;
             padding: 12px;
@@ -142,6 +144,48 @@
             color: #155724;
         }
         .loading-spinner { text-align: center; padding: 20px; color: #6b4a3a; }
+        .msg-user { font-weight: bold; color: #6b4a3a; }
+        .msg-time { font-size: 0.7rem; color: #b89a7a; float: right; }
+        .msg-text { margin-top: 4px; color: #4a3a2a; }
+        
+        .clear-btn {
+            background: #dc2626;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 12px;
+            font-size: 0.9rem;
+        }
+        .clear-btn:hover { background: #b71c1c; }
+        
+        .header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .auto-update-badge {
+            background: #4a8a4a;
+            color: white;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        @media (max-width: 600px) {
+            .header-flex { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .clear-btn { margin-left: 0; }
+        }
     </style>
 </head>
 <body>
@@ -160,7 +204,7 @@
     <div class="container">
         <div class="card">
             <h2>👑 АДМИН ПАНЕЛЬ - КАРАСИКОСЛАВИЯ</h2>
-            <div class="stats" id="sessionInfo">🐟 Работает с Firebase</div>
+            <div class="stats" id="sessionInfo">🐟 Работает с Firebase 🔥</div>
             <div class="flex">
                 <button onclick="window.loadFromFirebase()" class="primary">📥 Загрузить из Firebase</button>
                 <button onclick="window.saveToFirebase()" class="success">💾 Сохранить в Firebase</button>
@@ -196,12 +240,20 @@
         </div>
 
         <div class="card">
-            <h2>💬 Сообщения чата</h2>
+            <div class="header-flex">
+                <h2 style="margin-bottom:0;">💬 Сообщения чата</h2>
+                <button onclick="window.clearAllMessages()" class="clear-btn">🗑️ Очистить все сообщения</button>
+            </div>
+            <div style="margin-top:8px; margin-bottom:16px;">
+                <span class="auto-update-badge">🔄 Автообновление</span>
+                <span style="color:#6b4a3a; font-size:0.8rem; margin-left:8px;">обновляется каждые 5 секунд</span>
+            </div>
+            <div id="messagesStats" class="stats">Загрузка...</div>
             <div id="messagesList"><div class="loading-spinner">🔄 Загрузка...</div></div>
             
-            <h3>➕ Отправить сообщение</h3>
-            <input type="text" id="msgUsername" placeholder="Имя пользователя">
-            <input type="text" id="msgRole" placeholder="Роль">
+            <h3>➕ Отправить сообщение (от имени админа)</h3>
+            <input type="text" id="msgUsername" placeholder="Имя пользователя" value="Админ">
+            <input type="text" id="msgRole" placeholder="Роль" value="Карасик-админ">
             <textarea id="msgText" rows="2" placeholder="Текст сообщения"></textarea>
             <button onclick="window.createMessage()" class="primary">💬 Отправить</button>
         </div>
@@ -222,6 +274,7 @@
         const DB_URL = 'https://karasik-talk-default-rtdb.europe-west1.firebasedatabase.app';
         
         let db = { all: { passports: {}, announcements: {}, messages: {} } };
+        let autoUpdateInterval = null;
         
         // ===== ВХОД =====
         window.checkPassword = function() {
@@ -239,11 +292,29 @@
         
         window.logout = function() {
             sessionStorage.removeItem('admin_auth');
+            stopAutoUpdate();
             document.getElementById('loginOverlay').style.display = 'flex';
             document.getElementById('adminContent').style.display = 'none';
             document.getElementById('adminPassword').value = '';
             document.getElementById('loginError').textContent = '';
         };
+        
+        // ===== АВТООБНОВЛЕНИЕ =====
+        function startAutoUpdate() {
+            if (autoUpdateInterval) return;
+            autoUpdateInterval = setInterval(() => {
+                renderMessages();
+            }, 5000);
+            console.log('🔄 Автообновление сообщений запущено');
+        }
+        
+        function stopAutoUpdate() {
+            if (autoUpdateInterval) {
+                clearInterval(autoUpdateInterval);
+                autoUpdateInterval = null;
+                console.log('⏹️ Автообновление остановлено');
+            }
+        }
         
         // ===== ЗАГРУЗКА =====
         window.loadFromFirebase = async function() {
@@ -260,6 +331,7 @@
                 }
                 
                 renderAll();
+                startAutoUpdate();
                 document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Данные загружены из Firebase!</div>';
                 setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
             } catch (error) {
@@ -279,6 +351,26 @@
                 });
                 
                 document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Все данные сохранены в Firebase!</div>';
+                setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
+            } catch (error) {
+                document.getElementById('statusMsg').innerHTML = `<div class="warning">❌ Ошибка: ${error.message}</div>`;
+            }
+        };
+        
+        // ===== ОЧИСТКА ВСЕХ СООБЩЕНИЙ =====
+        window.clearAllMessages = async function() {
+            if (!confirm('⚠️ Ты уверен, что хочешь УДАЛИТЬ ВСЕ СООБЩЕНИЯ в чате? Это нельзя отменить!')) {
+                return;
+            }
+            
+            if (!confirm('🗑️ ЕЩЁ РАЗ: Удалить все сообщения навсегда?')) {
+                return;
+            }
+            
+            try {
+                db.all.messages = {};
+                renderAll();
+                document.getElementById('statusMsg').innerHTML = '<div class="success-msg">🗑️ Все сообщения удалены! Сохрани изменения.</div>';
                 setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
             } catch (error) {
                 document.getElementById('statusMsg').innerHTML = `<div class="warning">❌ Ошибка: ${error.message}</div>`;
@@ -384,24 +476,34 @@
         };
         
         function renderMessages() {
+            const statsDiv = document.getElementById('messagesStats');
             const listDiv = document.getElementById('messagesList');
             const messages = db.all.messages || {};
             const keys = Object.keys(messages);
+            
+            statsDiv.innerHTML = `💬 Всего сообщений: ${keys.length} ${keys.length > 0 ? '| 🟢 Автообновление' : ''}`;
             
             if (keys.length === 0) {
                 listDiv.innerHTML = '<p style="text-align:center;">💬 Нет сообщений</p>';
                 return;
             }
             
-            listDiv.innerHTML = keys.map(id => {
+            const sortedKeys = keys.sort((a, b) => {
+                const msgA = messages[a];
+                const msgB = messages[b];
+                return (msgA.timestamp || 0) - (msgB.timestamp || 0);
+            });
+            
+            listDiv.innerHTML = sortedKeys.map(id => {
                 const m = messages[id];
+                const time = m.timestamp ? new Date(m.timestamp).toLocaleString() : '—';
                 return `
-                    <div class="passport-item" style="border-left-color:#1a6a8a;">
-                        <strong>👤 ${escapeHtml(m.username)}</strong>
+                    <div class="message-item">
+                        <span class="msg-user">👤 ${escapeHtml(m.username)}</span>
                         <span class="role-tag">${escapeHtml(m.role || 'Обычный карасик')}</span>
-                        <span style="float:right; font-size:0.7rem; color:#b89a7a;">${m.timestamp ? new Date(m.timestamp).toLocaleString() : ''}</span>
-                        <p style="margin:8px 0;">${escapeHtml(m.text)}</p>
-                        <button class="danger" onclick="window.deleteMessage('${id}')" style="font-size:12px;">🗑️ Удалить</button>
+                        <span class="msg-time">📅 ${time}</span>
+                        <div class="msg-text">${escapeHtml(m.text)}</div>
+                        <button class="danger" onclick="window.deleteMessage('${id}')" style="font-size:12px; margin-top:6px;">🗑️ Удалить</button>
                     </div>
                 `;
             }).join('');
@@ -473,12 +575,12 @@
         };
         
         window.createMessage = function() {
-            const username = document.getElementById('msgUsername').value.trim();
-            const role = document.getElementById('msgRole').value.trim() || 'Обычный карасик';
+            const username = document.getElementById('msgUsername').value.trim() || 'Админ';
+            const role = document.getElementById('msgRole').value.trim() || 'Карасик-админ';
             const text = document.getElementById('msgText').value.trim();
             
-            if (!username || !text) {
-                alert('❌ Заполните имя и текст');
+            if (!text) {
+                alert('❌ Напишите текст сообщения');
                 return;
             }
             
@@ -490,8 +592,6 @@
                 timestamp: Date.now()
             };
             
-            document.getElementById('msgUsername').value = '';
-            document.getElementById('msgRole').value = '';
             document.getElementById('msgText').value = '';
             
             renderAll();
