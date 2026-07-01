@@ -235,20 +235,6 @@
         }
         .create-chat-area button:hover { background: #3a7a3a; }
         
-        .auto-update-badge {
-            background: #4a8a4a;
-            color: white;
-            padding: 2px 12px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
         .announcement-item {
             background: #fff8f0;
             border-radius: 16px;
@@ -267,7 +253,22 @@
             flex-wrap: wrap;
         }
         
+        .loading { text-align: center; padding: 20px; color: #c4885a; }
         footer { text-align: center; color: #c4a88a; font-size: 0.7rem; margin-top: 28px; }
+        
+        .auto-update-badge {
+            background: #4a8a4a;
+            color: white;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
         
         @media (max-width: 500px) {
             .card { padding: 16px; }
@@ -280,12 +281,12 @@
 
 <div class="container">
     <div class="card">
-        <h1>🐟 Karasik Talk</h1>
+        <h1>🐟 Karasik Talk <span class="auto-update-badge">🔄 LIVE</span></h1>
         <div class="subtitle">🇺🇸 Карасикославия · Страна мирных карасей</div>
         
         <!-- Логин -->
         <div class="login-area" id="loginArea">
-            <input type="text" id="loginInput" placeholder="Логин">
+            <input type="text" id="loginInput" placeholder="Логин" value="">
             <input type="password" id="passwordInput" placeholder="Пароль">
             <button class="login-btn" onclick="loginUser()">🔑 Войти</button>
             <button class="register-btn" onclick="registerUser()">📝 Зарегистрироваться</button>
