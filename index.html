@@ -84,6 +84,18 @@
             color: white;
             cursor: pointer;
         }
+        .user-info .admin-btn {
+            background: #ff8c00;
+            border: none;
+            padding: 4px 16px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .user-info .admin-btn:hover { background: #e67e00; }
         
         .error-box { background: #fff1f0; border-radius: 16px; padding: 12px; color: #b34e3a; border: 1px solid #ffc6be; margin-top: 8px; }
         .success-box { background: #d4edda; border-radius: 16px; padding: 12px; color: #155724; border: 1px solid #c3e6cb; margin-top: 8px; }
@@ -235,6 +247,34 @@
         }
         .create-chat-area button:hover { background: #3a7a3a; }
         
+        .add-member-area {
+            background: #f0e8d8;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .add-member-area input {
+            flex: 1;
+            padding: 8px 14px;
+            border: 2px solid #f0d5b0;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            min-width: 120px;
+        }
+        .add-member-area button {
+            background: #1a6a8a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .add-member-area button:hover { background: #0a4a6a; }
+        
         .announcement-item {
             background: #fff8f0;
             border-radius: 16px;
@@ -270,10 +310,21 @@
             50% { opacity: 0.5; }
         }
         
+        .member-tag {
+            display: inline-block;
+            background: #1a6a8a;
+            color: white;
+            padding: 1px 10px;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            margin: 2px;
+        }
+        
         @media (max-width: 500px) {
             .card { padding: 16px; }
             .chat-input-area { flex-direction: column; }
             .chat-input-area button { padding: 14px; }
+            .add-member-area { flex-direction: column; }
         }
     </style>
 </head>
@@ -298,6 +349,7 @@
             <span class="uname" id="userName">Имя</span>
             <span class="urole" id="userRole">Роль</span>
             <span style="color:#6b4a3a; font-size:0.8rem;" id="userLogin">@логин</span>
+            <a href="/admin" id="adminLink" style="display:none;" class="admin-btn">👑 Админка</a>
             <button class="logout-btn" onclick="logout()">🚪 Выйти</button>
         </div>
         
@@ -321,6 +373,15 @@
                     <h3 id="currentChatName" style="color:#6b4a3a;">Чат</h3>
                     <button onclick="leaveChat()" style="background:#dc2626; border:none; padding:6px 16px; border-radius:20px; color:white; cursor:pointer; font-size:0.8rem;">🚪 Покинуть</button>
                 </div>
+                
+                <!-- Добавление участников в уже созданную группу -->
+                <div class="add-member-area">
+                    <input type="text" id="addMemberInput" placeholder="Логин пользователя">
+                    <button onclick="addMemberToChat()">➕ Добавить участника</button>
+                </div>
+                
+                <div id="chatMembers" style="margin-bottom:8px; display:flex; flex-wrap:wrap; gap:4px;"></div>
+                
                 <div id="chatMessages" class="chat-box"><div class="loading">💬 Загрузка сообщений...</div></div>
                 <div class="chat-input-area">
                     <input type="text" id="messageInput" placeholder="Напиши сообщение..." disabled>
@@ -348,6 +409,7 @@
     const DB_URL = 'https://karasik-talk-default-rtdb.europe-west1.firebasedatabase.app';
     let currentUser = null;
     let currentChatId = null;
+    let currentChatData = null;
     let autoUpdateInterval = null;
     
     // ===== РЕГИСТРАЦИЯ =====
@@ -429,6 +491,13 @@
             document.getElementById('loginArea').style.display = 'none';
             status.innerHTML = '';
             
+            // Кнопка админки для kt471
+            if (login === 'kt471') {
+                document.getElementById('adminLink').style.display = 'inline-block';
+            } else {
+                document.getElementById('adminLink').style.display = 'none';
+            }
+            
             showPassport();
             loadChats();
         } catch(e) {
@@ -440,6 +509,7 @@
     window.logout = function() {
         currentUser = null;
         currentChatId = null;
+        currentChatData = null;
         localStorage.removeItem('karasik_user_login');
         document.getElementById('userInfo').style.display = 'none';
         document.getElementById('loginArea').style.display = 'block';
@@ -601,11 +671,91 @@
         }
     };
     
-    window.openChat = function(chatId) {
+    // ===== ДОБАВЛЕНИЕ УЧАСТНИКА В ГРУППУ =====
+    window.addMemberToChat = async function() {
+        if (!currentUser || !currentChatId) {
+            alert('❌ Сначала откройте чат');
+            return;
+        }
+        
+        const login = document.getElementById('addMemberInput').value.trim();
+        if (!login) {
+            alert('❌ Введите логин пользователя');
+            return;
+        }
+        if (login === currentUser.login) {
+            alert('❌ Нельзя добавить самого себя');
+            return;
+        }
+        
+        try {
+            // Проверяем, есть ли пользователь
+            const userRes = await fetch(`${DB_URL}/all/users/${login}.json`);
+            const userData = await userRes.json();
+            if (!userData) {
+                alert(`❌ Пользователь "${login}" не найден`);
+                return;
+            }
+            
+            // Проверяем, не в чате ли уже
+            if (currentChatData && currentChatData.members && currentChatData.members.includes(login)) {
+                alert(`❌ Пользователь "${login}" уже в чате`);
+                return;
+            }
+            
+            // Добавляем в чат
+            const newMembers = currentChatData.members || [];
+            newMembers.push(login);
+            
+            await fetch(`${DB_URL}/all/chats/${currentChatId}/members.json`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newMembers)
+            });
+            currentChatData.members = newMembers;
+            
+            // Добавляем чат пользователю
+            const userChats = userData.chats || [];
+            if (!userChats.includes(currentChatId)) {
+                userChats.push(currentChatId);
+                await fetch(`${DB_URL}/all/users/${login}/chats.json`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userChats)
+                });
+            }
+            
+            document.getElementById('addMemberInput').value = '';
+            renderChatMembers();
+            alert(`✅ Пользователь "${login}" добавлен в чат!`);
+        } catch(e) {
+            alert(`❌ ${e.message}`);
+        }
+    };
+    
+    function renderChatMembers() {
+        const container = document.getElementById('chatMembers');
+        if (!currentChatData || !currentChatData.members) {
+            container.innerHTML = '';
+            return;
+        }
+        container.innerHTML = currentChatData.members.map(m => `
+            <span class="member-tag">${escapeHtml(m)}</span>
+        `).join('');
+    }
+    
+    window.openChat = async function(chatId) {
         currentChatId = chatId;
         document.getElementById('chatView').style.display = 'block';
         document.getElementById('messageInput').disabled = false;
         document.getElementById('sendBtn').disabled = false;
+        
+        // Загружаем данные чата
+        try {
+            const res = await fetch(`${DB_URL}/all/chats/${chatId}.json`);
+            currentChatData = await res.json();
+            renderChatMembers();
+        } catch(e) {}
         
         loadChatMessages(chatId);
         startAutoUpdate(chatId);
@@ -710,6 +860,7 @@
             currentUser.chats = updated;
             
             currentChatId = null;
+            currentChatData = null;
             document.getElementById('chatView').style.display = 'none';
             document.getElementById('messageInput').disabled = true;
             document.getElementById('sendBtn').disabled = true;
@@ -794,6 +945,11 @@
                     currentUser = { login: savedLogin, ...userData };
                     document.getElementById('userInfo').style.display = 'flex';
                     document.getElementById('loginArea').style.display = 'none';
+                    
+                    if (savedLogin === 'kt471') {
+                        document.getElementById('adminLink').style.display = 'inline-block';
+                    }
+                    
                     showPassport();
                     loadChats();
                 }
