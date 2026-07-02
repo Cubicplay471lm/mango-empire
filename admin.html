@@ -65,7 +65,7 @@
             color: #6b4a3a;
         }
         h3 { margin: 20px 0 12px 0; color: #8b6b4a; }
-        input, textarea, select {
+        input, textarea {
             width: 100%;
             padding: 12px;
             margin: 6px 0;
@@ -73,7 +73,6 @@
             border-radius: 16px;
             font-family: inherit;
         }
-        select { appearance: auto; }
         button {
             background: #f4a460;
             color: white;
@@ -88,6 +87,7 @@
         button.secondary { background: #6b7280; }
         button.primary { background: #1a6a8a; }
         button.success { background: #4a8a4a; }
+        button.warning-btn { background: #ff8c00; }
         
         .item {
             background: #fff8f0;
@@ -143,6 +143,43 @@
             color: #155724;
         }
         .loading-spinner { text-align: center; padding: 20px; color: #6b4a3a; }
+        .msg-user { font-weight: bold; color: #6b4a3a; }
+        .msg-time { font-size: 0.7rem; color: #b89a7a; float: right; }
+        .msg-text { margin-top: 4px; color: #4a3a2a; }
+        
+        .clear-btn {
+            background: #dc2626;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 12px;
+            font-size: 0.9rem;
+        }
+        .clear-btn:hover { background: #b71c1c; }
+        
+        .header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .auto-update-badge {
+            background: #4a8a4a;
+            color: white;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
         
         .user-item {
             background: #e8f4fd;
@@ -170,6 +207,7 @@
             color: white;
             font-weight: bold;
         }
+        .user-item .nopassport { color: #b89a7a; font-size: 0.8rem; }
         .user-item .upassword {
             font-size: 0.7rem;
             color: #6b8a9a;
@@ -177,54 +215,6 @@
             background: #f0f0f0;
             padding: 1px 8px;
             border-radius: 10px;
-        }
-        .chat-item {
-            background: #e8f4fd;
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin-bottom: 8px;
-            border-left: 3px solid #1a6a8a;
-            cursor: pointer;
-        }
-        .chat-item:hover { background: #d0e4f0; }
-        
-        .header-flex {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .clear-btn {
-            background: #dc2626;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 30px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-        .clear-btn:hover { background: #b71c1c; }
-        
-        .message-in-chat {
-            background: #f8f0e8;
-            border-radius: 12px;
-            padding: 10px 14px;
-            margin-bottom: 6px;
-            border-left: 3px solid #1a6a8a;
-        }
-        .message-in-chat .msg-user { font-weight: bold; color: #1a4a6a; }
-        .message-in-chat .msg-time { font-size: 0.65rem; color: #b89a7a; float: right; }
-        .message-in-chat .msg-text { margin-top: 4px; color: #4a3a2a; }
-        
-        .chat-messages-box {
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 12px;
-            background: #faf6f0;
-            border-radius: 16px;
-            border: 1px solid #f0d5b0;
-            margin-top: 12px;
         }
         
         @media (max-width: 600px) {
@@ -246,6 +236,7 @@
 
 <div id="adminContent" class="admin-content">
     <div class="container">
+        <!-- Главная -->
         <div class="card">
             <h2>👑 АДМИН ПАНЕЛЬ - КАРАСИКОСЛАВИЯ</h2>
             <div class="stats">🐟 Все данные в Firebase 🔥</div>
@@ -255,10 +246,11 @@
                 <button onclick="window.fullWipe()" class="danger">🗑️ Полная очистка</button>
                 <button onclick="window.logout()" class="secondary">🚪 Выйти</button>
             </div>
-            <div class="warning">⚠️ Все пользователи, паспорта и чаты хранятся в Firebase</div>
+            <div class="warning">⚠️ Все пользователи, паспорта и чаты хранятся только в Firebase</div>
             <div id="statusMsg"></div>
         </div>
 
+        <!-- Пользователи -->
         <div class="card">
             <h2>👥 Пользователи</h2>
             <div id="usersStats" class="stats">Загрузка...</div>
@@ -270,11 +262,12 @@
                 <input type="password" id="newUserPassword" placeholder="Пароль" style="flex:1">
             </div>
             <input type="text" id="newUserFullName" placeholder="Полное имя (паспорт)">
-            <input type="text" id="newUserRole" placeholder="Роль">
+            <input type="text" id="newUserRole" placeholder="Роль (например: Золотой карасик)">
             <input type="text" id="newUserBirthDate" placeholder="Дата рождения">
-            <button onclick="window.createUser()" class="primary">👤 Создать</button>
+            <button onclick="window.createUser()" class="primary">👤 Создать пользователя с паспортом</button>
         </div>
 
+        <!-- Объявления -->
         <div class="card">
             <h2>📢 Объявления</h2>
             <div id="announcementsList"><div class="loading-spinner">🔄 Загрузка...</div></div>
@@ -285,32 +278,22 @@
             <button onclick="window.createAnnouncement()" class="primary">📢 Опубликовать</button>
         </div>
 
+        <!-- Чаты -->
         <div class="card">
             <div class="header-flex">
                 <h2 style="margin-bottom:0;">💬 Чаты</h2>
-                <button onclick="window.clearAllChats()" class="clear-btn">🗑️ Удалить все чаты</button>
+                <button onclick="window.clearAllChats()" class="danger" style="font-size:0.9rem; padding:8px 20px;">🗑️ Удалить все чаты</button>
             </div>
             <div id="chatsStats" class="stats">Загрузка...</div>
-            
-            <!-- Выпадающий список чатов -->
-            <select id="chatSelector" onchange="window.selectChat()" style="margin-bottom:12px;">
-                <option value="">— Выберите чат —</option>
-            </select>
-            
-            <!-- Информация о чате и сообщения -->
-            <div id="chatDetail">
-                <div id="chatInfo" style="margin-bottom:8px; color:#6b4a3a;"></div>
-                <div id="chatMessagesList" class="chat-messages-box">
-                    <div class="loading-spinner">💬 Выберите чат для просмотра сообщений</div>
-                </div>
-            </div>
+            <div id="chatsList"><div class="loading-spinner">🔄 Загрузка...</div></div>
         </div>
 
+        <!-- JSON -->
         <div class="card">
             <h2>💾 Данные</h2>
             <button onclick="window.downloadJSON()" style="width:100%;">📥 Скачать all.json</button>
             <hr>
-            <h3>Текущие данные:</h3>
+            <h3>Текущие данные (из Firebase):</h3>
             <pre id="jsonPreview" class="json-box">Загрузка...</pre>
         </div>
     </div>
@@ -321,38 +304,16 @@
         const ADMIN_PASSWORD = "рыбнадзор";
         const DB_URL = 'https://karasik-talk-default-rtdb.europe-west1.firebasedatabase.app';
         let db = { all: { users: {}, chats: {}, announcements: {} } };
-        let currentChatId = null;
-        let chatMessages = [];
-        
-        // ===== ВХОД В АДМИНКУ =====
-        window.checkPassword = function() {
-            const inputPass = document.getElementById('adminPassword').value;
-            const errorDiv = document.getElementById('loginError');
-            if (inputPass === ADMIN_PASSWORD) {
-                sessionStorage.setItem('admin_auth', 'true');
-                document.getElementById('loginOverlay').style.display = 'none';
-                document.getElementById('adminContent').style.display = 'block';
-                window.loadFromFirebase();
-            } else {
-                errorDiv.textContent = '❌ Неверный пароль';
-            }
-        };
-        
-        window.logout = function() {
-            sessionStorage.removeItem('admin_auth');
-            document.getElementById('loginOverlay').style.display = 'flex';
-            document.getElementById('adminContent').style.display = 'none';
-            document.getElementById('adminPassword').value = '';
-            document.getElementById('loginError').textContent = '';
-        };
         
         // ===== ЗАГРУЗКА ИЗ FIREBASE =====
         window.loadFromFirebase = async function() {
             try {
                 document.getElementById('statusMsg').innerHTML = '<div class="loading-spinner">🔄 Загрузка из Firebase...</div>';
+                
                 const res = await fetch(`${DB_URL}/all.json`);
                 const data = await res.json();
                 db.all = data || { users: {}, chats: {}, announcements: {} };
+                
                 renderAll();
                 document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Загружено из Firebase!</div>';
                 setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
@@ -365,11 +326,13 @@
         window.saveToFirebase = async function() {
             try {
                 document.getElementById('statusMsg').innerHTML = '<div class="loading-spinner">💾 Сохранение в Firebase...</div>';
+                
                 await fetch(`${DB_URL}/all.json`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(db.all)
                 });
+                
                 document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Сохранено в Firebase!</div>';
                 setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
             } catch (e) {
@@ -391,6 +354,28 @@
             } catch (e) {
                 document.getElementById('statusMsg').innerHTML = `<div class="warning">❌ ${e.message}</div>`;
             }
+        };
+        
+        // ===== ВХОД В АДМИНКУ =====
+        window.checkPassword = function() {
+            const inputPass = document.getElementById('adminPassword').value;
+            const errorDiv = document.getElementById('loginError');
+            if (inputPass === ADMIN_PASSWORD) {
+                sessionStorage.setItem('admin_auth', 'true');
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('adminContent').style.display = 'block';
+                window.loadFromFirebase();
+            } else {
+                errorDiv.textContent = '❌ Неверный пароль';
+            }
+        };
+        
+        window.logout = function() {
+            sessionStorage.removeItem('admin_auth');
+            document.getElementById('loginOverlay').style.display = 'flex';
+            document.getElementById('adminContent').style.display = 'none';
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('loginError').textContent = '';
         };
         
         // ===== ОТОБРАЖЕНИЕ =====
@@ -421,11 +406,14 @@
                 let passportHtml = '';
                 if (hasPassport) {
                     passportHtml = `
-                        <span class="upassport">🎫 ${escapeHtml(u.passport.fullName)}</span>
-                        <span class="urole">${escapeHtml(u.passport.role || 'Обычный карасик')}</span>
+                        <div style="margin-top:4px;">
+                            <span class="upassport">🎫 ${escapeHtml(u.passport.fullName)}</span>
+                            <span class="urole">${escapeHtml(u.passport.role || 'Обычный карасик')}</span>
+                            ${u.passport.birthDate ? `<span style="font-size:0.7rem; color:#6b8a9a;">📅 ${escapeHtml(u.passport.birthDate)}</span>` : ''}
+                        </div>
                     `;
                 } else {
-                    passportHtml = `<span class="nopassport" style="color:#b89a7a; font-size:0.8rem;">❌ Нет паспорта</span>`;
+                    passportHtml = `<div class="nopassport">❌ Нет паспорта</div>`;
                 }
                 
                 return `
@@ -435,10 +423,11 @@
                             <span class="upassword">🔑 ${escapeHtml(u.password || '—')}</span>
                             <button class="danger" onclick="window.deleteUser('${login}')" style="font-size:11px; padding:2px 12px;">❌</button>
                         </span>
-                        <div style="margin-top:4px;">${passportHtml}</div>
+                        ${passportHtml}
                         <div style="font-size:0.8rem; color:#6b8a9a; margin-top:4px;">
                             💬 Чатов: ${u.chats ? u.chats.length : 0}
-                            <button class="secondary" onclick="window.editPassport('${login}')" style="font-size:10px; padding:2px 12px;">✏️ Редактировать</button>
+                            ${u.createdAt ? `| 📅 ${new Date(u.createdAt).toLocaleDateString()}` : ''}
+                            <button class="secondary" onclick="window.editPassport('${login}')" style="font-size:10px; padding:2px 12px;">✏️ Редактировать паспорт</button>
                         </div>
                     </div>
                 `;
@@ -488,7 +477,7 @@
                 return;
             }
             if (!fullName) {
-                alert('❌ Заполните полное имя');
+                alert('❌ Заполните полное имя (паспорт)');
                 return;
             }
             
@@ -510,7 +499,7 @@
             document.getElementById('newUserBirthDate').value = '';
             
             renderAll();
-            document.getElementById('statusMsg').innerHTML = `<div class="success-msg">✅ Пользователь ${login} создан!</div>`;
+            document.getElementById('statusMsg').innerHTML = `<div class="success-msg">✅ Пользователь ${login} создан с паспортом! Сохрани в Firebase.</div>`;
             setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
         };
         
@@ -541,161 +530,136 @@
             }).join('');
         }
         
-        window.toggleAnnouncement = function(id) {
-            const ann = db.all.announcements[id];
-            if (!ann) return;
-            ann.active = ann.active === false ? true : false;
-            renderAll();
+        window.toggleAnnouncement = async function(id) {
+            try {
+                // Загружаем актуальные данные из Firebase
+                const res = await fetch(`${DB_URL}/all/announcements.json`);
+                const announcements = await res.json() || {};
+                
+                if (announcements[id]) {
+                    announcements[id].active = announcements[id].active === false ? true : false;
+                    
+                    // Сохраняем обратно
+                    await fetch(`${DB_URL}/all/announcements.json`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(announcements)
+                    });
+                    
+                    // Обновляем локальную базу
+                    db.all.announcements = announcements;
+                    renderAll();
+                    document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Обновлено!</div>';
+                    setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
+                }
+            } catch (error) {
+                document.getElementById('statusMsg').innerHTML = `<div class="warning">❌ Ошибка: ${error.message}</div>`;
+            }
         };
         
-        window.deleteAnnouncement = function(id) {
+        window.deleteAnnouncement = async function(id) {
             if (!confirm('Удалить объявление?')) return;
-            delete db.all.announcements[id];
-            renderAll();
+            
+            try {
+                const res = await fetch(`${DB_URL}/all/announcements.json`);
+                const announcements = await res.json() || {};
+                delete announcements[id];
+                
+                await fetch(`${DB_URL}/all/announcements.json`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(announcements)
+                });
+                
+                db.all.announcements = announcements;
+                renderAll();
+                document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Объявление удалено!</div>';
+                setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
+            } catch (error) {
+                document.getElementById('statusMsg').innerHTML = `<div class="warning">❌ Ошибка: ${error.message}</div>`;
+            }
         };
         
-        window.createAnnouncement = function() {
+        window.createAnnouncement = async function() {
             const title = document.getElementById('annTitle').value.trim();
             const text = document.getElementById('annText').value.trim();
+            
             if (!title || !text) {
                 alert('❌ Заполните заголовок и текст');
                 return;
             }
             
-            const id = Date.now().toString();
-            db.all.announcements[id] = {
-                title,
-                text,
-                date: new Date().toLocaleDateString(),
-                active: true
-            };
-            
-            document.getElementById('annTitle').value = '';
-            document.getElementById('annText').value = '';
-            renderAll();
-            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Объявление создано!</div>';
-            setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
+            try {
+                const res = await fetch(`${DB_URL}/all/announcements.json`);
+                const announcements = await res.json() || {};
+                
+                const id = Date.now().toString();
+                announcements[id] = {
+                    title: title,
+                    text: text,
+                    date: new Date().toLocaleDateString(),
+                    active: true
+                };
+                
+                await fetch(`${DB_URL}/all/announcements.json`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(announcements)
+                });
+                
+                db.all.announcements = announcements;
+                
+                document.getElementById('annTitle').value = '';
+                document.getElementById('annText').value = '';
+                
+                renderAll();
+                document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Объявление создано!</div>';
+                setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
+            } catch (error) {
+                document.getElementById('statusMsg').innerHTML = `<div class="warning">❌ Ошибка: ${error.message}</div>`;
+            }
         };
         
         // --- ЧАТЫ ---
         function renderChats() {
             const stats = document.getElementById('chatsStats');
-            const select = document.getElementById('chatSelector');
+            const list = document.getElementById('chatsList');
             const chats = db.all.chats || {};
             const keys = Object.keys(chats);
             stats.innerHTML = `💬 Всего чатов: ${keys.length}`;
             
-            // Обновляем выпадающий список
-            const currentValue = select.value;
-            select.innerHTML = '<option value="">— Выберите чат —</option>';
-            keys.forEach(id => {
-                const c = chats[id];
-                const option = document.createElement('option');
-                option.value = id;
-                option.textContent = `${c.name || 'Без названия'} (${c.members ? c.members.length : 0} участников)`;
-                if (id === currentValue) option.selected = true;
-                select.appendChild(option);
-            });
-            
-            // Если есть выбранный чат, показываем его сообщения
-            if (currentValue && chats[currentValue]) {
-                showChatMessages(currentValue, chats[currentValue]);
-            } else {
-                document.getElementById('chatInfo').innerHTML = '';
-                document.getElementById('chatMessagesList').innerHTML = '<div class="loading-spinner">💬 Выберите чат для просмотра сообщений</div>';
-            }
-        }
-        
-        window.selectChat = function() {
-            const select = document.getElementById('chatSelector');
-            const chatId = select.value;
-            const chats = db.all.chats || {};
-            
-            if (chatId && chats[chatId]) {
-                showChatMessages(chatId, chats[chatId]);
-            } else {
-                document.getElementById('chatInfo').innerHTML = '';
-                document.getElementById('chatMessagesList').innerHTML = '<div class="loading-spinner">💬 Выберите чат для просмотра сообщений</div>';
-            }
-        };
-        
-        function showChatMessages(chatId, chatData) {
-            const infoDiv = document.getElementById('chatInfo');
-            const messagesDiv = document.getElementById('chatMessagesList');
-            
-            infoDiv.innerHTML = `
-                <strong>💬 ${escapeHtml(chatData.name || 'Без названия')}</strong>
-                <span style="margin-left:12px; color:#6b8a9a;">👥 ${chatData.members ? chatData.members.join(', ') : '—'}</span>
-                <span style="margin-left:12px; color:#6b8a9a;">📅 ${chatData.createdAt ? new Date(chatData.createdAt).toLocaleDateString() : '—'}</span>
-                <button class="danger" onclick="window.deleteChat('${chatId}')" style="font-size:11px; padding:4px 16px; margin-left:12px;">🗑️ Удалить чат</button>
-            `;
-            
-            const messages = chatData.messages || {};
-            const keys = Object.keys(messages);
-            
             if (keys.length === 0) {
-                messagesDiv.innerHTML = '<div class="loading-spinner">💬 Сообщений в этом чате нет</div>';
+                list.innerHTML = '<p style="text-align:center;">💬 Нет чатов</p>';
                 return;
             }
             
-            const sortedKeys = keys.sort((a, b) => (messages[a].timestamp || 0) - (messages[b].timestamp || 0));
-            
-            messagesDiv.innerHTML = sortedKeys.map(id => {
-                const m = messages[id];
-                const time = m.timestamp ? new Date(m.timestamp).toLocaleString() : '';
+            list.innerHTML = keys.map(id => {
+                const c = chats[id];
                 return `
-                    <div class="message-in-chat">
-                        <span class="msg-user">${escapeHtml(m.from)}</span>
-                        <span class="msg-time">${time}</span>
-                        <div class="msg-text">${escapeHtml(m.text)}</div>
-                        <button class="danger" onclick="window.deleteMessageFromChat('${chatId}','${id}')" style="font-size:10px; padding:2px 12px; margin-top:4px;">🗑️ Удалить</button>
+                    <div class="item" style="border-left-color:#1a6a8a;">
+                        <strong>💬 ${escapeHtml(c.name)}</strong>
+                        <span style="float:right;">
+                            <button class="danger" onclick="window.deleteChat('${id}')" style="font-size:11px; padding:2px 12px;">🗑️</button>
+                        </span>
+                        <div style="font-size:0.8rem; color:#6b8a9a;">
+                            👥 ${c.members ? c.members.join(', ') : '—'}
+                            <span style="margin-left:12px;">📅 ${c.createdAt ? new Date(c.createdAt).toLocaleDateString() : '—'}</span>
+                            <span style="margin-left:12px;">💬 ${c.messages ? Object.keys(c.messages).length : 0} сообщений</span>
+                        </div>
                     </div>
                 `;
             }).join('');
         }
         
-        window.deleteMessageFromChat = function(chatId, messageId) {
-            if (!confirm('Удалить это сообщение?')) return;
-            
-            const chat = db.all.chats[chatId];
-            if (!chat) return;
-            
-            delete chat.messages[messageId];
-            renderAll();
-            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Сообщение удалено!</div>';
-            setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
-        };
-        
         window.deleteChat = function(id) {
-            if (!confirm(`Удалить чат и все сообщения в нём?`)) return;
-            
-            // Удаляем чат у всех пользователей
-            const chat = db.all.chats[id];
-            if (chat && chat.members) {
-                chat.members.forEach(login => {
-                    const user = db.all.users[login];
-                    if (user && user.chats) {
-                        user.chats = user.chats.filter(c => c !== id);
-                    }
-                });
-            }
-            
+            if (!confirm(`Удалить чат?`)) return;
             delete db.all.chats[id];
             renderAll();
-            document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Чат удалён!</div>';
-            setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
         };
         
         window.clearAllChats = function() {
             if (!confirm('🗑️ УДАЛИТЬ ВСЕ ЧАТЫ?')) return;
             if (!confirm('ЕЩЁ РАЗ: ВСЕ ЧАТЫ БУДУТ УДАЛЕНЫ!')) return;
-            
-            // Очищаем чаты у всех пользователей
-            const users = db.all.users || {};
-            Object.keys(users).forEach(login => {
-                users[login].chats = [];
-            });
-            
             db.all.chats = {};
             renderAll();
             document.getElementById('statusMsg').innerHTML = '<div class="success-msg">🗑️ Все чаты удалены!</div>';
