@@ -34,9 +34,10 @@
             --user-bg: #e8f5e8;
             --notification: #1a6a8a;
             --notification-text: #ffffff;
+            --success: #4a8a4a;
+            --danger: #dc2626;
         }
         
-        /* ===== ТЁМНАЯ ===== */
         [data-theme="dark"] {
             --bg: #1a1a2e;
             --bg2: #16162a;
@@ -53,7 +54,6 @@
             --notification-text: #1a1a2e;
         }
         
-        /* ===== ЦВЕТА ===== */
         [data-color="blue"] { --border: #4a8ad4; --primary: #4a8ad4; --primary-dark: #3a7ac4; --notification: #4a8ad4; }
         [data-color="green"] { --border: #4aaf4a; --primary: #4aaf4a; --primary-dark: #3a9f3a; --notification: #4aaf4a; }
         [data-color="purple"] { --border: #9b59b6; --primary: #9b59b6; --primary-dark: #8b49a6; --notification: #9b59b6; }
@@ -88,7 +88,6 @@
         }
         .subtitle { color: var(--text-light); padding-left: 16px; margin-bottom: 20px; }
         
-        /* ===== ТОП БАР ===== */
         .top-bar {
             display: flex;
             justify-content: flex-end;
@@ -122,55 +121,6 @@
         .color-btn:hover { transform: scale(1.1); }
         .color-btn.active { border: 3px solid var(--notification); box-shadow: 0 0 12px var(--notification); }
         
-        /* ===== УВЕДОМЛЕНИЯ ===== */
-        .notification-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-width: 350px;
-            width: 100%;
-        }
-        .notification {
-            background: var(--notification);
-            color: var(--notification-text);
-            padding: 14px 20px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            animation: slideIn 0.4s ease-out;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .notification .icon { font-size: 1.4rem; }
-        .notification .text { flex: 1; }
-        .notification .close {
-            background: none;
-            border: none;
-            color: var(--notification-text);
-            font-size: 1.2rem;
-            cursor: pointer;
-            opacity: 0.7;
-        }
-        .notification .close:hover { opacity: 1; }
-        .notification.fade-out { animation: fadeOut 0.3s ease-in forwards; }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translateX(0); }
-            to { opacity: 0; transform: translateX(50px); }
-        }
-        
-        /* ===== ЛОГИН ===== */
         .login-area {
             background: var(--bg2);
             padding: 16px;
@@ -397,6 +347,161 @@
         .announcement-item p { color: var(--text-light); }
         .announcement-item small { color: var(--text-light); font-size: 0.7rem; }
         
+        /* ===== ПОСТЫ ===== */
+        .post-item {
+            background: var(--bg2);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--border);
+            transition: 0.2s;
+        }
+        .post-item .post-author {
+            font-weight: bold;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .post-item .post-author .online-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .post-item .post-author .online-indicator.online { background: #4a8a4a; }
+        .post-item .post-author .online-indicator.offline { background: #b89a7a; }
+        .post-item .post-time {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            margin-left: 8px;
+        }
+        .post-item .post-text {
+            margin-top: 8px;
+            color: var(--text);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .post-item .post-actions {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .post-item .post-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: 0.2s;
+        }
+        .post-item .post-actions button:hover { color: var(--primary); }
+        .post-item .post-actions .liked { color: #e84393; }
+        .post-item .post-badge {
+            font-size: 0.65rem;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 8px;
+        }
+        .post-item .post-badge.new { background: #4a8ad4; color: white; }
+        .post-item .post-badge.popular { background: #f4a460; color: white; }
+        .post-item .comments-section {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--input-border);
+        }
+        .post-item .comment-item {
+            background: var(--chat-bg);
+            border-radius: 12px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+        }
+        .post-item .comment-item .comment-author {
+            font-weight: bold;
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+        .post-item .comment-item .comment-text {
+            color: var(--text);
+            font-size: 0.9rem;
+            margin-top: 2px;
+        }
+        .post-item .comment-item .comment-time {
+            font-size: 0.6rem;
+            color: var(--text-light);
+            float: right;
+        }
+        .post-item .add-comment-area {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .post-item .add-comment-area input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px solid var(--input-border);
+            border-radius: 30px;
+            font-size: 0.85rem;
+            background: var(--input-bg);
+            color: var(--text);
+        }
+        .post-item .add-comment-area button {
+            background: var(--primary);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .create-post-area {
+            background: var(--bg2);
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+        }
+        .create-post-area textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--input-border);
+            border-radius: 16px;
+            background: var(--input-bg);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: vertical;
+            min-height: 80px;
+        }
+        .create-post-area textarea:focus { outline: none; border-color: var(--border); }
+        .create-post-area button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 30px;
+            background: var(--secondary);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: 0.2s;
+        }
+        .create-post-area button:hover { opacity: 0.85; }
+        .create-post-area .disabled-msg {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            text-align: center;
+            margin-top: 6px;
+        }
+        
         footer { text-align: center; color: var(--text-light); font-size: 0.7rem; margin-top: 28px; }
         
         @media (max-width: 500px) {
@@ -404,14 +509,12 @@
             .top-bar { justify-content: center; }
             .chat-input-area { flex-direction: column; }
             .chat-input-area button { padding: 14px; }
-            .notification-container { max-width: 90%; right: 5%; top: 10px; }
+            .tabs { gap: 6px; }
+            .tab-btn { padding: 8px 14px; font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
-
-<!-- ===== УВЕДОМЛЕНИЯ ===== -->
-<div id="notificationContainer" class="notification-container"></div>
 
 <div class="container">
     <div class="card">
@@ -449,6 +552,7 @@
             <button class="tab-btn active" onclick="switchTab('chats')">💬 Чаты</button>
             <button class="tab-btn" onclick="switchTab('passport')">📋 Паспорт</button>
             <button class="tab-btn" onclick="switchTab('announcements')">📢 Новости</button>
+            <button class="tab-btn" onclick="switchTab('posts')">📝 Посты</button>
         </div>
         
         <!-- Чаты -->
@@ -484,13 +588,25 @@
             <div id="announcementsResult"><div class="loading">📢 Нажми "Загрузить новости"</div></div>
         </div>
         
+        <!-- Посты -->
+        <div id="tab-posts" class="tab-content">
+            <div id="postsContainer">
+                <div id="createPostArea" class="create-post-area" style="display:none;">
+                    <textarea id="postInput" placeholder="Что нового? (макс 500 символов)" maxlength="500"></textarea>
+                    <button onclick="createPost()">📝 Опубликовать пост</button>
+                    <div class="disabled-msg" id="postDisabledMsg"></div>
+                </div>
+                <div id="postsList"><div class="loading">📝 Загрузка постов...</div></div>
+            </div>
+        </div>
+        
     </div>
     <footer>🐟 Карасикославия · Все данные в Firebase 🔥</footer>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-    import { getDatabase, ref, get, set, push, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+    import { getDatabase, ref, get, set, push, onValue, serverTimestamp, update, remove } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
     
     const firebaseConfig = {
         apiKey: "AIzaSyCCyxK7YqIPmgYfhfU4FtcVS9IVuxNWh78",
@@ -511,41 +627,6 @@
     window.currentUser = null;
     window.currentChatId = null;
     window.updateInterval = null;
-    window.notificationSound = null;
-    
-    // ===== УВЕДОМЛЕНИЯ =====
-    window.showNotification = function(message, icon = '🐟', duration = 4000) {
-        const container = document.getElementById('notificationContainer');
-        const notif = document.createElement('div');
-        notif.className = 'notification';
-        notif.innerHTML = `
-            <span class="icon">${icon}</span>
-            <span class="text">${message}</span>
-            <button class="close" onclick="this.parentElement.remove()">✕</button>
-        `;
-        container.appendChild(notif);
-        
-        // Автоудаление
-        setTimeout(() => {
-            if (notif.parentElement) {
-                notif.classList.add('fade-out');
-                setTimeout(() => notif.remove(), 300);
-            }
-        }, duration);
-        
-        // Звук (опционально)
-        try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.frequency.value = 800;
-            gain.gain.value = 0.1;
-            osc.start();
-            osc.stop(ctx.currentTime + 0.15);
-        } catch(e) {}
-    };
     
     // ===== ТЕМА =====
     window.toggleTheme = function() {
@@ -554,7 +635,6 @@
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('karasik-theme', newTheme);
         document.querySelector('.theme-btn').textContent = newTheme === 'dark' ? '☀️' : '🌙';
-        showNotification(newTheme === 'dark' ? 'Включена тёмная тема' : 'Включена светлая тема', '🎨');
     };
     
     window.setColor = function(color) {
@@ -562,11 +642,8 @@
         localStorage.setItem('karasik-color', color);
         document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
         document.querySelector(`.color-btn[data-color="${color}"]`)?.classList.add('active');
-        const names = { orange: 'Оранжевый', blue: 'Синий', green: 'Зелёный', purple: 'Фиолетовый', pink: 'Розовый' };
-        showNotification(`Цвет: ${names[color] || color}`, '🎨');
     };
     
-    // Загрузка темы
     const savedTheme = localStorage.getItem('karasik-theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
     document.querySelector('.theme-btn').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
@@ -616,7 +693,6 @@
             });
             
             status.innerHTML = '<div class="success-box">✅ Регистрация успешна! Теперь войдите.</div>';
-            showNotification('Регистрация успешна! 🎉', '✅');
         } catch(e) {
             status.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
         }
@@ -653,7 +729,8 @@
             
             showPassport();
             loadChats();
-            showNotification(`Добро пожаловать, ${login}! 🐟`, '👋');
+            loadPosts();
+            showCreatePostArea();
         } catch(e) {
             status.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
         }
@@ -669,7 +746,8 @@
         document.getElementById('chatView').style.display = 'none';
         document.getElementById('chatsList').innerHTML = '<div class="loading">💬 Войдите, чтобы видеть чаты</div>';
         if (window.updateInterval) { clearInterval(window.updateInterval); window.updateInterval = null; }
-        showNotification('Вы вышли из аккаунта', '👋');
+        document.getElementById('createPostArea').style.display = 'none';
+        document.getElementById('postsList').innerHTML = '<div class="loading">📝 Войдите, чтобы видеть посты</div>';
     };
     
     // ===== ПАСПОРТ =====
@@ -756,7 +834,6 @@
             
             await apiPut(`chats/${chatId}`, chatData);
             
-            // Обновляем списки пользователей
             const userChats = window.currentUser.chats || [];
             userChats.push(chatId);
             await apiPut(`users/${window.currentUser.login}/chats`, userChats);
@@ -807,7 +884,6 @@
             }
             
             const sorted = keys.sort((a, b) => (messages[a].timestamp || 0) - (messages[b].timestamp || 0));
-            
             let html = sorted.map(id => {
                 const m = messages[id];
                 return `
@@ -818,15 +894,6 @@
                     </div>
                 `;
             }).join('');
-            
-            // Уведомление о новом сообщении
-            if (!silent && container.innerHTML !== html) {
-                // Показываем уведомление только если чат открыт и сообщение не от нас
-                const lastMsg = sorted.length > 0 ? messages[sorted[sorted.length - 1]] : null;
-                if (lastMsg && lastMsg.from !== window.currentUser?.login) {
-                    showNotification(`💬 ${lastMsg.from}: ${lastMsg.text.substring(0, 30)}${lastMsg.text.length > 30 ? '...' : ''}`, '💬');
-                }
-            }
             
             container.innerHTML = html;
             container.scrollTop = container.scrollHeight;
@@ -882,7 +949,6 @@
             document.getElementById('sendBtn').disabled = true;
             if (window.updateInterval) { clearInterval(window.updateInterval); window.updateInterval = null; }
             loadChats();
-            showNotification('Вы покинули чат', '👋');
         } catch(e) {
             showNotification(`Ошибка: ${e.message}`, '❌');
         }
@@ -913,13 +979,246 @@
         }
     };
     
+    // ===== ПОСТЫ =====
+    function showCreatePostArea() {
+        const container = document.getElementById('createPostArea');
+        if (window.currentUser && window.currentUser.passport && window.currentUser.passport.fullName) {
+            container.style.display = 'block';
+            document.getElementById('postDisabledMsg').textContent = '';
+        } else {
+            container.style.display = 'block';
+            document.getElementById('postDisabledMsg').textContent = '⚠️ У вас нет паспорта, вы не можете создавать посты.';
+            document.getElementById('postInput').disabled = true;
+            // остальное не блокируем, но кнопка будет работать, проверим
+        }
+    }
+    
+    async function loadPosts() {
+        const container = document.getElementById('postsList');
+        container.innerHTML = '🔄 Загрузка...';
+        
+        try {
+            const posts = await apiFetch('posts') || {};
+            const keys = Object.keys(posts);
+            if (keys.length === 0) {
+                container.innerHTML = '<div class="loading">📝 Нет постов. Будь первым!</div>';
+                return;
+            }
+            
+            // Сортируем по времени (новые сверху)
+            const sortedKeys = keys.sort((a, b) => (posts[b].timestamp || 0) - (posts[a].timestamp || 0));
+            
+            // Проверяем онлайн статус для авторов
+            const onlineStatuses = {};
+            for (const key of sortedKeys) {
+                const author = posts[key].author;
+                if (author && !onlineStatuses[author]) {
+                    try {
+                        const status = await apiFetch(`users/${author}/online`) || {};
+                        onlineStatuses[author] = status.status === 'online';
+                    } catch(e) { onlineStatuses[author] = false; }
+                }
+            }
+            
+            let html = '';
+            for (const key of sortedKeys) {
+                const post = posts[key];
+                const isOnline = onlineStatuses[post.author] || false;
+                const likesCount = post.likes || 0;
+                const comments = post.comments || {};
+                const commentKeys = Object.keys(comments);
+                const timeAgo = getTimeAgo(post.timestamp);
+                const isNew = (Date.now() - (post.timestamp || 0)) < 3600000; // 1 час
+                const isPopular = likesCount >= 5;
+                
+                let badgeHtml = '';
+                if (isNew) badgeHtml = `<span class="post-badge new">Новый</span>`;
+                if (isPopular) badgeHtml += `<span class="post-badge popular">🔥 Популярный</span>`;
+                
+                const isLiked = window.currentUser && post.likedBy && post.likedBy[window.currentUser.login];
+                
+                html += `
+                    <div class="post-item" data-postid="${key}">
+                        <div class="post-author">
+                            <span>${escapeHtml(post.author)}</span>
+                            <span class="online-indicator ${isOnline ? 'online' : 'offline'}"></span>
+                            ${badgeHtml}
+                            <span class="post-time">${timeAgo}</span>
+                        </div>
+                        <div class="post-text">${escapeHtml(post.text)}</div>
+                        <div class="post-actions">
+                            <button onclick="likePost('${key}')" class="${isLiked ? 'liked' : ''}">
+                                ❤️ <span id="likes-${key}">${likesCount}</span>
+                            </button>
+                            <button onclick="toggleComments('${key}')">
+                                💬 <span id="comments-count-${key}">${commentKeys.length}</span>
+                            </button>
+                        </div>
+                        <div class="comments-section" id="comments-${key}" style="display:none;">
+                            ${commentKeys.map(cid => {
+                                const c = comments[cid];
+                                return `
+                                    <div class="comment-item">
+                                        <span class="comment-author">${escapeHtml(c.author)}</span>
+                                        <span class="comment-time">${getTimeAgo(c.timestamp)}</span>
+                                        <div class="comment-text">${escapeHtml(c.text)}</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                            <div class="add-comment-area">
+                                <input type="text" placeholder="Написать комментарий..." id="comment-input-${key}">
+                                <button onclick="addComment('${key}')">📤</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        } catch(e) {
+            container.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
+        }
+    }
+    
+    window.createPost = async function() {
+        if (!window.currentUser) {
+            showNotification('Сначала войдите!', '❌');
+            return;
+        }
+        if (!window.currentUser.passport || !window.currentUser.passport.fullName) {
+            showNotification('У вас нет паспорта!', '❌');
+            return;
+        }
+        
+        const input = document.getElementById('postInput');
+        const text = input.value.trim();
+        if (!text) return;
+        if (text.length > 500) {
+            showNotification('Максимум 500 символов', '❌');
+            return;
+        }
+        
+        try {
+            const postId = Date.now().toString();
+            const newPost = {
+                author: window.currentUser.login,
+                text: text,
+                timestamp: Date.now(),
+                likes: 0,
+                likedBy: {},
+                comments: {}
+            };
+            
+            await apiPut(`posts/${postId}`, newPost);
+            input.value = '';
+            loadPosts();
+            showNotification('Пост опубликован! 📝', '✅');
+        } catch(e) {
+            showNotification(`Ошибка: ${e.message}`, '❌');
+        }
+    };
+    
+    window.likePost = async function(postId) {
+        if (!window.currentUser) {
+            showNotification('Сначала войдите!', '❌');
+            return;
+        }
+        
+        try {
+            const post = await apiFetch(`posts/${postId}`);
+            if (!post) { showNotification('Пост не найден', '❌'); return; }
+            
+            const likedBy = post.likedBy || {};
+            const isLiked = likedBy[window.currentUser.login];
+            let likes = post.likes || 0;
+            
+            if (isLiked) {
+                delete likedBy[window.currentUser.login];
+                likes--;
+            } else {
+                likedBy[window.currentUser.login] = true;
+                likes++;
+            }
+            
+            await apiPut(`posts/${postId}/likes`, likes);
+            await apiPut(`posts/${postId}/likedBy`, likedBy);
+            
+            loadPosts();
+        } catch(e) {
+            showNotification(`Ошибка: ${e.message}`, '❌');
+        }
+    };
+    
+    window.toggleComments = function(postId) {
+        const section = document.getElementById(`comments-${postId}`);
+        if (section.style.display === 'none') {
+            section.style.display = 'block';
+        } else {
+            section.style.display = 'none';
+        }
+    };
+    
+    window.addComment = async function(postId) {
+        if (!window.currentUser) {
+            showNotification('Сначала войдите!', '❌');
+            return;
+        }
+        
+        const input = document.getElementById(`comment-input-${postId}`);
+        const text = input.value.trim();
+        if (!text) return;
+        
+        try {
+            const post = await apiFetch(`posts/${postId}`);
+            if (!post) { showNotification('Пост не найден', '❌'); return; }
+            
+            const comments = post.comments || {};
+            const commentId = Date.now().toString();
+            comments[commentId] = {
+                author: window.currentUser.login,
+                text: text,
+                timestamp: Date.now()
+            };
+            
+            await apiPut(`posts/${postId}/comments`, comments);
+            input.value = '';
+            loadPosts();
+        } catch(e) {
+            showNotification(`Ошибка: ${e.message}`, '❌');
+        }
+    };
+    
+    // ===== ВРЕМЯ =====
+    function getTimeAgo(timestamp) {
+        if (!timestamp) return 'только что';
+        const diff = Date.now() - timestamp;
+        const seconds = Math.floor(diff / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        
+        if (seconds < 60) return `${seconds} сек назад`;
+        if (minutes < 60) return `${minutes} мин назад`;
+        if (hours < 24) return `${hours} ч назад`;
+        return `${days} дн назад`;
+    }
+    
+    // ===== УВЕДОМЛЕНИЯ =====
+    function showNotification(message, icon = '🐟') {
+        // Можно использовать браузерные уведомления или тосты
+        console.log(`${icon} ${message}`);
+        // Здесь можно добавить всплывающее уведомление
+    }
+    
     // ===== ВКЛАДКИ =====
     window.switchTab = function(tab) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
         document.getElementById(`tab-${tab}`).classList.add('active');
         document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
-        if (tab === 'chats' && window.currentUser) loadChats();
+        if (tab === 'posts' && window.currentUser) {
+            loadPosts();
+            showCreatePostArea();
+        }
     };
     
     // ===== UTILS =====
@@ -941,19 +1240,14 @@
                     document.getElementById('loginArea').style.display = 'none';
                     showPassport();
                     loadChats();
-                    showNotification(`С возвращением, ${saved}! 🐟`, '👋');
+                    loadPosts();
+                    showCreatePostArea();
                 }
             } catch(e) {}
         }
     }
     
     autoLogin();
-    
-    // ===== СОБЫТИЯ ДЛЯ УВЕДОМЛЕНИЙ (для демо) =====
-    // Показываем приветственное уведомление
-    setTimeout(() => {
-        showNotification('🐟 Добро пожаловать в Karasik Talk!', '👋', 5000);
-    }, 1500);
 </script>
 </body>
 </html>
