@@ -567,8 +567,20 @@
             <div id="chatView" style="display:none; margin-top:16px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap;">
                     <h3 id="currentChatName" style="color:var(--text);">Чат</h3>
-                    <button onclick="leaveChat()" style="background:var(--danger); border:none; padding:6px 16px; border-radius:20px; color:white; cursor:pointer; font-size:0.8rem;">🚪 Покинуть</button>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button onclick="showAddMember()" style="background:var(--secondary); border:none; padding:6px 16px; border-radius:20px; color:white; cursor:pointer; font-size:0.8rem;">➕ Добавить</button>
+                        <button onclick="leaveChat()" style="background:var(--danger); border:none; padding:6px 16px; border-radius:20px; color:white; cursor:pointer; font-size:0.8rem;">🚪 Покинуть</button>
+                    </div>
                 </div>
+                
+                <div id="addMemberPanel" style="display:none; background:var(--bg2); padding:12px; border-radius:12px; margin-bottom:12px;">
+                    <div style="display:flex; gap:8px;">
+                        <input type="text" id="addMemberInput" placeholder="Логин пользователя" style="flex:1; padding:8px 12px; border:2px solid var(--input-border); border-radius:30px; font-size:0.9rem; background:var(--input-bg); color:var(--text);">
+                        <button onclick="addMemberToChat()" style="background:var(--primary); border:none; padding:8px 16px; border-radius:30px; color:white; font-weight:bold; cursor:pointer;">➕ Добавить</button>
+                        <button onclick="hideAddMember()" style="background:var(--danger); border:none; padding:8px 16px; border-radius:30px; color:white; cursor:pointer;">✕</button>
+                    </div>
+                </div>
+                
                 <div id="chatMessages" class="chat-box"><div class="loading">💬 Загрузка...</div></div>
                 <div class="chat-input-area">
                     <input type="text" id="messageInput" placeholder="Напиши сообщение..." disabled>
@@ -775,6 +787,73 @@
         document.getElementById('userRole').textContent = p.role || 'Обычный карасик';
         document.getElementById('userLogin').textContent = `@${window.currentUser.login}`;
     }
+    
+    // ===== ДОБАВЛЕНИЕ УЧАСТНИКА =====
+    window.showAddMember = function() {
+        document.getElementById('addMemberPanel').style.display = 'block';
+        document.getElementById('addMemberInput').focus();
+    };
+    
+    window.hideAddMember = function() {
+        document.getElementById('addMemberPanel').style.display = 'none';
+        document.getElementById('addMemberInput').value = '';
+    };
+    
+    window.addMemberToChat = async function() {
+        if (!window.currentUser || !window.currentChatId) {
+            showNotification('Сначала выберите чат', '❌');
+            return;
+        }
+        
+        const login = document.getElementById('addMemberInput').value.trim();
+        if (!login) {
+            showNotification('Введите логин', '❌');
+            return;
+        }
+        if (login === window.currentUser.login) {
+            showNotification('Нельзя добавить себя', '❌');
+            return;
+        }
+        
+        try {
+            const users = await apiFetch('users');
+            if (!users || !users[login]) {
+                showNotification(`Пользователь "${login}" не найден`, '❌');
+                return;
+            }
+            
+            const chat = await apiFetch(`chats/${window.currentChatId}`);
+            if (!chat) {
+                showNotification('Чат не найден', '❌');
+                return;
+            }
+            
+            if (chat.members && chat.members.includes(login)) {
+                showNotification('Пользователь уже в чате', '❌');
+                return;
+            }
+            
+            chat.members.push(login);
+            await apiPut(`chats/${window.currentChatId}`, chat);
+            
+            const user = await apiFetch(`users/${login}`);
+            if (user) {
+                const userChats = user.chats || [];
+                if (!userChats.includes(window.currentChatId)) {
+                    userChats.push(window.currentChatId);
+                    await apiPut(`users/${login}/chats`, userChats);
+                }
+            }
+            
+            document.getElementById('addMemberInput').value = '';
+            hideAddMember();
+            loadMessages(window.currentChatId);
+            loadChats();
+            showNotification(`✅ ${login} добавлен в чат!`, '🎉');
+        } catch(e) {
+            showNotification(`❌ Ошибка: ${e.message}`);
+        }
+    };
     
     // ===== ЧАТЫ =====
     async function loadChats() {
