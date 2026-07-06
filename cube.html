@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Джойстик + куб</title>
+<style>
+body { margin:0; overflow:hidden; touch-action:none; }
+#joystick-zone {
+  position: absolute; bottom: 40px; left: 40px;
+  width: 140px; height: 140px; border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  border: 3px solid rgba(255,255,255,0.5);
+  z-index: 10;
+}
+#joystick-knob {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: radial-gradient(circle, #f0c040, #b08820);
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+<div id="joystick-zone"><div id="joystick-knob"></div></div>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x222222);
+const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 100);
+camera.position.set(0,3,8);
+camera.lookAt(0,0,0);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// Куб
+const geometry = new THREE.BoxGeometry(0.8,0.8,0.8);
+const material = new THREE.MeshStandardMaterial({color:0xff4444});
+const cube = new THREE.Mesh(geometry, material);
+cube.position.y = 0.4;
+scene.add(cube);
+
+// Свет
+const light = new THREE.DirectionalLight(0xffffff,1);
+light.position.set(2,4,3);
+scene.add(light);
+const ambient = new THREE.AmbientLight(0x404060);
+scene.add(ambient);
+
+// Пол
+const plane = new THREE.Mesh(
+  new THREE.PlaneGeometry(10,10),
+  new THREE.MeshStandardMaterial({color:0x333333, side:THREE.DoubleSide})
+);
+plane.rotation.x = -Math.PI/2;
+plane.position.y = -0.1;
+scene.add(plane);
+
+// ===== ДЖОЙСТИК =====
+const jZone = document.getElementById('joystick-zone');
+const knob = document.getElementById('joystick-knob');
+let joyX = 0, joyY = 0;
+
+function handleJoystick(cx, cy) {
+  const rect = jZone.getBoundingClientRect();
+  let dx = cx - (rect.left + rect.width/2);
+  let dy = cy - (rect.top + rect.height/2);
+  const dist = Math.sqrt(dx*dx + dy*dy);
+  const max = rect.width/2;
+  if (dist > max) { dx = dx / dist * max; dy = dy / dist * max; }
+  joyX = dx / max;
+  joyY = dy / max;
+  knob.style.transform = `translate(${dx}px, ${dy}px)`;
+}
+
+// Touch
+jZone.addEventListener('touchstart', e => {
+  e.preventDefault();
+  const t = e.touches[0];
+  handleJoystick(t.clientX, t.clientY);
+});
+jZone.addEventListener('touchmove', e => {
+  e.preventDefault();
+  const t = e.touches[0];
+  handleJoystick(t.clientX, t.clientY);
+});
+jZone.addEventListener('touchend', e => {
+  e.preventDefault();
+  joyX = 0; joyY = 0;
+  knob.style.transform = 'translate(-50%, -50%)';
+});
+
+// Mouse (ПК)
+let mouseDown = false;
+jZone.addEventListener('mousedown', e => { mouseDown = true; handleJoystick(e.clientX, e.clientY); });
+window.addEventListener('mousemove', e => { if (mouseDown) handleJoystick(e.clientX, e.clientY); });
+window.addEventListener('mouseup', () => { if (mouseDown) { mouseDown = false; joyX=0; joyY=0; knob.style.transform='translate(-50%,-50%)'; } });
+
+// ===== ИГРОВОЙ ЦИКЛ =====
+const speed = 2.5;
+let lastTime = 0;
+function animate(time) {
+  const delta = Math.min((time - lastTime)/1000, 0.05);
+  lastTime = time;
+  cube.position.x += joyX * speed * delta;
+  cube.position.z -= joyY * speed * delta;
+  // Ограничение
+  cube.position.x = Math.max(-4, Math.min(4, cube.position.x));
+  cube.position.z = Math.max(-4, Math.min(4, cube.position.z));
+  renderer.render(scene, camera);
+  requestAnimationFrame(animate);
+}
+animate(0);
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+</script>
+</body>
+</html>
