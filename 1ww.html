@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <title>three.js - солдат с джойстиком</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <style>
+                body { margin:0; overflow:hidden; touch-action:none; }
+                #container { width:100vw; height:100vh; display:block; }
+                #info {
+                        position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
+                        color:#fff; background:rgba(0,0,0,0.6); padding:8px 18px;
+                        border-radius:30px; font-size:14px; pointer-events:none; z-index:5;
+                        text-align:center; white-space:nowrap;
+                }
+                /* ===== ДЖОЙСТИК ===== */
+                #joystick-zone {
+                        position: absolute;
+                        bottom: 40px;
+                        left: 40px;
+                        width: 140px;
+                        height: 140px;
+                        border-radius: 50%;
+                        background: rgba(255,255,255,0.2);
+                        border: 3px solid rgba(255,255,255,0.5);
+                        touch-action: none;
+                        z-index: 20;
+                        box-shadow: 0 0 30px rgba(0,0,0,0.5);
+                }
+                #joystick-knob {
+                        width: 60px;
+                        height: 60px;
+                        border-radius: 50%;
+                        background: radial-gradient(circle, #f0c040, #b08820);
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        box-shadow: 0 0 20px rgba(240,192,64,0.6);
+                        pointer-events: none;
+                }
+        </style>
+</head>
+<body>
+        <div id="container"></div>
+        <div id="info">🕹️ Джойстик влево-внизу — двигай солдата</div>
+
+        <!-- Джойстик -->
+        <div id="joystick-zone">
+                <div id="joystick-knob"></div>
+        </div>
+
+        <script type="importmap">
+                {
+                        "imports": {
+                                "three": "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js",
+                                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"
+                        }
+                }
+        </script>
+
+        <script type="module">
+                import * as THREE from 'three';
+                import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+                import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+                import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+                import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
+
+                // ====== ОРИГИНАЛЬНЫЙ КОД (с небольшими правками) ======
+                let scene, renderer, camera, floor, orbitControls;
+                let group, followGroup, model, skeleton, mixer, timer;
+                let actions;
+                const settings = {
+                        show_skeleton: false,
+                        fixe_transition: true,
+                };
+                const PI = Math.PI;
+                const PI90 = Math.PI / 2;
+
+                const controls = {
+                        key: [0, 0],
+                        ease: new THREE.Vector3(),
+                        position: new THREE.Vector3(),
+                        up: new THREE.Vector3(0,1,0),
+                        rotate: new THREE.Quaternion(),
+                        current: 'Idle',
+                        fadeDuration: 0.5,
+                        runVelocity: 5,
+                        walkVelocity: 1.8,
+                        rotateSpeed: 0.05,
+                        floorDecale: 0,
+                };
+
+                // ====== ДЖОЙСТИК (управление) ======
+                const jZone = document.getElementById('joystick-zone');
+                const knob = document.getElementById('joystick-knob');
+
+                // Состояние джойстика
+                let joyX = 0, joyY = 0; // -1..1
+                let isDragging = false;
+
+                function handleJoystick(clientX, clientY) {
+                        const rect = jZone.getBoundingClientRect();
+                        const cx = rect.left + rect.width/2;
+                        const cy = rect.top + rect.height/2;
+                        let dx = clientX - cx;
+                        let dy = clientY - cy;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        const max = rect.width/2;
+                        // Ограничиваем радиусом
+                        if (dist > max) {
+                                dx = dx / dist * max;
+                                dy = dy / dist * max;
+                        }
+                        // Нормализуем
+                        joyX = dx / max;
+                        joyY = dy / max; // вверх = отрицательное dy
+                        // Обновляем ручку
+                        knob.style.transform = `translate(${dx}px, ${dy}px)`;
+                }
+
+                // Touch
+                jZone.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        isDragging = true;
+                        const touch = e.touches[0];
+                        handleJoystick(touch.clientX, touch.clientY);
+                }, { passive: false });
+                jZone.addEventListener('touchmove', (e) => {
+                        e.preventDefault();
+                        if (!isDragging) return;
+                        const touch = e.touches[0];
+                        handleJoystick(touch.clientX, touch.clientY);
+                }, { passive: false });
+                jZone.addEventListener('touchend', (e) => {
+                        e.preventDefault();
+                        isDragging = false;
+                        joyX = 0; joyY = 0;
+                        knob.style.transform = 'translate(-50%, -50%)';
+                }, { passive: false });
+                jZone.addEventListener('touchcancel', (e) => {
+                        isDragging = false;
+                        joyX = 0; joyY = 0;
+                        knob.style.transform = 'translate(-50%, -50%)';
+                });
+
+                // Mouse (для ПК)
+                let mouseDown = false;
+                jZone.addEventListener('mousedown', (e) => {
+                        mouseDown = true;
+                        handleJoystick(e.clientX, e.clientY);
+                });
+                window.addEventListener('mousemove', (e) => {
+                        if (!mouseDown) return;
+                        handleJoystick(e.clientX, e.clientY);
+                });
+                window.addEventListener('mouseup', () => {
+                        if (mouseDown) {
+                                mouseDown = false;
+                                joyX = 0; joyY = 0;
+                                knob.style.transform = 'translate(-50%, -50%)';
+                        }
+                });
+
+                // ====== ФУНКЦИЯ ОБНОВЛЕНИЯ УПРАВЛЕНИЯ (вместо клавиатуры) ======
+                function updateJoystickControls() {
+                        // Порог мёртвой зоны
+                        const deadZone = 0.1;
+                        let dx = Math.abs(joyX) > deadZone ? joyX : 0;
+                        let dy = Math.abs(joyY) > deadZone ? joyY : 0;
+                        // В оригинале key[0] = -1 вверх, 1 вниз; key[1] = -1 влево, 1 вправо
+                        // У нас joyY: положительное = вниз, отрицательное = вверх
+                        controls.key[0] = -dy; // вверх
+                        controls.key[1] = dx;  // вправо
+                        // Бег: если джойстик от центра > 0.7
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        controls.key[2] = dist > 0.7 ? 1 : 0;
+                }
+
+                // ====== ИНИЦИАЛИЗАЦИЯ (оригинал) ======
+                function init() {
+                        const container = document.getElementById('container');
+                        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+                        camera.position.set(0, 2, -5);
+                        timer = new THREE.Timer();
+                        timer.connect(document);
+                        scene = new THREE.Scene();
+                        scene.background = new THREE.Color(0x5e5d5d);
+                        scene.fog = new THREE.Fog(0x5e5d5d, 2, 20);
+                        group = new THREE.Group();
+                        scene.add(group);
+                        followGroup = new THREE.Group();
+                        scene.add(followGroup);
+                        const dirLight = new THREE.DirectionalLight(0xffffff, 5);
+                        dirLight.position.set(-2, 5, -3);
+                        dirLight.castShadow = true;
+                        const cam = dirLight.shadow.camera;
+                        cam.top = cam.right = 2;
+                        cam.bottom = cam.left = -2;
+                        cam.near = 3;
+                        cam.far = 8;
+                        dirLight.shadow.mapSize.set(1024, 1024);
+                        followGroup.add(dirLight);
+                        followGroup.add(dirLight.target);
+                        renderer = new THREE.WebGLRenderer({ antialias: true });
+                        renderer.setPixelRatio(window.devicePixelRatio);
+                        renderer.setSize(window.innerWidth, window.innerHeight);
+                        renderer.setAnimationLoop(animate);
+                        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+                        renderer.toneMappingExposure = 0.5;
+                        renderer.shadowMap.enabled = true;
+                        renderer.shadowMap.type = THREE.PCFShadowMap;
+                        container.appendChild(renderer.domElement);
+                        orbitControls = new OrbitControls(camera, renderer.domElement);
+                        orbitControls.target.set(0,1,0);
+                        orbitControls.enableDamping = true;
+                        orbitControls.enablePan = false;
+                        orbitControls.maxPolarAngle = PI90 - 0.05;
+                        orbitControls.update();
+                        window.addEventListener('resize', onWindowResize);
+                        // Загружаем окружение и модель
+                        new HDRLoader()
+                                .setPath('https://threejs.org/examples/textures/equirectangular/')
+                                .load('lobe.hdr', function(texture) {
+                                        texture.mapping = THREE.EquirectangularReflectionMapping;
+                                        scene.environment = texture;
+                                        scene.environmentIntensity = 1.5;
+                                        loadModel();
+                                        addFloor();
+                                });
+                }
+
+                function addFloor() {
+                        const size = 50;
+                        const repeat = 16;
+                        const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
+                        const floorT = new THREE.TextureLoader().load('https://threejs.org/examples/textures/floors/FloorsCheckerboard_S_Diffuse.jpg');
+                        floorT.colorSpace = THREE.SRGBColorSpace;
+                        floorT.repeat.set(repeat, repeat);
+                        floorT.wrapS = floorT.wrapT = THREE.RepeatWrapping;
+                        floorT.anisotropy = maxAnisotropy;
+                        const floorN = new THREE.TextureLoader().load('https://threejs.org/examples/textures/floors/FloorsCheckerboard_S_Normal.jpg');
+                        floorN.repeat.set(repeat, repeat);
+                        floorN.wrapS = floorN.wrapT = THREE.RepeatWrapping;
+                        floorN.anisotropy = maxAnisotropy;
+                        const mat = new THREE.MeshStandardMaterial({ map: floorT, normalMap: floorN, normalScale: new THREE.Vector2(0.5,0.5), color:0x404040, depthWrite:false, roughness:0.85 });
+                        const g = new THREE.PlaneGeometry(size, size, 50, 50);
+                        g.rotateX(-PI90);
+                        floor = new THREE.Mesh(g, mat);
+                        floor.receiveShadow = true;
+                        scene.add(floor);
+                        controls.floorDecale = (size / repeat) * 4;
+                        const bulbGeometry = new THREE.SphereGeometry(0.05, 16, 8);
+                        const bulbLight = new THREE.PointLight(0xffee88, 2, 500, 2);
+                        const bulbMat = new THREE.MeshStandardMaterial({ emissive:0xffffee, emissiveIntensity:1, color:0x000000 });
+                        bulbLight.add(new THREE.Mesh(bulbGeometry, bulbMat));
+                        bulbLight.position.set(1, 0.1, -3);
+                        bulbLight.castShadow = true;
+                        floor.add(bulbLight);
+                }
+
+                function loadModel() {
+                        const loader = new GLTFLoader();
+                        loader.load('https://threejs.org/examples/models/gltf/Soldier.glb', function(gltf) {
+                                model = gltf.scene;
+                                group.add(model);
+                                model.rotation.y = PI;
+                                group.rotation.y = PI;
+                                model.traverse(function(object) {
+                                        if (object.isMesh) {
+                                                if (object.name == 'vanguard_Mesh') {
+                                                        object.castShadow = true;
+                                                        object.receiveShadow = true;
+                                                        object.material.metalness = 1.0;
+                                                        object.material.roughness = 0.2;
+                                                        object.material.color.set(1,1,1);
+                                                        object.material.metalnessMap = object.material.map;
+                                                } else {
+                                                        object.material.metalness = 1;
+                                                        object.material.roughness = 0;
+                                                        object.material.transparent = true;
+                                                        object.material.opacity = 0.8;
+                                                        object.material.color.set(1,1,1);
+                                                }
+                                        }
+                                });
+                                skeleton = new THREE.SkeletonHelper(model);
+                                skeleton.setColors(new THREE.Color(0xe000ff), new THREE.Color(0x00e0ff));
+                                skeleton.visible = false;
+                                scene.add(skeleton);
+                                createPanel();
+                                const animations = gltf.animations;
+                                mixer = new THREE.AnimationMixer(model);
+                                actions = {
+                                        Idle: mixer.clipAction(animations[0]),
+                                        Walk: mixer.clipAction(animations[3]),
+                                        Run: mixer.clipAction(animations[1])
+                                };
+                                for (const m in actions) {
+                                        actions[m].enabled = true;
+                                        actions[m].setEffectiveTimeScale(1);
+                                        if (m !== 'Idle') actions[m].setEffectiveWeight(0);
+                                }
+                                actions.Idle.play();
+                                animate();
+                        });
+                }
+
+                function updateCharacter(delta) {
+                        // Сначала обновляем джойстик -> controls.key
+                        updateJoystickControls();
+
+                        const fade = controls.fadeDuration;
+                        const key = controls.key;
+                        const up = controls.up;
+                        const ease = controls.ease;
+                        const rotate = controls.rotate;
+                        const position = controls.position;
+                        const azimuth = orbitControls.getAzimuthalAngle();
+                        const active = key[0] === 0 && key[1] === 0 ? false : true;
+                        const play = active ? (key[2] ? 'Run' : 'Walk') : 'Idle';
+
+                        if (controls.current != play) {
+                                const current = actions[play];
+                                const old = actions[controls.current];
+                                controls.current = play;
+                                if (settings.fixe_transition) {
+                                        current.reset();
+                                        current.weight = 1.0;
+                                        current.stopFading();
+                                        old.stopFading();
+                                        if (play !== 'Idle') current.time = old.time * (current.getClip().duration / old.getClip().duration);
+                                        old._scheduleFading(fade, old.getEffectiveWeight(), 0);
+                                        current._scheduleFading(fade, current.getEffectiveWeight(), 1);
+                                        current.play();
+                                } else {
+                                        setWeight(current, 1.0);
+                                        old.fadeOut(fade);
+                                        current.reset().fadeIn(fade).play();
+                                }
+                        }
+
+                        if (controls.current !== 'Idle') {
+                                const velocity = controls.current == 'Run' ? controls.runVelocity : controls.walkVelocity;
+                                ease.set(key[1], 0, key[0]).multiplyScalar(velocity * delta);
+                                const angle = unwrapRad(Math.atan2(ease.x, ease.z) + azimuth);
+                                rotate.setFromAxisAngle(up, angle);
+                                ease.applyAxisAngle(up, azimuth);
+                                position.add(ease);
+                                camera.position.add(ease);
+                                group.position.copy(position);
+                                group.quaternion.rotateTowards(rotate, controls.rotateSpeed);
+                                orbitControls.target.copy(position).add({x:0, y:1, z:0});
+                                followGroup.position.copy(position);
+                                const dx = position.x - floor.position.x;
+                                const dz = position.z - floor.position.z;
+                                if (Math.abs(dx) > controls.floorDecale) floor.position.x += dx;
+                                if (Math.abs(dz) > controls.floorDecale) floor.position.z += dz;
+                        }
+
+                        if (mixer) mixer.update(delta);
+                        orbitControls.update();
+                }
+
+                function unwrapRad(r) { return Math.atan2(Math.sin(r), Math.cos(r)); }
+
+                function createPanel() {
+                        const panel = new GUI({ width:310 });
+                        panel.add(settings, 'show_skeleton').onChange((b) => { skeleton.visible = b; });
+                        panel.add(settings, 'fixe_transition');
+                }
+
+                function setWeight(action, weight) {
+                        action.enabled = true;
+                        action.setEffectiveTimeScale(1);
+                        action.setEffectiveWeight(weight);
+                }
+
+                function onWindowResize() {
+                        camera.aspect = window.innerWidth / window.innerHeight;
+                        camera.updateProjectionMatrix();
+                        renderer.setSize(window.innerWidth, window.innerHeight);
+                }
+
+                function animate() {
+                        timer.update();
+                        const delta = timer.getDelta();
+                        updateCharacter(delta);
+                        renderer.render(scene, camera);
+                }
+
+                // Запуск
+                init();
+
+                // Убираем обработчики клавиатуры, т.к. они не нужны
+                // Можно оставить для ПК, но мы их удаляем.
+                // Но чтобы не мешали, закомментируем или переопределим:
+                // мы уже не добавляем слушатели, так что клавиши не будут работать.
+                // Если хочешь, чтобы клавиши тоже работали, можно оставить, но необязательно.
+                console.log('Джойстик активен!');
+        </script>
+</body>
+</html>
