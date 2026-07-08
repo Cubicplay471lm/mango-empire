@@ -85,13 +85,11 @@
             border-left: 5px solid var(--border);
             padding-left: 16px;
             margin-bottom: 8px;
-            cursor: pointer;
         }
         .subtitle {
             color: var(--text-light);
             padding-left: 16px;
             margin-bottom: 20px;
-            cursor: pointer;
         }
         
         .top-bar {
@@ -195,6 +193,17 @@
             color: white;
             cursor: pointer;
         }
+        .user-info .admin-link {
+            background: var(--danger);
+            border: none;
+            padding: 4px 16px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.7rem;
+            text-decoration: none;
+        }
+        .user-info .admin-link:hover { opacity: 0.85; }
         
         .error-box { background: #fff1f0; border-radius: 16px; padding: 12px; color: #b34e3a; border: 1px solid #ffc6be; margin-top: 8px; }
         .success-box { background: #d4edda; border-radius: 16px; padding: 12px; color: #155724; border: 1px solid #c3e6cb; margin-top: 8px; }
@@ -516,48 +525,6 @@
             margin-top: 6px;
         }
         
-        /* ===== АДМИН ПАНЕЛЬ ===== */
-        #adminPanel {
-            background: var(--bg2);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 16px;
-            border: 2px solid var(--primary);
-        }
-        #adminPanel .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        #adminPanel .admin-header h3 {
-            color: var(--text);
-        }
-        #adminPanel .admin-header button {
-            background: var(--danger);
-            border: none;
-            padding: 4px 12px;
-            border-radius: 20px;
-            color: white;
-            cursor: pointer;
-        }
-        .admin-user-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 12px;
-            background: var(--card);
-            border-radius: 12px;
-            margin-bottom: 6px;
-            border-left: 3px solid var(--border);
-        }
-        .admin-user-item .login {
-            font-weight: bold;
-            color: var(--text);
-        }
-        .admin-user-item .bal {
-            color: var(--text-light);
-        }
-        
         /* ===== ПЕРЕВОДЫ ===== */
         .transfer-item {
             background: var(--bg2);
@@ -597,27 +564,8 @@
             <button class="color-btn" style="background:#e84393;" onclick="setColor('pink')" data-color="pink"></button>
         </div>
         
-        <h1 onclick="checkAdminAccess()">🐟 Karasik Talk</h1>
-        <div class="subtitle" onclick="checkAdminAccess()">🇺🇸 Карасикославия · Нажми 3 раза для админки</div>
-        
-        <!-- АДМИН-ПАНЕЛЬ -->
-        <div id="adminPanel" style="display:none;">
-            <div class="admin-header">
-                <h3>👑 Админ-панель</h3>
-                <button onclick="document.getElementById('adminPanel').style.display='none'">✕</button>
-            </div>
-            <div style="margin-bottom:12px;">
-                <label style="color:var(--text); font-weight:bold;">➕ Добавить баланс</label>
-                <div style="display:flex; gap:8px; margin-top:6px; flex-wrap:wrap;">
-                    <input type="text" id="adminUserInput" placeholder="Логин" style="flex:2; padding:8px 12px; border:2px solid var(--input-border); border-radius:30px; background:var(--input-bg); color:var(--text); min-width:100px;">
-                    <input type="number" id="adminAmountInput" placeholder="Сумма" style="flex:1; padding:8px 12px; border:2px solid var(--input-border); border-radius:30px; background:var(--input-bg); color:var(--text); min-width:80px;">
-                    <button onclick="adminAddBalance()" style="background:var(--primary); border:none; padding:8px 16px; border-radius:30px; color:white; font-weight:bold; cursor:pointer;">💳 Добавить</button>
-                </div>
-            </div>
-            <div id="adminUsersList" style="max-height:200px; overflow-y:auto;">
-                <div class="loading">👥 Загрузка пользователей...</div>
-            </div>
-        </div>
+        <h1>🐟 Karasik Talk</h1>
+        <div class="subtitle">🇺🇸 Карасикославия</div>
         
         <!-- Логин -->
         <div class="login-area" id="loginArea">
@@ -634,6 +582,7 @@
             <span class="urole" id="userRole">Роль</span>
             <span class="balance" id="userBalance">💰 0</span>
             <span style="color:var(--text-light); font-size:0.8rem;" id="userLogin">@логин</span>
+            <a href="admin.html" class="admin-link" id="adminLink" style="display:none;">👑 Админ</a>
             <button class="logout-btn" onclick="logout()">🚪 Выйти</button>
         </div>
         
@@ -745,8 +694,6 @@
     window.currentUser = null;
     window.currentChatId = null;
     window.updateInterval = null;
-    let adminClickCount = 0;
-    let adminTimer = null;
     
     // ===== ТЕМА =====
     window.toggleTheme = function() {
@@ -772,7 +719,8 @@
     document.documentElement.setAttribute('data-color', savedColor);
     document.querySelector(`.color-btn[data-color="${savedColor}"]`)?.classList.add('active');
     
-    // ===== API =====    async function apiFetch(path) {
+    // ===== API =====
+    async function apiFetch(path) {
         const res = await fetch(`${DB_URL}/all/${path}.json`);
         return res.json();
     }
@@ -785,89 +733,6 @@
         });
         return res.json();
     }
-    
-    // ===== АДМИН-ДОСТУП (3 клика) =====
-    window.checkAdminAccess = function() {
-        if (!window.currentUser) {
-            showNotification('Сначала войдите!', '❌');
-            return;
-        }
-        const role = window.currentUser.passport?.role || '';
-        if (!role.toLowerCase().includes('админ')) {
-            showNotification('Доступ запрещён!', '🚫');
-            return;
-        }
-        
-        adminClickCount++;
-        if (adminClickCount === 1) {
-            adminTimer = setTimeout(() => {
-                adminClickCount = 0;
-            }, 3000);
-        }
-        if (adminClickCount >= 3) {
-            clearTimeout(adminTimer);
-            adminClickCount = 0;
-            document.getElementById('adminPanel').style.display = 'block';
-            loadAdminData();
-            showNotification('👑 Админ-панель открыта!', '👑');
-        }
-    };
-    
-    // ===== АДМИН: ЗАГРУЗКА ПОЛЬЗОВАТЕЛЕЙ =====
-    async function loadAdminData() {
-        const container = document.getElementById('adminUsersList');
-        try {
-            const users = await apiFetch('users');
-            if (!users) {
-                container.innerHTML = '<div class="loading">👥 Нет пользователей</div>';
-                return;
-            }
-            const keys = Object.keys(users);
-            let html = '';
-            for (const login of keys) {
-                const balance = await getUserBalance(login);
-                html += `
-                    <div class="admin-user-item">
-                        <span class="login">👤 ${escapeHtml(login)}</span>
-                        <span class="bal">💰 ${balance} монет</span>
-                    </div>
-                `;
-            }
-            container.innerHTML = html;
-        } catch(e) {
-            container.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
-        }
-    }
-    
-    // ===== АДМИН: ДОБАВИТЬ БАЛАНС =====
-    window.adminAddBalance = async function() {
-        const login = document.getElementById('adminUserInput').value.trim();
-        const amount = parseInt(document.getElementById('adminAmountInput').value);
-        
-        if (!login || isNaN(amount) || amount <= 0) {
-            showNotification('Введите логин и сумму', '❌');
-            return;
-        }
-        
-        try {
-            const users = await apiFetch('users');
-            if (!users || !users[login]) {
-                showNotification(`Пользователь "${login}" не найден`, '❌');
-                return;
-            }
-            
-            const currentBalance = await getUserBalance(login);
-            await updateUserBalance(login, currentBalance + amount);
-            
-            document.getElementById('adminUserInput').value = '';
-            document.getElementById('adminAmountInput').value = '';
-            loadAdminData();
-            updateUserBalanceDisplay();
-            showNotification(`✅ ${login} получил ${amount} монет!`, '💰');
-        } catch(e) {
-            showNotification(`❌ Ошибка: ${e.message}`);
-        }
-    };
     
     // ===== БАЛАНС =====
     async function getUserBalance(login) {
@@ -887,6 +752,12 @@
         if (!window.currentUser) return;
         const balance = await getUserBalance(window.currentUser.login);
         document.getElementById('userBalance').textContent = `💰 ${balance}`;
+        // Обновляем в паспорте
+        const passportDisplay = document.getElementById('passportDisplay');
+        if (passportDisplay && window.currentUser.passport) {
+            // просто обновим паспорт
+            showPassport();
+        }
     }
     
     // ===== РЕГИСТРАЦИЯ =====
@@ -950,6 +821,14 @@
             document.getElementById('loginArea').style.display = 'none';
             status.innerHTML = '';
             
+            // Показываем ссылку на админку, если есть права
+            const role = user.passport?.role || '';
+            if (role.toLowerCase().includes('админ')) {
+                document.getElementById('adminLink').style.display = 'inline-block';
+            } else {
+                document.getElementById('adminLink').style.display = 'none';
+            }
+            
             showPassport();
             loadChats();
             loadPosts();
@@ -970,7 +849,7 @@
         document.getElementById('loginArea').style.display = 'block';
         document.getElementById('chatView').style.display = 'none';
         document.getElementById('chatsList').innerHTML = '<div class="loading">💬 Войдите, чтобы видеть чаты</div>';
-        document.getElementById('adminPanel').style.display = 'none';
+        document.getElementById('adminLink').style.display = 'none';
         if (window.updateInterval) { clearInterval(window.updateInterval); window.updateInterval = null; }
         document.getElementById('createPostArea').style.display = 'none';
         document.getElementById('postsList').innerHTML = '<div class="loading">📝 Войдите, чтобы видеть посты</div>';
@@ -981,6 +860,7 @@
     function showPassport() {
         const container = document.getElementById('passportDisplay');
         const p = window.currentUser.passport;
+        const balance = window.currentUser.balance || 0;
         
         if (!p || !p.fullName) {
             container.innerHTML = `<div style="background:#fff3cd; border-radius:16px; padding:16px; color:#856404; border:1px solid #ffc107;">⚠️ У вас нет паспорта. Обратитесь к администратору.</div>`;
@@ -994,7 +874,7 @@
                 <div class="detail"><span class="label">👤 Логин</span><span>${escapeHtml(window.currentUser.login)}</span></div>
                 <div class="detail"><span class="label">🏷️ Роль</span><span><span class="role-tag">${escapeHtml(p.role || 'Обычный карасик')}</span></span></div>
                 <div class="detail"><span class="label">📅 Дата рождения</span><span>${escapeHtml(p.birthDate || '—')}</span></div>
-                <div class="detail"><span class="label">💰 Баланс</span><span style="font-weight:bold; color:var(--success);">${window.currentUser.balance || 0} монет</span></div>
+                <div class="detail"><span class="label">💰 Баланс</span><span style="font-weight:bold; color:var(--success);">${balance} монет</span></div>
                 <div style="margin-top:16px; text-align:center; font-size:0.8rem; color:var(--text-light);">🐟 Карасикославия</div>
             </div>
         `;
@@ -1004,9 +884,482 @@
         document.getElementById('userLogin').textContent = `@${window.currentUser.login}`;
     }
     
-    // ===== ЧАТЫ (полный код) =====
-    // ... (весь код чатов из предыдущей версии)
-    // Для краткости я показываю основные функции, но в полном коде они есть
+    // ===== ЧАТЫ =====
+    async function loadChats() {
+        if (!window.currentUser) return;
+        const container = document.getElementById('chatsList');
+        container.innerHTML = '🔄 Загрузка...';
+        
+        try {
+            const chats = await apiFetch('chats') || {};
+            const userChats = [];
+            for (const [id, chat] of Object.entries(chats)) {
+                if (chat.members && chat.members.includes(window.currentUser.login)) {
+                    userChats.push({ id, ...chat });
+                }
+            }
+            
+            if (userChats.length === 0) {
+                container.innerHTML = '<div class="loading">💬 Ты не участвуешь ни в одном чате</div>';
+                return;
+            }
+            
+            container.innerHTML = userChats.map(chat => `
+                <div class="chat-list-item" onclick="openChat('${chat.id}')">
+                    <span class="cname">${escapeHtml(chat.name)}</span>
+                    <span class="cmembers">👥 ${chat.members ? chat.members.join(', ') : ''}</span>
+                </div>
+            `).join('');
+        } catch(e) {
+            container.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
+        }
+    }
+    
+    window.createChat = async function() {
+        if (!window.currentUser) { showNotification('Сначала войдите!', '❌'); return; }
+        
+        const name = document.getElementById('chatNameInput').value.trim();
+        const member = document.getElementById('chatMemberInput').value.trim();
+        
+        if (!name || !member) { showNotification('Заполните все поля', '❌'); return; }
+        if (member === window.currentUser.login) { showNotification('Нельзя добавить самого себя', '❌'); return; }
+        
+        try {
+            const users = await apiFetch('users');
+            if (!users || !users[member]) {
+                showNotification(`Пользователь "${member}" не найден`, '❌');
+                return;
+            }
+            
+            const chatId = Date.now().toString();
+            const chatData = {
+                name: name,
+                members: [window.currentUser.login, member],
+                createdBy: window.currentUser.login,
+                createdAt: new Date().toISOString(),
+                messages: {}
+            };
+            
+            await apiPut(`chats/${chatId}`, chatData);
+            
+            const userChats = window.currentUser.chats || [];
+            userChats.push(chatId);
+            await apiPut(`users/${window.currentUser.login}/chats`, userChats);
+            window.currentUser.chats = userChats;
+            
+            const memberChats = users[member].chats || [];
+            memberChats.push(chatId);
+            await apiPut(`users/${member}/chats`, memberChats);
+            
+            document.getElementById('chatNameInput').value = '';
+            document.getElementById('chatMemberInput').value = '';
+            
+            loadChats();
+            showNotification(`Чат "${name}" создан! 🎉`, '✅');
+        } catch(e) {
+            showNotification(`Ошибка: ${e.message}`, '❌');
+        }
+    };
+    
+    window.openChat = function(chatId) {
+        window.currentChatId = chatId;
+        document.getElementById('chatView').style.display = 'block';
+        document.getElementById('messageInput').disabled = false;
+        document.getElementById('sendBtn').disabled = false;
+        
+        loadMessages(chatId);
+        if (window.updateInterval) clearInterval(window.updateInterval);
+        window.updateInterval = setInterval(() => {
+            if (window.currentChatId === chatId) loadMessages(chatId, true);
+        }, 3000);
+    };
+    
+    async function loadMessages(chatId, silent = false) {
+        const container = document.getElementById('chatMessages');
+        const nameEl = document.getElementById('currentChatName');
+        
+        try {
+            const chat = await apiFetch(`chats/${chatId}`);
+            if (!chat) { container.innerHTML = '<div class="error-box">❌ Чат не найден</div>'; return; }
+            
+            nameEl.textContent = chat.name || 'Чат';
+            const messages = chat.messages || {};
+            const keys = Object.keys(messages);
+            
+            if (keys.length === 0) {
+                if (!silent) container.innerHTML = '<div class="loading">💬 Сообщений пока нет</div>';
+                return;
+            }
+            
+            const sorted = keys.sort((a, b) => (messages[a].timestamp || 0) - (messages[b].timestamp || 0));
+            let html = sorted.map(id => {
+                const m = messages[id];
+                return `
+                    <div class="message-item">
+                        <span class="msg-user">${escapeHtml(m.from)}</span>
+                        <span class="msg-time">${m.timestamp ? new Date(m.timestamp).toLocaleString() : ''}</span>
+                        <div class="msg-text">${escapeHtml(m.text)}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = html;
+            container.scrollTop = container.scrollHeight;
+        } catch(e) {
+            if (!silent) container.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
+        }
+    }
+    
+    window.sendMessage = async function() {
+        if (!window.currentUser || !window.currentChatId) {
+            showNotification('Выберите чат', '❌');
+            return;
+        }
+        
+        const input = document.getElementById('messageInput');
+        const text = input.value.trim();
+        if (!text) return;
+        
+        try {
+            const chat = await apiFetch(`chats/${window.currentChatId}`);
+            if (!chat) { showNotification('Чат не найден', '❌'); return; }
+            
+            const messages = chat.messages || {};
+            const id = Date.now().toString();
+            messages[id] = {
+                from: window.currentUser.login,
+                text: text,
+                timestamp: Date.now()
+            };
+            
+            await apiPut(`chats/${window.currentChatId}/messages`, messages);
+            
+            input.value = '';
+            loadMessages(window.currentChatId);
+        } catch(e) {
+            showNotification(`Ошибка: ${e.message}`, '❌');
+        }
+    };
+    
+    window.leaveChat = async function() {
+        if (!window.currentChatId) return;
+        if (!confirm('Покинуть чат?')) return;
+        
+        try {
+            const userChats = window.currentUser.chats || [];
+            const updated = userChats.filter(id => id !== window.currentChatId);
+            await apiPut(`users/${window.currentUser.login}/chats`, updated);
+            window.currentUser.chats = updated;
+            
+            window.currentChatId = null;
+            document.getElementById('chatView').style.display = 'none';
+            document.getElementById('messageInput').disabled = true;
+            document.getElementById('sendBtn').disabled = true;
+            if (window.updateInterval) { clearInterval(window.updateInterval); window.updateInterval = null; }
+            loadChats();
+        } catch(e) {
+            showNotification(`Ошибка: ${e.message}`, '❌');
+        }
+    };
+    
+    // ===== ДОБАВЛЕНИЕ УЧАСТНИКА =====
+    window.showAddMember = function() {
+        document.getElementById('addMemberPanel').style.display = 'block';
+        document.getElementById('addMemberInput').focus();
+    };
+    
+    window.hideAddMember = function() {
+        document.getElementById('addMemberPanel').style.display = 'none';
+        document.getElementById('addMemberInput').value = '';
+    };
+    
+    window.addMemberToChat = async function() {
+        if (!window.currentUser || !window.currentChatId) {
+            showNotification('Сначала выберите чат', '❌');
+            return;
+        }
+        
+        const login = document.getElementById('addMemberInput').value.trim();
+        if (!login) {
+            showNotification('Введите логин', '❌');
+            return;
+        }
+        if (login === window.currentUser.login) {
+            showNotification('Нельзя добавить себя', '❌');
+            return;
+        }
+        
+        try {
+            const users = await apiFetch('users');
+            if (!users || !users[login]) {
+                showNotification(`Пользователь "${login}" не найден`, '❌');
+                return;
+            }
+            
+            const chat = await apiFetch(`chats/${window.currentChatId}`);
+            if (!chat) {
+                showNotification('Чат не найден', '❌');
+                return;
+            }
+            
+            if (chat.members && chat.members.includes(login)) {
+                showNotification('Пользователь уже в чате', '❌');
+                return;
+            }
+            
+            chat.members.push(login);
+            await apiPut(`chats/${window.currentChatId}`, chat);
+            
+            const user = await apiFetch(`users/${login}`);
+            if (user) {
+                const userChats = user.chats || [];
+                if (!userChats.includes(window.currentChatId)) {
+                    userChats.push(window.currentChatId);
+                    await apiPut(`users/${login}/chats`, userChats);
+                }
+            }
+            
+            document.getElementById('addMemberInput').value = '';
+            hideAddMember();
+            loadMessages(window.currentChatId);
+            loadChats();
+            showNotification(`✅ ${login} добавлен в чат!`, '🎉');
+        } catch(e) {
+            showNotification(`❌ Ошибка: ${e.message}`);
+        }
+    };
+    
+    // ===== НОВОСТИ =====
+    window.loadAnnouncements = async function() {
+        const container = document.getElementById('announcementsResult');
+        container.innerHTML = '🔄 Загрузка...';
+        try {
+            const data = await apiFetch('announcements') || {};
+            const items = Object.values(data).filter(a => a !== null && a.active !== false);
+            
+            if (items.length === 0) {
+                container.innerHTML = '<div class="error-box">📭 Нет активных новостей</div>';
+                return;
+            }
+            
+            container.innerHTML = items.map(a => `
+                <div class="announcement-item">
+                    <h3>📌 ${escapeHtml(a.title)}</h3>
+                    <p>${escapeHtml(a.text)}</p>
+                    <small>📅 ${escapeHtml(a.date || 'Недавно')}</small>
+                </div>
+            `).join('');
+        } catch(e) {
+            container.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
+        }
+    };
+    
+    // ===== ПОСТЫ =====
+    function showCreatePostArea() {
+        const container = document.getElementById('createPostArea');
+        if (window.currentUser && window.currentUser.passport && window.currentUser.passport.fullName) {
+            container.style.display = 'block';
+            document.getElementById('postDisabledMsg').textContent = '';
+            document.getElementById('postInput').disabled = false;
+        } else {
+            container.style.display = 'block';
+            document.getElementById('postDisabledMsg').textContent = '⚠️ У вас нет паспорта, вы не можете создавать посты.';
+            document.getElementById('postInput').disabled = true;
+        }
+    }
+    
+    async function loadPosts() {
+        const container = document.getElementById('postsList');
+        container.innerHTML = '🔄 Загрузка...';
+        
+        try {
+            const posts = await apiFetch('posts') || {};
+            const keys = Object.keys(posts);
+            if (keys.length === 0) {
+                container.innerHTML = '<div class="loading">📝 Нет постов. Будь первым!</div>';
+                return;
+            }
+            
+            const sortedKeys = keys.sort((a, b) => (posts[b].timestamp || 0) - (posts[a].timestamp || 0));
+            
+            // Онлайн-статусы
+            const onlineStatuses = {};
+            for (const key of sortedKeys) {
+                const author = posts[key].author;
+                if (author && !onlineStatuses[author]) {
+                    try {
+                        const status = await apiFetch(`users/${author}/online`) || {};
+                        onlineStatuses[author] = status.status === 'online';
+                    } catch(e) { onlineStatuses[author] = false; }
+                }
+            }
+            
+            let html = '';
+            for (const key of sortedKeys) {
+                const post = posts[key];
+                const isOnline = onlineStatuses[post.author] || false;
+                const likesCount = post.likes || 0;
+                const comments = post.comments || {};
+                const commentKeys = Object.keys(comments);
+                const timeAgo = getTimeAgo(post.timestamp);
+                const isNew = (Date.now() - (post.timestamp || 0)) < 3600000;
+                const isPopular = likesCount >= 5;
+                
+                let badgeHtml = '';
+                if (isNew) badgeHtml = `<span class="post-badge new">Новый</span>`;
+                if (isPopular) badgeHtml += `<span class="post-badge popular">🔥 Популярный</span>`;
+                
+                const isLiked = window.currentUser && post.likedBy && post.likedBy[window.currentUser.login];
+                
+                html += `
+                    <div class="post-item" data-postid="${key}">
+                        <div class="post-author">
+                            <span>${escapeHtml(post.author)}</span>
+                            <span class="online-indicator ${isOnline ? 'online' : 'offline'}"></span>
+                            ${badgeHtml}
+                            <span class="post-time">${timeAgo}</span>
+                        </div>
+                        <div class="post-text">${escapeHtml(post.text)}</div>
+                        <div class="post-actions">
+                            <button onclick="likePost('${key}')" class="${isLiked ? 'liked' : ''}">
+                                ❤️ <span id="likes-${key}">${likesCount}</span>
+                            </button>
+                            <button onclick="toggleComments('${key}')">
+                                💬 <span id="comments-count-${key}">${commentKeys.length}</span>
+                            </button>
+                        </div>
+                        <div class="comments-section" id="comments-${key}" style="display:none;">
+                            ${commentKeys.map(cid => {
+                                const c = comments[cid];
+                                return `
+                                    <div class="comment-item">
+                                        <span class="comment-author">${escapeHtml(c.author)}</span>
+                                        <span class="comment-time">${getTimeAgo(c.timestamp)}</span>
+                                        <div class="comment-text">${escapeHtml(c.text)}</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                            <div class="add-comment-area">
+                                <input type="text" placeholder="Написать комментарий..." id="comment-input-${key}">
+                                <button onclick="addComment('${key}')">📤</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        } catch(e) {
+            container.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
+        }
+    }
+    
+    window.createPost = async function() {
+        if (!window.currentUser) {
+            showNotification('Сначала войдите!', '❌');
+            return;
+        }
+        if (!window.currentUser.passport || !window.currentUser.passport.fullName) {
+            showNotification('У вас нет паспорта!', '❌');
+            return;
+        }
+        
+        const input = document.getElementById('postInput');
+        const text = input.value.trim();
+        if (!text) return;
+        if (text.length > 500) {
+            showNotification('Максимум 500 символов', '❌');
+            return;
+        }
+        
+        try {
+            const postId = Date.now().toString();
+            const newPost = {
+                author: window.currentUser.login,
+                text: text,
+                timestamp: Date.now(),
+                likes: 0,
+                likedBy: {},
+                comments: {}
+            };
+            
+            await apiPut(`posts/${postId}`, newPost);
+            input.value = '';
+            loadPosts();
+            showNotification('Пост опубликован! 📝', '✅');
+        } catch(e) {
+            showNotification(`Ошибка: ${e.message}`, '❌');
+        }
+    };
+    
+    window.likePost = async function(postId) {
+        if (!window.currentUser) {
+            showNotification('Сначала войдите!', '❌');
+            return;
+        }
+        
+        try {
+            const post = await apiFetch(`posts/${postId}`);
+            if (!post) { showNotification('Пост не найден', '❌'); return; }
+            
+            const likedBy = post.likedBy || {};
+            const isLiked = likedBy[window.currentUser.login];
+            let likes = post.likes || 0;
+            
+            if (isLiked) {
+                delete likedBy[window.currentUser.login];
+                likes--;
+            } else {
+                likedBy[window.currentUser.login] = true;
+                likes++;
+            }
+            
+            await apiPut(`posts/${postId}/likes`, likes);
+            await apiPut(`posts/${postId}/likedBy`, likedBy);
+            
+            loadPosts();
+        } catch(e) {
+            showNotification(`Ошибка: ${e.message}`, '❌');
+        }
+    };
+    
+    window.toggleComments = function(postId) {
+        const section = document.getElementById(`comments-${postId}`);
+        if (section.style.display === 'none') {
+            section.style.display = 'block';
+        } else {
+            section.style.display = 'none';
+        }
+    };
+    
+    window.addComment = async function(postId) {
+        if (!window.currentUser) {
+            showNotification('Сначала войдите!', '❌');
+            return;
+        }
+        
+        const input = document.getElementById(`comment-input-${postId}`);
+        const text = input.value.trim();
+        if (!text) return;
+        
+        try {
+            const post = await apiFetch(`posts/${postId}`);
+            if (!post) { showNotification('Пост не найден', '❌'); return; }
+            
+            const comments = post.comments || {};
+            const commentId = Date.now().toString();
+            comments[commentId] = {
+                author: window.currentUser.login,
+                text: text,
+                timestamp: Date.now()
+            };
+            
+            await apiPut(`posts/${postId}/comments`, comments);
+            input.value = '';
+            loadPosts();
+        } catch(e) {
+            showNotification(`Ошибка: ${e.message}`, '❌');
+        }
+    };
     
     // ===== ПЕРЕВОДЫ =====
     window.makeTransfer = async function() {
@@ -1064,7 +1417,6 @@
             
             updateUserBalanceDisplay();
             loadTransactions();
-            loadAdminData();
             showNotification(`✅ Переведено ${amount} монет ${to}`, '💸');
         } catch(e) {
             status.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
@@ -1086,7 +1438,6 @@
                 return;
             }
             
-            // Фильтруем только транзакции пользователя
             const userTxs = keys.filter(id => {
                 const tx = transactions[id];
                 return tx.from === window.currentUser.login || tx.to === window.currentUser.login;
@@ -1157,9 +1508,6 @@
         if (!str) return '';
         return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
     }
-    
-    // ===== POSTS (кратко) =====
-    // ... (полный код постов)
     
     // ===== АВТОВХОД =====
     async function autoLogin() {
