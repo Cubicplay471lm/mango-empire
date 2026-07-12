@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🐟 Karasik Talk</title>
-    
+    <title>🐟 Karasik Talk · Casino</title>
+
     <script type="importmap">
         {
             "imports": {
@@ -13,9 +13,8 @@
             }
         }
     </script>
-    
+
     <style>
-        /* ===== ПЕРЕМЕННЫЕ ===== */
         :root {
             --bg: #f0e6d3;
             --bg2: #e8dcc8;
@@ -36,8 +35,9 @@
             --notification-text: #ffffff;
             --success: #4a8a4a;
             --danger: #dc2626;
+            --gold: #f5b342;
         }
-        
+
         [data-theme="dark"] {
             --bg: #1a1a2e;
             --bg2: #16162a;
@@ -53,13 +53,12 @@
             --notification: #f4a460;
             --notification-text: #1a1a2e;
         }
-        
+
         [data-color="blue"] { --border: #4a8ad4; --primary: #4a8ad4; --primary-dark: #3a7ac4; --notification: #4a8ad4; }
         [data-color="green"] { --border: #4aaf4a; --primary: #4aaf4a; --primary-dark: #3a9f3a; --notification: #4aaf4a; }
         [data-color="purple"] { --border: #9b59b6; --primary: #9b59b6; --primary-dark: #8b49a6; --notification: #9b59b6; }
         [data-color="pink"] { --border: #e84393; --primary: #e84393; --primary-dark: #d83383; --notification: #e84393; }
-        
-        /* ===== ОСНОВНЫЕ ===== */
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -91,7 +90,7 @@
             padding-left: 16px;
             margin-bottom: 20px;
         }
-        
+
         .top-bar {
             display: flex;
             justify-content: flex-end;
@@ -124,7 +123,7 @@
         }
         .color-btn:hover { transform: scale(1.1); }
         .color-btn.active { border: 3px solid var(--notification); box-shadow: 0 0 12px var(--notification); }
-        
+
         .login-area {
             background: var(--bg2);
             padding: 16px;
@@ -157,7 +156,7 @@
         .login-area .login-btn:hover { background: var(--primary-dark); }
         .login-area .register-btn { background: var(--secondary); color: white; }
         .login-area .register-btn:hover { opacity: 0.85; }
-        
+
         .user-info {
             background: var(--user-bg);
             padding: 12px 16px;
@@ -204,11 +203,11 @@
             text-decoration: none;
         }
         .user-info .admin-link:hover { opacity: 0.85; }
-        
+
         .error-box { background: #fff1f0; border-radius: 16px; padding: 12px; color: #b34e3a; border: 1px solid #ffc6be; margin-top: 8px; }
         .success-box { background: #d4edda; border-radius: 16px; padding: 12px; color: #155724; border: 1px solid #c3e6cb; margin-top: 8px; }
         .loading { text-align: center; padding: 20px; color: var(--text-light); }
-        
+
         .tabs {
             display: flex;
             gap: 12px;
@@ -228,318 +227,170 @@
         .tab-btn.active { background: var(--primary); color: white; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        
-        .passport-card {
-            background: linear-gradient(140deg, var(--bg2), var(--card));
-            border-radius: 32px;
-            padding: 20px;
-            border: 2px solid var(--border);
-            margin-top: 12px;
-        }
-        .passport-card .badge {
-            background: var(--primary);
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 0.75rem;
-            color: white;
-            margin-bottom: 18px;
-        }
-        .passport-card .name { font-size: 1.8rem; font-weight: 700; color: var(--text); }
-        .passport-card .detail {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            border-bottom: 1px dashed var(--input-border);
-            padding: 12px 0;
-        }
-        .passport-card .label { font-weight: 600; color: var(--text-light); }
-        .passport-card .role-tag {
-            background: var(--primary);
-            padding: 2px 14px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: white;
-            font-weight: bold;
-        }
-        
-        .chat-list-item {
+
+        /* ===== КАЗИНО ===== */
+        .casino-game {
             background: var(--bg2);
-            border-radius: 12px;
-            padding: 12px 16px;
-            margin-bottom: 8px;
-            border-left: 4px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            cursor: pointer;
-            transition: 0.2s;
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 2px solid var(--gold);
         }
-        .chat-list-item:hover { background: var(--input-border); }
-        .chat-list-item .cname { font-weight: bold; color: var(--text); }
-        .chat-list-item .cmembers { font-size: 0.8rem; color: var(--text-light); }
-        
-        .chat-box {
-            height: 400px;
-            overflow-y: auto;
-            padding: 16px;
-            background: var(--chat-bg);
-            border-radius: 20px;
-            border: 2px solid var(--input-border);
+        .casino-game .game-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--gold);
+            text-align: center;
             margin-bottom: 16px;
         }
-        .message-item {
-            background: var(--msg-bg);
-            border-radius: 16px;
-            padding: 12px 16px;
-            margin-bottom: 8px;
-            border-left: 4px solid var(--border);
+        .casino-game .balance-display {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+            color: var(--text);
         }
+        .casino-game .balance-display span {
+            font-weight: bold;
+            color: var(--gold);
+        }
+        .casino-game .bet-area {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .casino-game .bet-area input {
+            padding: 12px 16px;
+            border: 2px solid var(--input-border);
+            border-radius: 30px;
+            font-size: 1rem;
+            background: var(--input-bg);
+            color: var(--text);
+            width: 150px;
+            text-align: center;
+        }
+        .casino-game .bet-area input:focus { outline: none; border-color: var(--gold); }
+        .casino-game .bet-area button {
+            padding: 12px 32px;
+            border: none;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 1rem;
+        }
+        .casino-game .bet-area .bet-btn { background: var(--gold); color: white; }
+        .casino-game .bet-area .bet-btn:hover { transform: scale(1.05); }
+        .casino-game .bet-area .bet-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .casino-game .coinflip-result {
+            text-align: center;
+            font-size: 3rem;
+            padding: 20px;
+            margin: 16px 0;
+            background: var(--card);
+            border-radius: 16px;
+            border: 2px solid var(--gold);
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .casino-game .coinflip-result .result-text {
+            font-size: 1.2rem;
+            color: var(--text);
+            margin-top: 8px;
+        }
+        .casino-game .coinflip-result .win { color: var(--success); }
+        .casino-game .coinflip-result .lose { color: var(--danger); }
+
+        .casino-game .history {
+            margin-top: 16px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .casino-game .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--input-border);
+            font-size: 0.9rem;
+        }
+        .casino-game .history-item .win { color: var(--success); }
+        .casino-game .history-item .lose { color: var(--danger); }
+
+        /* ===== ОСТАЛЬНЫЕ СТИЛИ (сокращённо) ===== */
+        .chat-box { height: 400px; overflow-y: auto; padding: 16px; background: var(--chat-bg); border-radius: 20px; border: 2px solid var(--input-border); margin-bottom: 16px; }
+        .message-item { background: var(--msg-bg); border-radius: 16px; padding: 12px 16px; margin-bottom: 8px; border-left: 4px solid var(--border); }
         .message-item .msg-user { font-weight: bold; color: var(--text); }
         .message-item .msg-time { font-size: 0.65rem; color: var(--text-light); float: right; }
         .message-item .msg-text { margin-top: 4px; color: var(--text); }
-        
-        .chat-input-area {
-            display: flex;
-            gap: 12px;
-        }
-        .chat-input-area input {
-            flex: 1;
-            padding: 14px 18px;
-            border: 2px solid var(--input-border);
-            border-radius: 40px;
-            font-size: 1rem;
-            font-family: inherit;
-            background: var(--input-bg);
-            color: var(--text);
-        }
+        .chat-input-area { display: flex; gap: 12px; }
+        .chat-input-area input { flex: 1; padding: 14px 18px; border: 2px solid var(--input-border); border-radius: 40px; font-size: 1rem; background: var(--input-bg); color: var(--text); }
         .chat-input-area input:focus { outline: none; border-color: var(--border); }
-        .chat-input-area button {
-            background: var(--primary);
-            border: none;
-            padding: 0 28px;
-            border-radius: 40px;
-            color: white;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+        .chat-input-area button { background: var(--primary); border: none; padding: 0 28px; border-radius: 40px; color: white; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.2s; }
         .chat-input-area button:hover { background: var(--primary-dark); }
-        
-        .create-chat-area {
-            background: var(--bg2);
-            padding: 16px;
-            border-radius: 16px;
-            margin-bottom: 16px;
-        }
-        .create-chat-area input {
-            width: 100%;
-            padding: 10px 16px;
-            margin: 4px 0;
-            border: 2px solid var(--input-border);
-            border-radius: 30px;
-            font-size: 0.95rem;
-            background: var(--input-bg);
-            color: var(--text);
-        }
-        .create-chat-area button {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 30px;
-            background: var(--secondary);
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 4px;
-            transition: 0.2s;
-        }
+
+        .create-chat-area { background: var(--bg2); padding: 16px; border-radius: 16px; margin-bottom: 16px; }
+        .create-chat-area input { width: 100%; padding: 10px 16px; margin: 4px 0; border: 2px solid var(--input-border); border-radius: 30px; font-size: 0.95rem; background: var(--input-bg); color: var(--text); }
+        .create-chat-area button { width: 100%; padding: 10px; border: none; border-radius: 30px; background: var(--secondary); color: white; font-weight: bold; cursor: pointer; margin-top: 4px; transition: 0.2s; }
         .create-chat-area button:hover { opacity: 0.85; }
-        
-        .announcement-item {
-            background: var(--bg2);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 12px;
-            border-left: 4px solid var(--border);
-        }
+
+        .chat-list-item { background: var(--bg2); border-radius: 12px; padding: 12px 16px; margin-bottom: 8px; border-left: 4px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; cursor: pointer; transition: 0.2s; }
+        .chat-list-item:hover { background: var(--input-border); }
+        .chat-list-item .cname { font-weight: bold; color: var(--text); }
+        .chat-list-item .cmembers { font-size: 0.8rem; color: var(--text-light); }
+
+        .passport-card { background: linear-gradient(140deg, var(--bg2), var(--card)); border-radius: 32px; padding: 20px; border: 2px solid var(--border); margin-top: 12px; }
+        .passport-card .badge { background: var(--primary); display: inline-block; padding: 6px 16px; border-radius: 40px; font-weight: bold; font-size: 0.75rem; color: white; margin-bottom: 18px; }
+        .passport-card .name { font-size: 1.8rem; font-weight: 700; color: var(--text); }
+        .passport-card .detail { display: flex; justify-content: space-between; flex-wrap: wrap; border-bottom: 1px dashed var(--input-border); padding: 12px 0; }
+        .passport-card .label { font-weight: 600; color: var(--text-light); }
+        .passport-card .role-tag { background: var(--primary); padding: 2px 14px; border-radius: 20px; font-size: 0.8rem; color: white; font-weight: bold; }
+
+        .announcement-item { background: var(--bg2); border-radius: 16px; padding: 16px; margin-bottom: 12px; border-left: 4px solid var(--border); }
         .announcement-item h3 { color: var(--text); margin-bottom: 6px; }
         .announcement-item p { color: var(--text-light); }
-        .announcement-item small { color: var(--text-light); font-size: 0.7rem; }
-        
-        /* ===== ПОСТЫ ===== */
-        .post-item {
-            background: var(--bg2);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 16px;
-            border-left: 4px solid var(--border);
-            transition: 0.2s;
-        }
-        .post-item .post-author {
-            font-weight: bold;
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .post-item .post-author .online-indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-        }
+
+        .post-item { background: var(--bg2); border-radius: 16px; padding: 16px; margin-bottom: 16px; border-left: 4px solid var(--border); }
+        .post-item .post-author { font-weight: bold; color: var(--text); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .post-item .post-author .online-indicator { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
         .post-item .post-author .online-indicator.online { background: #4a8a4a; }
         .post-item .post-author .online-indicator.offline { background: #b89a7a; }
-        .post-item .post-time {
-            font-size: 0.7rem;
-            color: var(--text-light);
-            margin-left: 8px;
-        }
-        .post-item .post-text {
-            margin-top: 8px;
-            color: var(--text);
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-        .post-item .post-actions {
-            display: flex;
-            gap: 16px;
-            margin-top: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .post-item .post-actions button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-            color: var(--text-light);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            transition: 0.2s;
-        }
+        .post-item .post-time { font-size: 0.7rem; color: var(--text-light); margin-left: 8px; }
+        .post-item .post-text { margin-top: 8px; color: var(--text); white-space: pre-wrap; word-break: break-word; }
+        .post-item .post-actions { display: flex; gap: 16px; margin-top: 12px; align-items: center; flex-wrap: wrap; }
+        .post-item .post-actions button { background: none; border: none; cursor: pointer; font-size: 0.9rem; color: var(--text-light); display: flex; align-items: center; gap: 4px; transition: 0.2s; }
         .post-item .post-actions button:hover { color: var(--primary); }
         .post-item .post-actions .liked { color: #e84393; }
-        .post-item .post-badge {
-            font-size: 0.65rem;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-weight: bold;
-            display: inline-block;
-            margin-left: 8px;
-        }
+        .post-item .post-badge { font-size: 0.65rem; padding: 2px 10px; border-radius: 20px; font-weight: bold; display: inline-block; margin-left: 8px; }
         .post-item .post-badge.new { background: #4a8ad4; color: white; }
         .post-item .post-badge.popular { background: #f4a460; color: white; }
-        .post-item .comments-section {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px dashed var(--input-border);
-        }
-        .post-item .comment-item {
-            background: var(--chat-bg);
-            border-radius: 12px;
-            padding: 8px 12px;
-            margin-bottom: 8px;
-        }
-        .post-item .comment-item .comment-author {
-            font-weight: bold;
-            color: var(--text);
-            font-size: 0.85rem;
-        }
-        .post-item .comment-item .comment-text {
-            color: var(--text);
-            font-size: 0.9rem;
-            margin-top: 2px;
-        }
-        .post-item .comment-item .comment-time {
-            font-size: 0.6rem;
-            color: var(--text-light);
-            float: right;
-        }
-        .post-item .add-comment-area {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-        }
-        .post-item .add-comment-area input {
-            flex: 1;
-            padding: 8px 12px;
-            border: 2px solid var(--input-border);
-            border-radius: 30px;
-            font-size: 0.85rem;
-            background: var(--input-bg);
-            color: var(--text);
-        }
-        .post-item .add-comment-area button {
-            background: var(--primary);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 30px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        
-        .create-post-area {
-            background: var(--bg2);
-            padding: 16px;
-            border-radius: 16px;
-            margin-bottom: 16px;
-        }
-        .create-post-area textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid var(--input-border);
-            border-radius: 16px;
-            background: var(--input-bg);
-            color: var(--text);
-            font-family: inherit;
-            font-size: 0.95rem;
-            resize: vertical;
-            min-height: 80px;
-        }
+        .post-item .comments-section { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--input-border); }
+        .post-item .comment-item { background: var(--chat-bg); border-radius: 12px; padding: 8px 12px; margin-bottom: 8px; }
+        .post-item .comment-item .comment-author { font-weight: bold; color: var(--text); font-size: 0.85rem; }
+        .post-item .comment-item .comment-text { color: var(--text); font-size: 0.9rem; margin-top: 2px; }
+        .post-item .comment-item .comment-time { font-size: 0.6rem; color: var(--text-light); float: right; }
+        .post-item .add-comment-area { display: flex; gap: 8px; margin-top: 8px; }
+        .post-item .add-comment-area input { flex: 1; padding: 8px 12px; border: 2px solid var(--input-border); border-radius: 30px; font-size: 0.85rem; background: var(--input-bg); color: var(--text); }
+        .post-item .add-comment-area button { background: var(--primary); border: none; padding: 8px 16px; border-radius: 30px; color: white; font-weight: bold; cursor: pointer; }
+
+        .create-post-area { background: var(--bg2); padding: 16px; border-radius: 16px; margin-bottom: 16px; }
+        .create-post-area textarea { width: 100%; padding: 12px; border: 2px solid var(--input-border); border-radius: 16px; background: var(--input-bg); color: var(--text); font-family: inherit; font-size: 0.95rem; resize: vertical; min-height: 80px; }
         .create-post-area textarea:focus { outline: none; border-color: var(--border); }
-        .create-post-area button {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 30px;
-            background: var(--secondary);
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 8px;
-            transition: 0.2s;
-        }
+        .create-post-area button { width: 100%; padding: 10px; border: none; border-radius: 30px; background: var(--secondary); color: white; font-weight: bold; cursor: pointer; margin-top: 8px; transition: 0.2s; }
         .create-post-area button:hover { opacity: 0.85; }
-        .create-post-area .disabled-msg {
-            color: var(--text-light);
-            font-size: 0.9rem;
-            text-align: center;
-            margin-top: 6px;
-        }
-        
-        /* ===== ПЕРЕВОДЫ ===== */
-        .transfer-item {
-            background: var(--bg2);
-            border-radius: 12px;
-            padding: 12px 16px;
-            margin-bottom: 8px;
-            border-left: 3px solid var(--primary);
-        }
+
+        .transfer-item { background: var(--bg2); border-radius: 12px; padding: 12px 16px; margin-bottom: 8px; border-left: 3px solid var(--primary); }
         .transfer-item .t-from { font-weight: bold; color: var(--text); }
         .transfer-item .t-to { font-weight: bold; color: var(--secondary); }
         .transfer-item .t-amount { font-weight: bold; color: var(--success); }
         .transfer-item .t-time { font-size: 0.7rem; color: var(--text-light); float: right; }
-        
+
         footer { text-align: center; color: var(--text-light); font-size: 0.7rem; margin-top: 28px; }
-        
+
         @media (max-width: 500px) {
             .card { padding: 16px; }
             .top-bar { justify-content: center; }
@@ -547,6 +398,7 @@
             .chat-input-area button { padding: 14px; }
             .tabs { gap: 6px; }
             .tab-btn { padding: 8px 14px; font-size: 0.8rem; }
+            .casino-game .bet-area input { width: 100px; }
         }
     </style>
 </head>
@@ -563,10 +415,10 @@
             <button class="color-btn" style="background:#9b59b6;" onclick="setColor('purple')" data-color="purple"></button>
             <button class="color-btn" style="background:#e84393;" onclick="setColor('pink')" data-color="pink"></button>
         </div>
-        
+
         <h1>🐟 Karasik Talk</h1>
-        <div class="subtitle">🇺🇸 Карасикославия</div>
-        
+        <div class="subtitle">🇺🇸 Карасикославия · Casino</div>
+
         <!-- Логин -->
         <div class="login-area" id="loginArea">
             <input type="text" id="loginInput" placeholder="Логин">
@@ -575,7 +427,7 @@
             <button class="register-btn" onclick="register()">📝 Регистрация</button>
             <div id="authStatus"></div>
         </div>
-        
+
         <!-- Пользователь -->
         <div id="userInfo" class="user-info">
             <span class="uname" id="userName">Имя</span>
@@ -585,15 +437,16 @@
             <a href="admin.html" class="admin-link" id="adminLink" style="display:none;">👑 Админ</a>
             <button class="logout-btn" onclick="logout()">🚪 Выйти</button>
         </div>
-        
+
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('chats')">💬 Чаты</button>
+            <button class="tab-btn" onclick="switchTab('casino')">🎰 Казино</button>
             <button class="tab-btn" onclick="switchTab('passport')">📋 Паспорт</button>
             <button class="tab-btn" onclick="switchTab('announcements')">📢 Новости</button>
             <button class="tab-btn" onclick="switchTab('posts')">📝 Посты</button>
             <button class="tab-btn" onclick="switchTab('transfers')">💸 Переводы</button>
         </div>
-        
+
         <!-- Чаты -->
         <div id="tab-chats" class="tab-content active">
             <div class="create-chat-area">
@@ -602,7 +455,7 @@
                 <button onclick="createChat()">➕ Создать чат</button>
             </div>
             <div id="chatsList"><div class="loading">💬 Войдите, чтобы видеть чаты</div></div>
-            
+
             <div id="chatView" style="display:none; margin-top:16px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap;">
                     <h3 id="currentChatName" style="color:var(--text);">Чат</h3>
@@ -611,7 +464,7 @@
                         <button onclick="leaveChat()" style="background:var(--danger); border:none; padding:6px 16px; border-radius:20px; color:white; cursor:pointer; font-size:0.8rem;">🚪 Покинуть</button>
                     </div>
                 </div>
-                
+
                 <div id="addMemberPanel" style="display:none; background:var(--bg2); padding:12px; border-radius:12px; margin-bottom:12px;">
                     <div style="display:flex; gap:8px;">
                         <input type="text" id="addMemberInput" placeholder="Логин пользователя" style="flex:1; padding:8px 12px; border:2px solid var(--input-border); border-radius:30px; font-size:0.9rem; background:var(--input-bg); color:var(--text);">
@@ -619,7 +472,7 @@
                         <button onclick="hideAddMember()" style="background:var(--danger); border:none; padding:8px 16px; border-radius:30px; color:white; cursor:pointer;">✕</button>
                     </div>
                 </div>
-                
+
                 <div id="chatMessages" class="chat-box"><div class="loading">💬 Загрузка...</div></div>
                 <div class="chat-input-area">
                     <input type="text" id="messageInput" placeholder="Напиши сообщение..." disabled>
@@ -627,18 +480,41 @@
                 </div>
             </div>
         </div>
-        
+
+        <!-- ===== КАЗИНО ===== -->
+        <div id="tab-casino" class="tab-content">
+            <div class="casino-game">
+                <div class="game-title">🎰 CoinFlip Casino</div>
+                <div class="balance-display">💰 Баланс: <span id="casinoBalance">0</span> монет</div>
+
+                <div class="bet-area">
+                    <input type="number" id="betAmount" placeholder="Ставка" min="1" value="10">
+                    <button class="bet-btn" onclick="placeBet('heads')">🪙 Орёл</button>
+                    <button class="bet-btn" onclick="placeBet('tails')">🪙 Решка</button>
+                </div>
+
+                <div class="coinflip-result" id="coinflipResult">
+                    <span style="font-size:4rem;">🪙</span>
+                    <div class="result-text">Сделай ставку!</div>
+                </div>
+
+                <div class="history" id="casinoHistory">
+                    <div style="text-align:center; color:var(--text-light);">История игр</div>
+                </div>
+            </div>
+        </div>
+
         <!-- Паспорт -->
         <div id="tab-passport" class="tab-content">
             <div id="passportDisplay"></div>
         </div>
-        
+
         <!-- Новости -->
         <div id="tab-announcements" class="tab-content">
             <button onclick="loadAnnouncements()" style="background:var(--secondary); border:none; padding:10px 20px; border-radius:30px; color:white; font-weight:bold; cursor:pointer; margin-bottom:12px;">🔄 Загрузить новости</button>
             <div id="announcementsResult"><div class="loading">📢 Нажми "Загрузить новости"</div></div>
         </div>
-        
+
         <!-- Посты -->
         <div id="tab-posts" class="tab-content">
             <div id="postsContainer">
@@ -650,7 +526,7 @@
                 <div id="postsList"><div class="loading">📝 Загрузка постов...</div></div>
             </div>
         </div>
-        
+
         <!-- Переводы -->
         <div id="tab-transfers" class="tab-content">
             <div id="transferArea" style="background:var(--bg2); border-radius:16px; padding:16px; margin-bottom:16px;">
@@ -666,7 +542,7 @@
                 <div class="loading">💸 Загрузка транзакций...</div>
             </div>
         </div>
-        
+
     </div>
     <footer>🐟 Карасикославия · Все данные в Firebase 🔥</footer>
 </div>
@@ -674,7 +550,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
     import { getDatabase, ref, get, set, push, onValue, serverTimestamp, update, remove } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
-    
+
     const firebaseConfig = {
         apiKey: "AIzaSyCCyxK7YqIPmgYfhfU4FtcVS9IVuxNWh78",
         authDomain: "karasik-talk.firebaseapp.com",
@@ -687,14 +563,17 @@
 
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
-    
+
     const DB_URL = 'https://karasik-talk-default-rtdb.europe-west1.firebasedatabase.app';
-    
+
     // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
     window.currentUser = null;
     window.currentChatId = null;
     window.updateInterval = null;
-    
+    window.casinoHistory = [];
+    window.totalBets = 0;
+    window.consecutiveWins = 0;
+
     // ===== ТЕМА =====
     window.toggleTheme = function() {
         const current = document.documentElement.getAttribute('data-theme');
@@ -703,28 +582,28 @@
         localStorage.setItem('karasik-theme', newTheme);
         document.querySelector('.theme-btn').textContent = newTheme === 'dark' ? '☀️' : '🌙';
     };
-    
+
     window.setColor = function(color) {
         document.documentElement.setAttribute('data-color', color);
         localStorage.setItem('karasik-color', color);
         document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
         document.querySelector(`.color-btn[data-color="${color}"]`)?.classList.add('active');
     };
-    
+
     const savedTheme = localStorage.getItem('karasik-theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
     document.querySelector('.theme-btn').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
-    
+
     const savedColor = localStorage.getItem('karasik-color') || 'orange';
     document.documentElement.setAttribute('data-color', savedColor);
     document.querySelector(`.color-btn[data-color="${savedColor}"]`)?.classList.add('active');
-    
+
     // ===== API =====
     async function apiFetch(path) {
         const res = await fetch(`${DB_URL}/all/${path}.json`);
         return res.json();
     }
-    
+
     async function apiPut(path, data) {
         const res = await fetch(`${DB_URL}/all/${path}.json`, {
             method: 'PUT',
@@ -733,7 +612,7 @@
         });
         return res.json();
     }
-    
+
     // ===== БАЛАНС =====
     async function getUserBalance(login) {
         try {
@@ -743,66 +622,65 @@
             return 0;
         }
     }
-    
+
     async function updateUserBalance(login, newBalance) {
         await apiPut(`users/${login}/balance`, newBalance);
     }
-    
+
     async function updateUserBalanceDisplay() {
         if (!window.currentUser) return;
         const balance = await getUserBalance(window.currentUser.login);
         document.getElementById('userBalance').textContent = `💰 ${balance}`;
-        // Обновляем в паспорте
-        const passportDisplay = document.getElementById('passportDisplay');
-        if (passportDisplay && window.currentUser.passport) {
-            // просто обновим паспорт
+        document.getElementById('casinoBalance').textContent = balance;
+        if (window.currentUser.passport) {
             showPassport();
         }
     }
-    
+
     // ===== РЕГИСТРАЦИЯ =====
     window.register = async function() {
         const login = document.getElementById('loginInput').value.trim();
         const password = document.getElementById('passwordInput').value.trim();
         const status = document.getElementById('authStatus');
-        
+
         if (!login || !password) {
             status.innerHTML = '<div class="error-box">❌ Заполните логин и пароль</div>';
             return;
         }
-        
+
         try {
             const users = await apiFetch('users');
             if (users && users[login]) {
                 status.innerHTML = '<div class="error-box">❌ Пользователь уже существует</div>';
                 return;
             }
-            
+
             await apiPut(`users/${login}`, {
                 password: password,
                 passport: { fullName: login, role: 'Обычный карасик', birthDate: '' },
                 createdAt: new Date().toISOString(),
                 chats: [],
-                balance: 0
+                balance: 0,
+                casinoStats: { totalBets: 0, totalWins: 0, totalLosses: 0 }
             });
-            
+
             status.innerHTML = '<div class="success-box">✅ Регистрация успешна! Теперь войдите.</div>';
         } catch(e) {
             status.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
         }
     };
-    
+
     // ===== ЛОГИН =====
     window.login = async function() {
         const login = document.getElementById('loginInput').value.trim();
         const password = document.getElementById('passwordInput').value.trim();
         const status = document.getElementById('authStatus');
-        
+
         if (!login || !password) {
             status.innerHTML = '<div class="error-box">❌ Введите логин и пароль</div>';
             return;
         }
-        
+
         try {
             const user = await apiFetch(`users/${login}`);
             if (!user) {
@@ -813,33 +691,33 @@
                 status.innerHTML = '<div class="error-box">❌ Неверный пароль</div>';
                 return;
             }
-            
+
             window.currentUser = { login, ...user };
             localStorage.setItem('karasik_user_login', login);
-            
+
             document.getElementById('userInfo').style.display = 'flex';
             document.getElementById('loginArea').style.display = 'none';
             status.innerHTML = '';
-            
-            // Показываем ссылку на админку, если есть права
+
             const role = user.passport?.role || '';
             if (role.toLowerCase().includes('админ')) {
                 document.getElementById('adminLink').style.display = 'inline-block';
             } else {
                 document.getElementById('adminLink').style.display = 'none';
             }
-            
+
             showPassport();
             loadChats();
             loadPosts();
             loadTransactions();
             showCreatePostArea();
             updateUserBalanceDisplay();
+            loadCasinoHistory();
         } catch(e) {
             status.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
         }
     };
-    
+
     // ===== ВЫХОД =====
     window.logout = function() {
         window.currentUser = null;
@@ -854,19 +732,22 @@
         document.getElementById('createPostArea').style.display = 'none';
         document.getElementById('postsList').innerHTML = '<div class="loading">📝 Войдите, чтобы видеть посты</div>';
         document.getElementById('transactionsList').innerHTML = '<div class="loading">💸 Войдите, чтобы видеть переводы</div>';
+        document.getElementById('casinoBalance').textContent = '0';
+        document.getElementById('casinoHistory').innerHTML = '<div style="text-align:center; color:var(--text-light);">Войдите, чтобы играть</div>';
+        document.getElementById('coinflipResult').innerHTML = `<span style="font-size:4rem;">🪙</span><div class="result-text">Войдите, чтобы играть</div>`;
     };
-    
+
     // ===== ПАСПОРТ =====
     function showPassport() {
         const container = document.getElementById('passportDisplay');
         const p = window.currentUser.passport;
         const balance = window.currentUser.balance || 0;
-        
+
         if (!p || !p.fullName) {
             container.innerHTML = `<div style="background:#fff3cd; border-radius:16px; padding:16px; color:#856404; border:1px solid #ffc107;">⚠️ У вас нет паспорта. Обратитесь к администратору.</div>`;
             return;
         }
-        
+
         container.innerHTML = `
             <div class="passport-card">
                 <div class="badge">🇺🇸 УДОСТОВЕРЕНИЕ ЛИЧНОСТИ</div>
@@ -878,18 +759,17 @@
                 <div style="margin-top:16px; text-align:center; font-size:0.8rem; color:var(--text-light);">🐟 Карасикославия</div>
             </div>
         `;
-        
+
         document.getElementById('userName').textContent = p.fullName || window.currentUser.login;
         document.getElementById('userRole').textContent = p.role || 'Обычный карасик';
         document.getElementById('userLogin').textContent = `@${window.currentUser.login}`;
     }
-    
-    // ===== ЧАТЫ =====
+
+    // ===== ЧАТЫ (сокращённо, из предыдущей версии) =====
     async function loadChats() {
         if (!window.currentUser) return;
         const container = document.getElementById('chatsList');
         container.innerHTML = '🔄 Загрузка...';
-        
         try {
             const chats = await apiFetch('chats') || {};
             const userChats = [];
@@ -898,12 +778,10 @@
                     userChats.push({ id, ...chat });
                 }
             }
-            
             if (userChats.length === 0) {
                 container.innerHTML = '<div class="loading">💬 Ты не участвуешь ни в одном чате</div>';
                 return;
             }
-            
             container.innerHTML = userChats.map(chat => `
                 <div class="chat-list-item" onclick="openChat('${chat.id}')">
                     <span class="cname">${escapeHtml(chat.name)}</span>
@@ -914,23 +792,19 @@
             container.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
         }
     }
-    
+
     window.createChat = async function() {
         if (!window.currentUser) { showNotification('Сначала войдите!', '❌'); return; }
-        
         const name = document.getElementById('chatNameInput').value.trim();
         const member = document.getElementById('chatMemberInput').value.trim();
-        
         if (!name || !member) { showNotification('Заполните все поля', '❌'); return; }
         if (member === window.currentUser.login) { showNotification('Нельзя добавить самого себя', '❌'); return; }
-        
         try {
             const users = await apiFetch('users');
             if (!users || !users[member]) {
                 showNotification(`Пользователь "${member}" не найден`, '❌');
                 return;
             }
-            
             const chatId = Date.now().toString();
             const chatData = {
                 name: name,
@@ -939,58 +813,48 @@
                 createdAt: new Date().toISOString(),
                 messages: {}
             };
-            
             await apiPut(`chats/${chatId}`, chatData);
-            
             const userChats = window.currentUser.chats || [];
             userChats.push(chatId);
             await apiPut(`users/${window.currentUser.login}/chats`, userChats);
             window.currentUser.chats = userChats;
-            
             const memberChats = users[member].chats || [];
             memberChats.push(chatId);
             await apiPut(`users/${member}/chats`, memberChats);
-            
             document.getElementById('chatNameInput').value = '';
             document.getElementById('chatMemberInput').value = '';
-            
             loadChats();
             showNotification(`Чат "${name}" создан! 🎉`, '✅');
         } catch(e) {
             showNotification(`Ошибка: ${e.message}`, '❌');
         }
     };
-    
+
     window.openChat = function(chatId) {
         window.currentChatId = chatId;
         document.getElementById('chatView').style.display = 'block';
         document.getElementById('messageInput').disabled = false;
         document.getElementById('sendBtn').disabled = false;
-        
         loadMessages(chatId);
         if (window.updateInterval) clearInterval(window.updateInterval);
         window.updateInterval = setInterval(() => {
             if (window.currentChatId === chatId) loadMessages(chatId, true);
         }, 3000);
     };
-    
+
     async function loadMessages(chatId, silent = false) {
         const container = document.getElementById('chatMessages');
         const nameEl = document.getElementById('currentChatName');
-        
         try {
             const chat = await apiFetch(`chats/${chatId}`);
             if (!chat) { container.innerHTML = '<div class="error-box">❌ Чат не найден</div>'; return; }
-            
             nameEl.textContent = chat.name || 'Чат';
             const messages = chat.messages || {};
             const keys = Object.keys(messages);
-            
             if (keys.length === 0) {
                 if (!silent) container.innerHTML = '<div class="loading">💬 Сообщений пока нет</div>';
                 return;
             }
-            
             const sorted = keys.sort((a, b) => (messages[a].timestamp || 0) - (messages[b].timestamp || 0));
             let html = sorted.map(id => {
                 const m = messages[id];
@@ -1002,55 +866,40 @@
                     </div>
                 `;
             }).join('');
-            
             container.innerHTML = html;
             container.scrollTop = container.scrollHeight;
         } catch(e) {
             if (!silent) container.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
         }
     }
-    
+
     window.sendMessage = async function() {
-        if (!window.currentUser || !window.currentChatId) {
-            showNotification('Выберите чат', '❌');
-            return;
-        }
-        
+        if (!window.currentUser || !window.currentChatId) { showNotification('Выберите чат', '❌'); return; }
         const input = document.getElementById('messageInput');
         const text = input.value.trim();
         if (!text) return;
-        
         try {
             const chat = await apiFetch(`chats/${window.currentChatId}`);
             if (!chat) { showNotification('Чат не найден', '❌'); return; }
-            
             const messages = chat.messages || {};
             const id = Date.now().toString();
-            messages[id] = {
-                from: window.currentUser.login,
-                text: text,
-                timestamp: Date.now()
-            };
-            
+            messages[id] = { from: window.currentUser.login, text: text, timestamp: Date.now() };
             await apiPut(`chats/${window.currentChatId}/messages`, messages);
-            
             input.value = '';
             loadMessages(window.currentChatId);
         } catch(e) {
             showNotification(`Ошибка: ${e.message}`, '❌');
         }
     };
-    
+
     window.leaveChat = async function() {
         if (!window.currentChatId) return;
         if (!confirm('Покинуть чат?')) return;
-        
         try {
             const userChats = window.currentUser.chats || [];
             const updated = userChats.filter(id => id !== window.currentChatId);
             await apiPut(`users/${window.currentUser.login}/chats`, updated);
             window.currentUser.chats = updated;
-            
             window.currentChatId = null;
             document.getElementById('chatView').style.display = 'none';
             document.getElementById('messageInput').disabled = true;
@@ -1061,55 +910,30 @@
             showNotification(`Ошибка: ${e.message}`, '❌');
         }
     };
-    
-    // ===== ДОБАВЛЕНИЕ УЧАСТНИКА =====
+
     window.showAddMember = function() {
         document.getElementById('addMemberPanel').style.display = 'block';
         document.getElementById('addMemberInput').focus();
     };
-    
+
     window.hideAddMember = function() {
         document.getElementById('addMemberPanel').style.display = 'none';
         document.getElementById('addMemberInput').value = '';
     };
-    
+
     window.addMemberToChat = async function() {
-        if (!window.currentUser || !window.currentChatId) {
-            showNotification('Сначала выберите чат', '❌');
-            return;
-        }
-        
+        if (!window.currentUser || !window.currentChatId) { showNotification('Сначала выберите чат', '❌'); return; }
         const login = document.getElementById('addMemberInput').value.trim();
-        if (!login) {
-            showNotification('Введите логин', '❌');
-            return;
-        }
-        if (login === window.currentUser.login) {
-            showNotification('Нельзя добавить себя', '❌');
-            return;
-        }
-        
+        if (!login) { showNotification('Введите логин', '❌'); return; }
+        if (login === window.currentUser.login) { showNotification('Нельзя добавить себя', '❌'); return; }
         try {
             const users = await apiFetch('users');
-            if (!users || !users[login]) {
-                showNotification(`Пользователь "${login}" не найден`, '❌');
-                return;
-            }
-            
+            if (!users || !users[login]) { showNotification(`Пользователь "${login}" не найден`, '❌'); return; }
             const chat = await apiFetch(`chats/${window.currentChatId}`);
-            if (!chat) {
-                showNotification('Чат не найден', '❌');
-                return;
-            }
-            
-            if (chat.members && chat.members.includes(login)) {
-                showNotification('Пользователь уже в чате', '❌');
-                return;
-            }
-            
+            if (!chat) { showNotification('Чат не найден', '❌'); return; }
+            if (chat.members && chat.members.includes(login)) { showNotification('Пользователь уже в чате', '❌'); return; }
             chat.members.push(login);
             await apiPut(`chats/${window.currentChatId}`, chat);
-            
             const user = await apiFetch(`users/${login}`);
             if (user) {
                 const userChats = user.chats || [];
@@ -1118,7 +942,6 @@
                     await apiPut(`users/${login}/chats`, userChats);
                 }
             }
-            
             document.getElementById('addMemberInput').value = '';
             hideAddMember();
             loadMessages(window.currentChatId);
@@ -1128,7 +951,7 @@
             showNotification(`❌ Ошибка: ${e.message}`);
         }
     };
-    
+
     // ===== НОВОСТИ =====
     window.loadAnnouncements = async function() {
         const container = document.getElementById('announcementsResult');
@@ -1136,12 +959,10 @@
         try {
             const data = await apiFetch('announcements') || {};
             const items = Object.values(data).filter(a => a !== null && a.active !== false);
-            
             if (items.length === 0) {
                 container.innerHTML = '<div class="error-box">📭 Нет активных новостей</div>';
                 return;
             }
-            
             container.innerHTML = items.map(a => `
                 <div class="announcement-item">
                     <h3>📌 ${escapeHtml(a.title)}</h3>
@@ -1153,7 +974,7 @@
             container.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
         }
     };
-    
+
     // ===== ПОСТЫ =====
     function showCreatePostArea() {
         const container = document.getElementById('createPostArea');
@@ -1167,11 +988,10 @@
             document.getElementById('postInput').disabled = true;
         }
     }
-    
+
     async function loadPosts() {
         const container = document.getElementById('postsList');
         container.innerHTML = '🔄 Загрузка...';
-        
         try {
             const posts = await apiFetch('posts') || {};
             const keys = Object.keys(posts);
@@ -1179,10 +999,7 @@
                 container.innerHTML = '<div class="loading">📝 Нет постов. Будь первым!</div>';
                 return;
             }
-            
             const sortedKeys = keys.sort((a, b) => (posts[b].timestamp || 0) - (posts[a].timestamp || 0));
-            
-            // Онлайн-статусы
             const onlineStatuses = {};
             for (const key of sortedKeys) {
                 const author = posts[key].author;
@@ -1193,7 +1010,6 @@
                     } catch(e) { onlineStatuses[author] = false; }
                 }
             }
-            
             let html = '';
             for (const key of sortedKeys) {
                 const post = posts[key];
@@ -1204,13 +1020,10 @@
                 const timeAgo = getTimeAgo(post.timestamp);
                 const isNew = (Date.now() - (post.timestamp || 0)) < 3600000;
                 const isPopular = likesCount >= 5;
-                
                 let badgeHtml = '';
                 if (isNew) badgeHtml = `<span class="post-badge new">Новый</span>`;
                 if (isPopular) badgeHtml += `<span class="post-badge popular">🔥 Популярный</span>`;
-                
                 const isLiked = window.currentUser && post.likedBy && post.likedBy[window.currentUser.login];
-                
                 html += `
                     <div class="post-item" data-postid="${key}">
                         <div class="post-author">
@@ -1252,36 +1065,17 @@
             container.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
         }
     }
-    
+
     window.createPost = async function() {
-        if (!window.currentUser) {
-            showNotification('Сначала войдите!', '❌');
-            return;
-        }
-        if (!window.currentUser.passport || !window.currentUser.passport.fullName) {
-            showNotification('У вас нет паспорта!', '❌');
-            return;
-        }
-        
+        if (!window.currentUser) { showNotification('Сначала войдите!', '❌'); return; }
+        if (!window.currentUser.passport || !window.currentUser.passport.fullName) { showNotification('У вас нет паспорта!', '❌'); return; }
         const input = document.getElementById('postInput');
         const text = input.value.trim();
         if (!text) return;
-        if (text.length > 500) {
-            showNotification('Максимум 500 символов', '❌');
-            return;
-        }
-        
+        if (text.length > 500) { showNotification('Максимум 500 символов', '❌'); return; }
         try {
             const postId = Date.now().toString();
-            const newPost = {
-                author: window.currentUser.login,
-                text: text,
-                timestamp: Date.now(),
-                likes: 0,
-                likedBy: {},
-                comments: {}
-            };
-            
+            const newPost = { author: window.currentUser.login, text: text, timestamp: Date.now(), likes: 0, likedBy: {}, comments: {} };
             await apiPut(`posts/${postId}`, newPost);
             input.value = '';
             loadPosts();
@@ -1290,69 +1084,41 @@
             showNotification(`Ошибка: ${e.message}`, '❌');
         }
     };
-    
+
     window.likePost = async function(postId) {
-        if (!window.currentUser) {
-            showNotification('Сначала войдите!', '❌');
-            return;
-        }
-        
+        if (!window.currentUser) { showNotification('Сначала войдите!', '❌'); return; }
         try {
             const post = await apiFetch(`posts/${postId}`);
             if (!post) { showNotification('Пост не найден', '❌'); return; }
-            
             const likedBy = post.likedBy || {};
             const isLiked = likedBy[window.currentUser.login];
             let likes = post.likes || 0;
-            
-            if (isLiked) {
-                delete likedBy[window.currentUser.login];
-                likes--;
-            } else {
-                likedBy[window.currentUser.login] = true;
-                likes++;
-            }
-            
+            if (isLiked) { delete likedBy[window.currentUser.login]; likes--; }
+            else { likedBy[window.currentUser.login] = true; likes++; }
             await apiPut(`posts/${postId}/likes`, likes);
             await apiPut(`posts/${postId}/likedBy`, likedBy);
-            
             loadPosts();
         } catch(e) {
             showNotification(`Ошибка: ${e.message}`, '❌');
         }
     };
-    
+
     window.toggleComments = function(postId) {
         const section = document.getElementById(`comments-${postId}`);
-        if (section.style.display === 'none') {
-            section.style.display = 'block';
-        } else {
-            section.style.display = 'none';
-        }
+        section.style.display = section.style.display === 'none' ? 'block' : 'none';
     };
-    
+
     window.addComment = async function(postId) {
-        if (!window.currentUser) {
-            showNotification('Сначала войдите!', '❌');
-            return;
-        }
-        
+        if (!window.currentUser) { showNotification('Сначала войдите!', '❌'); return; }
         const input = document.getElementById(`comment-input-${postId}`);
         const text = input.value.trim();
         if (!text) return;
-        
         try {
             const post = await apiFetch(`posts/${postId}`);
             if (!post) { showNotification('Пост не найден', '❌'); return; }
-            
             const comments = post.comments || {};
             const commentId = Date.now().toString();
-            comments[commentId] = {
-                author: window.currentUser.login,
-                text: text,
-                timestamp: Date.now()
-            };
-            
+            comments[commentId] = { author: window.currentUser.login, text: text, timestamp: Date.now() };
             await apiPut(`posts/${postId}/comments`, comments);
             input.value = '';
             loadPosts();
@@ -1360,18 +1126,13 @@
             showNotification(`Ошибка: ${e.message}`, '❌');
         }
     };
-    
+
     // ===== ПЕРЕВОДЫ =====
     window.makeTransfer = async function() {
-        if (!window.currentUser) {
-            showNotification('Сначала войдите!', '❌');
-            return;
-        }
-        
+        if (!window.currentUser) { showNotification('Сначала войдите!', '❌'); return; }
         const to = document.getElementById('transferToInput').value.trim();
         const amount = parseInt(document.getElementById('transferAmountInput').value);
         const status = document.getElementById('transferStatus');
-        
         if (!to || isNaN(amount) || amount <= 0) {
             status.innerHTML = '<div class="error-box">❌ Введите получателя и сумму</div>';
             return;
@@ -1380,41 +1141,26 @@
             status.innerHTML = '<div class="error-box">❌ Нельзя перевести самому себе</div>';
             return;
         }
-        
         try {
             const users = await apiFetch('users');
             if (!users || !users[to]) {
                 status.innerHTML = `<div class="error-box">❌ Пользователь "${to}" не найден</div>`;
                 return;
             }
-            
             const senderBalance = await getUserBalance(window.currentUser.login);
             if (senderBalance < amount) {
                 status.innerHTML = `<div class="error-box">❌ Недостаточно монет! У вас ${senderBalance}</div>`;
                 return;
             }
-            
-            // Списываем у отправителя
             await updateUserBalance(window.currentUser.login, senderBalance - amount);
-            
-            // Добавляем получателю
             const receiverBalance = await getUserBalance(to);
             await updateUserBalance(to, receiverBalance + amount);
-            
-            // Сохраняем транзакцию
             const txId = Date.now().toString();
-            await apiPut(`transactions/${txId}`, {
-                from: window.currentUser.login,
-                to: to,
-                amount: amount,
-                timestamp: Date.now()
-            });
-            
+            await apiPut(`transactions/${txId}`, { from: window.currentUser.login, to: to, amount: amount, timestamp: Date.now() });
             document.getElementById('transferToInput').value = '';
             document.getElementById('transferAmountInput').value = '';
             status.innerHTML = '<div class="success-box">✅ Перевод выполнен!</div>';
             setTimeout(() => status.innerHTML = '', 3000);
-            
             updateUserBalanceDisplay();
             loadTransactions();
             showNotification(`✅ Переведено ${amount} монет ${to}`, '💸');
@@ -1422,14 +1168,13 @@
             status.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
         }
     };
-    
+
     async function loadTransactions() {
         const container = document.getElementById('transactionsList');
         if (!window.currentUser) {
             container.innerHTML = '<div class="loading">💸 Войдите, чтобы видеть переводы</div>';
             return;
         }
-        
         try {
             const transactions = await apiFetch('transactions') || {};
             const keys = Object.keys(transactions);
@@ -1437,17 +1182,14 @@
                 container.innerHTML = '<div class="loading">💸 Нет транзакций</div>';
                 return;
             }
-            
             const userTxs = keys.filter(id => {
                 const tx = transactions[id];
                 return tx.from === window.currentUser.login || tx.to === window.currentUser.login;
             }).sort((a, b) => (transactions[b].timestamp || 0) - (transactions[a].timestamp || 0));
-            
             if (userTxs.length === 0) {
                 container.innerHTML = '<div class="loading">💸 У вас пока нет транзакций</div>';
                 return;
             }
-            
             container.innerHTML = userTxs.map(id => {
                 const tx = transactions[id];
                 const isIncoming = tx.to === window.currentUser.login;
@@ -1467,7 +1209,161 @@
             container.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
         }
     }
-    
+
+    // ===== КАЗИНО =====
+    async function loadCasinoHistory() {
+        if (!window.currentUser) return;
+        try {
+            const history = await apiFetch(`casinoHistory/${window.currentUser.login}`) || [];
+            window.casinoHistory = history;
+            renderCasinoHistory();
+        } catch(e) {
+            console.error('Ошибка загрузки истории казино:', e);
+        }
+    }
+
+    function renderCasinoHistory() {
+        const container = document.getElementById('casinoHistory');
+        if (!window.currentUser) {
+            container.innerHTML = '<div style="text-align:center; color:var(--text-light);">Войдите, чтобы играть</div>';
+            return;
+        }
+        if (window.casinoHistory.length === 0) {
+            container.innerHTML = '<div style="text-align:center; color:var(--text-light);">🎰 Сделай первую ставку!</div>';
+            return;
+        }
+        const recent = window.casinoHistory.slice(-20).reverse();
+        container.innerHTML = recent.map(item => `
+            <div class="history-item">
+                <span>${item.choice === 'heads' ? '🪙 Орёл' : '🪙 Решка'} → ${item.result === 'heads' ? '🪙 Орёл' : '🪙 Решка'}</span>
+                <span class="${item.win ? 'win' : 'lose'}">${item.win ? `+${item.amount} 🎉` : `-${item.amount} 💸`}</span>
+            </div>
+        `).join('');
+    }
+
+    window.placeBet = async function(choice) {
+        if (!window.currentUser) {
+            showNotification('Сначала войдите!', '❌');
+            return;
+        }
+
+        const amountInput = document.getElementById('betAmount');
+        const amount = parseInt(amountInput.value);
+        if (isNaN(amount) || amount <= 0) {
+            showNotification('Введите корректную сумму ставки', '❌');
+            return;
+        }
+
+        const balance = await getUserBalance(window.currentUser.login);
+        if (amount > balance) {
+            showNotification(`Недостаточно монет! У вас ${balance}`, '❌');
+            return;
+        }
+
+        const resultElement = document.getElementById('coinflipResult');
+
+        // Анимация подбрасывания
+        resultElement.innerHTML = `<span style="font-size:4rem; animation: spin 0.5s linear infinite;">🪙</span><div class="result-text">Подбрасываем...</div>`;
+
+        // Логика казино: сначала везёт, потом сливает
+        let win = false;
+        let result = Math.random() > 0.5 ? 'heads' : 'tails';
+
+        // 🔥 Механика "сначала везёт, потом сливает"
+        const userStats = await apiFetch(`users/${window.currentUser.login}/casinoStats`) || { totalBets: 0, totalWins: 0, totalLosses: 0 };
+        const totalBets = userStats.totalBets || 0;
+        const winRate = totalBets > 0 ? userStats.totalWins / totalBets : 0;
+
+        // Если игрок выигрывает слишком часто (> 60%) — начинаем подкручивать
+        let rigged = false;
+        if (totalBets > 5 && winRate > 0.6) {
+            rigged = true;
+            // Шанс на выигрыш падает до 30%
+            const random = Math.random();
+            if (random > 0.3) {
+                // Проигрыш
+                result = choice === 'heads' ? 'tails' : 'heads';
+                win = false;
+            } else {
+                win = true;
+            }
+        } else {
+            // Честный шанс 50/50
+            win = (result === choice);
+        }
+
+        // Если игрок проигрывает слишком часто — даём немного выиграть
+        if (totalBets > 10 && winRate < 0.3) {
+            const random = Math.random();
+            if (random > 0.4) {
+                win = true;
+                result = choice;
+            }
+        }
+
+        // Обновляем баланс
+        const newBalance = win ? balance + amount : balance - amount;
+        await updateUserBalance(window.currentUser.login, newBalance);
+
+        // Сохраняем статистику
+        const updatedStats = {
+            totalBets: (userStats.totalBets || 0) + 1,
+            totalWins: (userStats.totalWins || 0) + (win ? 1 : 0),
+            totalLosses: (userStats.totalLosses || 0) + (win ? 0 : 1)
+        };
+        await apiPut(`users/${window.currentUser.login}/casinoStats`, updatedStats);
+
+        // Сохраняем историю
+        const historyEntry = {
+            choice: choice,
+            result: result,
+            amount: amount,
+            win: win,
+            timestamp: Date.now()
+        };
+        window.casinoHistory.push(historyEntry);
+        await apiPut(`casinoHistory/${window.currentUser.login}`, window.casinoHistory);
+
+        // Показываем результат
+        const resultText = win ? '🎉 ПОБЕДА!' : '😢 ПРОИГРЫШ';
+        const resultClass = win ? 'win' : 'lose';
+        const emoji = result === 'heads' ? '🪙 Орёл' : '🪙 Решка';
+
+        setTimeout(() => {
+            resultElement.innerHTML = `
+                <span style="font-size:4rem;">${win ? '🎉' : '💸'}</span>
+                <div class="result-text ${resultClass}">
+                    ${win ? `+${amount} монет! 🎉` : `-${amount} монет... 😢`}
+                    <br><span style="font-size:1rem;">${emoji}</span>
+                </div>
+            `;
+        }, 600);
+
+        // Обновляем баланс на экране
+        updateUserBalanceDisplay();
+
+        // Обновляем историю
+        renderCasinoHistory();
+
+        // Уведомление
+        showNotification(win ? `🎉 Выигрыш ${amount} монет!` : `😢 Проигрыш ${amount} монет...`, win ? '🎉' : '💸');
+
+        // 🌟 Если баланс стал 0 — добавляем "драму"
+        if (newBalance === 0) {
+            setTimeout(() => {
+                showNotification('💀 Вы проиграли все монеты! Идите работать в чат!', '💀');
+                resultElement.innerHTML += `<div class="result-text" style="color:var(--danger); font-size:1.2rem;">💀 БАНКРОТ!</div>`;
+            }, 1000);
+        }
+
+        // 🔥 Если выигрышная серия — подогреваем азарт
+        if (win && window.casinoHistory.filter(h => h.win).length > 3) {
+            setTimeout(() => {
+                showNotification('🔥 Повезло! Может, рискнёшь ещё?', '🎰');
+            }, 800);
+        }
+    };
+
     // ===== ВРЕМЯ =====
     function getTimeAgo(timestamp) {
         if (!timestamp) return 'только что';
@@ -1476,18 +1372,18 @@
         const minutes = Math.floor(seconds / 60);
         const hours = Math.floor(minutes / 60);
         const days = Math.floor(hours / 24);
-        
         if (seconds < 60) return `${seconds} сек назад`;
         if (minutes < 60) return `${minutes} мин назад`;
         if (hours < 24) return `${hours} ч назад`;
         return `${days} дн назад`;
     }
-    
+
     // ===== УВЕДОМЛЕНИЯ =====
     function showNotification(message, icon = '🐟') {
         console.log(`${icon} ${message}`);
+        // Можно добавить всплывающие уведомления позже
     }
-    
+
     // ===== ВКЛАДКИ =====
     window.switchTab = function(tab) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -1501,14 +1397,18 @@
         if (tab === 'transfers' && window.currentUser) {
             loadTransactions();
         }
+        if (tab === 'casino' && window.currentUser) {
+            updateUserBalanceDisplay();
+            loadCasinoHistory();
+        }
     };
-    
+
     // ===== UTILS =====
     function escapeHtml(str) {
         if (!str) return '';
         return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
     }
-    
+
     // ===== АВТОВХОД =====
     async function autoLogin() {
         const saved = localStorage.getItem('karasik_user_login');
@@ -1526,11 +1426,22 @@
                     loadTransactions();
                     showCreatePostArea();
                     updateUserBalanceDisplay();
+                    loadCasinoHistory();
                 }
             } catch(e) {}
         }
     }
-    
+
+    // Добавляем стиль для анимации
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    `;
+    document.head.appendChild(style);
+
     autoLogin();
 </script>
 </body>
