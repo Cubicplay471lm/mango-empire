@@ -65,7 +65,7 @@
             color: #6b4a3a;
         }
         h3 { margin: 20px 0 12px 0; color: #8b6b4a; }
-        input, textarea {
+        input, textarea, select {
             width: 100%;
             padding: 12px;
             margin: 6px 0;
@@ -118,13 +118,20 @@
         hr { margin: 20px 0; border-color: #f0d5b0; }
         .role-tag {
             display: inline-block;
-            background: #f4a460;
             padding: 2px 12px;
             border-radius: 20px;
             font-size: 0.8rem;
             color: white;
             font-weight: bold;
         }
+        .role-tag.collector { background: #2ecc71; }
+        .role-tag.banker { background: #f39c12; }
+        .role-tag.fortune { background: #e84393; }
+        .role-tag.police { background: #2c3e50; }
+        .role-tag.bandit { background: #e74c3c; }
+        .role-tag.mayor { background: #8e44ad; }
+        .role-tag.admin { background: #dc2626; }
+        
         .warning {
             background: #fff3cd;
             border: 1px solid #ffc107;
@@ -160,15 +167,7 @@
             color: white;
             font-weight: bold;
         }
-        .user-item .urole {
-            display: inline-block;
-            background: #4a8a4a;
-            padding: 2px 12px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            color: white;
-            font-weight: bold;
-        }
+        .user-item .urole { padding: 2px 12px; border-radius: 20px; font-size: 0.7rem; color: white; font-weight: bold; }
         .user-item .nopassport { color: #b89a7a; font-size: 0.8rem; }
         .user-item .upassword {
             font-size: 0.7rem;
@@ -236,8 +235,16 @@
                 <input type="password" id="newUserPassword" placeholder="Пароль" style="flex:1">
             </div>
             <input type="text" id="newUserFullName" placeholder="Полное имя (паспорт)">
-            <input type="text" id="newUserRole" placeholder="Роль (например: Золотой карасик)">
-            <input type="text" id="newUserBirthDate" placeholder="Дата рождения">
+            <input type="text" id="newUserAddress" placeholder="Прописка">
+            <select id="newUserRole">
+                <option value="Собиратель">🖨️ Собиратель</option>
+                <option value="Банкир">🏦 Банкир</option>
+                <option value="Гадалка">🔮 Гадалка</option>
+                <option value="Полиция">👮 Полиция</option>
+                <option value="Бандит">😈 Бандит</option>
+                <option value="Мэр">👑 Мэр</option>
+                <option value="Админ">👑 Админ</option>
+            </select>
             <button onclick="window.createUser()" class="primary">👤 Создать пользователя с паспортом</button>
         </div>
 
@@ -247,12 +254,12 @@
             <div id="balanceStats" class="stats">Загрузка...</div>
             <div id="balanceList"><div class="loading-spinner">🔄 Загрузка...</div></div>
             
-            <h3>➕ Добавить монеты</h3>
+            <h3>➕ Добавить рыбки</h3>
             <div class="flex">
                 <input type="text" id="balanceUserInput" placeholder="Логин" style="flex:2">
                 <input type="number" id="balanceAmountInput" placeholder="Сумма" style="flex:1">
             </div>
-            <button onclick="window.addBalance()" class="primary">💳 Добавить монеты</button>
+            <button onclick="window.addBalance()" class="primary">🐟 Добавить рыбки</button>
         </div>
 
         <!-- Объявления -->
@@ -304,11 +311,9 @@
         window.loadFromFirebase = async function() {
             try {
                 document.getElementById('statusMsg').innerHTML = '<div class="loading-spinner">🔄 Загрузка из Firebase...</div>';
-                
                 const res = await fetch(`${DB_URL}/all.json`);
                 const data = await res.json();
                 db.all = data || { users: {}, chats: {}, announcements: {}, transactions: {} };
-                
                 renderAll();
                 document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Загружено из Firebase!</div>';
                 setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
@@ -321,13 +326,11 @@
         window.saveToFirebase = async function() {
             try {
                 document.getElementById('statusMsg').innerHTML = '<div class="loading-spinner">💾 Сохранение в Firebase...</div>';
-                
                 await fetch(`${DB_URL}/all.json`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(db.all)
                 });
-                
                 document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Сохранено в Firebase!</div>';
                 setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
             } catch (e) {
@@ -339,7 +342,6 @@
         window.fullWipe = async function() {
             if (!confirm('🗑️ УДАЛИТЬ ВСЕ ДАННЫЕ НАВСЕГДА?')) return;
             if (!confirm('ЕЩЁ РАЗ: ВСЁ БУДЕТ УДАЛЕНО!')) return;
-            
             try {
                 await fetch(`${DB_URL}/all.json`, { method: 'DELETE' });
                 db.all = { users: {}, chats: {}, announcements: {}, transactions: {} };
@@ -399,15 +401,17 @@
             list.innerHTML = keys.map(login => {
                 const u = users[login];
                 const hasPassport = u.passport && u.passport.fullName;
+                const role = u.passport?.role || 'Собиратель';
+                const roleClass = role.toLowerCase();
                 
                 let passportHtml = '';
                 if (hasPassport) {
                     passportHtml = `
                         <div style="margin-top:4px;">
                             <span class="upassport">🎫 ${escapeHtml(u.passport.fullName)}</span>
-                            <span class="urole">${escapeHtml(u.passport.role || 'Обычный карасик')}</span>
-                            ${u.passport.birthDate ? `<span style="font-size:0.7rem; color:#6b8a9a;">📅 ${escapeHtml(u.passport.birthDate)}</span>` : ''}
-                            <span class="ubalance">💰 ${u.balance || 0} монет</span>
+                            <span class="urole" style="background:${getRoleColor(role)}">${escapeHtml(role)}</span>
+                            ${u.passport.address ? `<span style="font-size:0.7rem; color:#6b8a9a;">🏠 ${escapeHtml(u.passport.address)}</span>` : ''}
+                            <span class="ubalance">🐟 ${u.balance || 0}</span>
                         </div>
                     `;
                 } else {
@@ -424,12 +428,26 @@
                         ${passportHtml}
                         <div style="font-size:0.8rem; color:#6b8a9a; margin-top:4px;">
                             💬 Чатов: ${u.chats ? u.chats.length : 0}
+                            ${u.clicks ? `| 📊 Кликов: ${u.clicks}` : ''}
                             ${u.createdAt ? `| 📅 ${new Date(u.createdAt).toLocaleDateString()}` : ''}
-                            <button class="secondary" onclick="window.editPassport('${login}')" style="font-size:10px; padding:2px 12px;">✏️ Редактировать паспорт</button>
+                            <button class="secondary" onclick="window.editPassport('${login}')" style="font-size:10px; padding:2px 12px;">✏️ Редактировать</button>
                         </div>
                     </div>
                 `;
             }).join('');
+        }
+        
+        function getRoleColor(role) {
+            const colors = {
+                'Собиратель': '#2ecc71',
+                'Банкир': '#f39c12',
+                'Гадалка': '#e84393',
+                'Полиция': '#2c3e50',
+                'Бандит': '#e74c3c',
+                'Мэр': '#8e44ad',
+                'Админ': '#dc2626'
+            };
+            return colors[role] || '#6b7280';
         }
         
         window.editPassport = function(login) {
@@ -437,14 +455,14 @@
             if (!user) return;
             
             const fullName = prompt('Полное имя:', user.passport?.fullName || '');
-            const role = prompt('Роль:', user.passport?.role || 'Обычный карасик');
-            const birthDate = prompt('Дата рождения:', user.passport?.birthDate || '');
+            const role = prompt('Роль (Собиратель, Банкир, Гадалка, Полиция, Бандит, Мэр, Админ):', user.passport?.role || 'Собиратель');
+            const address = prompt('Прописка:', user.passport?.address || 'Карасикославия, ул. Центральная, д. 1');
             
             if (fullName !== null) {
                 if (!user.passport) user.passport = {};
                 user.passport.fullName = fullName || 'Неизвестный';
-                user.passport.role = role || 'Обычный карасик';
-                user.passport.birthDate = birthDate || '';
+                user.passport.role = role || 'Собиратель';
+                user.passport.address = address || '—';
                 renderAll();
                 document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Паспорт обновлён</div>';
                 setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
@@ -463,8 +481,8 @@
             const login = document.getElementById('newUserLogin').value.trim();
             const password = document.getElementById('newUserPassword').value.trim();
             const fullName = document.getElementById('newUserFullName').value.trim();
-            const role = document.getElementById('newUserRole').value.trim() || 'Обычный карасик';
-            const birthDate = document.getElementById('newUserBirthDate').value.trim();
+            const address = document.getElementById('newUserAddress').value.trim() || 'Карасикославия, ул. Центральная, д. 1';
+            const role = document.getElementById('newUserRole').value;
             
             if (!login || !password) {
                 alert('❌ Заполните логин и пароль');
@@ -484,18 +502,19 @@
                 passport: {
                     fullName: fullName,
                     role: role,
-                    birthDate: birthDate || ''
+                    address: address
                 },
                 createdAt: new Date().toISOString(),
                 chats: [],
-                balance: 0
+                balance: 100,
+                clicks: 0,
+                credits: {}
             };
             
             document.getElementById('newUserLogin').value = '';
             document.getElementById('newUserPassword').value = '';
             document.getElementById('newUserFullName').value = '';
-            document.getElementById('newUserRole').value = '';
-            document.getElementById('newUserBirthDate').value = '';
+            document.getElementById('newUserAddress').value = '';
             
             renderAll();
             document.getElementById('statusMsg').innerHTML = `<div class="success-msg">✅ Пользователь ${login} создан с паспортом!</div>`;
@@ -510,12 +529,12 @@
             const keys = Object.keys(users);
             
             if (keys.length === 0) {
-                stats.innerHTML = '💰 Нет пользователей';
+                stats.innerHTML = '🐟 Нет пользователей';
                 list.innerHTML = '<p style="text-align:center;">👤 Нет пользователей для отображения баланса</p>';
                 return;
             }
             
-            stats.innerHTML = `💰 Всего монет в системе: ${keys.reduce((sum, key) => sum + (users[key].balance || 0), 0)}`;
+            stats.innerHTML = `🐟 Всего рыбок в системе: ${keys.reduce((sum, key) => sum + (users[key].balance || 0), 0)}`;
             
             list.innerHTML = keys.map(login => {
                 const u = users[login];
@@ -523,7 +542,8 @@
                     <div class="user-item">
                         <span class="ulogin">👤 ${escapeHtml(login)}</span>
                         <span style="float:right;">
-                            <span class="ubalance">💰 ${u.balance || 0} монет</span>
+                            <span class="ubalance">🐟 ${u.balance || 0}</span>
+                            ${u.clicks ? `<span style="font-size:0.8rem; color:#6b8a9a;">📊 ${u.clicks} кликов</span>` : ''}
                             <button class="secondary" onclick="window.editBalance('${login}')" style="font-size:10px; padding:2px 12px;">✏️</button>
                         </span>
                     </div>
@@ -534,7 +554,6 @@
         window.editBalance = function(login) {
             const user = db.all.users[login];
             if (!user) return;
-            
             const amount = prompt('Введите новую сумму баланса:', user.balance || 0);
             if (amount !== null && !isNaN(amount) && Number(amount) >= 0) {
                 user.balance = Number(amount);
@@ -547,24 +566,20 @@
         window.addBalance = function() {
             const login = document.getElementById('balanceUserInput').value.trim();
             const amount = parseInt(document.getElementById('balanceAmountInput').value);
-            
             if (!login || isNaN(amount) || amount <= 0) {
                 alert('❌ Введите логин и сумму');
                 return;
             }
-            
             const user = db.all.users[login];
             if (!user) {
                 alert(`❌ Пользователь "${login}" не найден`);
                 return;
             }
-            
             user.balance = (user.balance || 0) + amount;
             document.getElementById('balanceUserInput').value = '';
             document.getElementById('balanceAmountInput').value = '';
-            
             renderAll();
-            document.getElementById('statusMsg').innerHTML = `<div class="success-msg">✅ ${login} получил ${amount} монет!</div>`;
+            document.getElementById('statusMsg').innerHTML = `<div class="success-msg">✅ ${login} получил ${amount} 🐟!</div>`;
             setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
         };
         
@@ -573,12 +588,10 @@
             const list = document.getElementById('announcementsList');
             const announcements = db.all.announcements || {};
             const keys = Object.keys(announcements);
-            
             if (keys.length === 0) {
                 list.innerHTML = '<p style="text-align:center;">📭 Нет объявлений</p>';
                 return;
             }
-            
             list.innerHTML = keys.map(id => {
                 const a = announcements[id];
                 return `
@@ -615,7 +628,6 @@
                 alert('❌ Заполните заголовок и текст');
                 return;
             }
-            
             const id = Date.now().toString();
             db.all.announcements[id] = {
                 title: title,
@@ -623,7 +635,6 @@
                 date: new Date().toLocaleDateString(),
                 active: true
             };
-            
             document.getElementById('annTitle').value = '';
             document.getElementById('annText').value = '';
             renderAll();
@@ -638,12 +649,10 @@
             const chats = db.all.chats || {};
             const keys = Object.keys(chats);
             stats.innerHTML = `💬 Всего чатов: ${keys.length}`;
-            
             if (keys.length === 0) {
                 list.innerHTML = '<p style="text-align:center;">💬 Нет чатов</p>';
                 return;
             }
-            
             list.innerHTML = keys.map(id => {
                 const c = chats[id];
                 return `
@@ -684,21 +693,18 @@
             const transactions = db.all.transactions || {};
             const keys = Object.keys(transactions);
             stats.innerHTML = `💸 Всего транзакций: ${keys.length}`;
-            
             if (keys.length === 0) {
                 list.innerHTML = '<p style="text-align:center;">💸 Нет транзакций</p>';
                 return;
             }
-            
             const sortedKeys = keys.sort((a, b) => (transactions[b].timestamp || 0) - (transactions[a].timestamp || 0));
-            
             list.innerHTML = sortedKeys.map(id => {
                 const tx = transactions[id];
                 return `
                     <div class="item" style="border-left-color:#4a8a4a;">
                         <strong>${escapeHtml(tx.from)} → ${escapeHtml(tx.to)}</strong>
                         <span style="float:right;">
-                            <span style="font-weight:bold; color:#4a8a4a;">💰 ${tx.amount} монет</span>
+                            <span style="font-weight:bold; color:#4a8a4a;">🐟 ${tx.amount}</span>
                             <button class="danger" onclick="window.deleteTransaction('${id}')" style="font-size:11px; padding:2px 12px;">🗑️</button>
                         </span>
                         <div style="font-size:0.8rem; color:#6b8a9a;">
