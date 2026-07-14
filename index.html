@@ -184,6 +184,7 @@
         .user-info .urole.police { background: #2c3e50; }
         .user-info .urole.bandit { background: #e74c3c; }
         .user-info .urole.mayor { background: #8e44ad; }
+        .user-info .urole.admin { background: #dc2626; }
         
         .user-info .balance {
             background: var(--secondary);
@@ -270,6 +271,7 @@
         .passport-card .role-tag.police { background: #2c3e50; }
         .passport-card .role-tag.bandit { background: #e74c3c; }
         .passport-card .role-tag.mayor { background: #8e44ad; }
+        .passport-card .role-tag.admin { background: #dc2626; }
 
         .announcement-item { background: var(--bg2); border-radius: 16px; padding: 16px; margin-bottom: 12px; border-left: 4px solid var(--border); }
         .announcement-item h3 { color: var(--text); margin-bottom: 6px; }
@@ -433,6 +435,35 @@
             width: 100%;
             padding: 10px;
             background: var(--credit);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 4px;
+        }
+
+        .banker-panel .emission-section {
+            margin-top: 12px;
+            padding: 12px;
+            background: var(--card);
+            border-radius: 12px;
+            border: 2px solid var(--gold);
+        }
+        .banker-panel .emission-section .emission-title { font-weight: bold; color: var(--gold); margin-bottom: 8px; }
+        .banker-panel .emission-section input {
+            padding: 8px 12px;
+            border: 2px solid var(--input-border);
+            border-radius: 12px;
+            background: var(--input-bg);
+            color: var(--text);
+            width: 100%;
+            margin: 4px 0;
+        }
+        .banker-panel .emission-section .emission-btn {
+            width: 100%;
+            padding: 10px;
+            background: var(--gold);
             border: none;
             border-radius: 12px;
             color: white;
@@ -758,7 +789,7 @@
                 <div class="history" id="numberHistory"><div style="text-align:center; color:var(--text-light);">История игр</div></div>
             </div>
 
-            <!-- Fortune Teller (Гадалка) -->
+            <!-- Fortune Teller -->
             <div class="fortune-panel" id="fortunePanel">
                 <div class="title">🔮 Гадалка</div>
                 <div style="text-align:center; margin-bottom:12px;">
@@ -853,8 +884,6 @@
     window.casinoHistory = [];
     window.numberHistory = [];
     window.fortuneHistory = [];
-    window.fortuneCooldown = 0;
-    window.collectorClicks = 0;
     window.salaryRate = 40;
 
     // ===== THEME =====
@@ -935,9 +964,8 @@
                 chats: [],
                 balance: 100,
                 clicks: 0,
-                clickHistory: [],
                 credits: {},
-                transactions: []
+                salaryRequest: null
             });
             status.innerHTML = '<div class="success-box">✅ Регистрация успешна! Теперь войдите.</div>';
         } catch(e) {
@@ -967,7 +995,6 @@
             status.innerHTML = '';
 
             const role = user.passport?.role || '';
-            // Role class
             const roleClass = role.toLowerCase();
             document.getElementById('userRole').className = `urole ${roleClass}`;
             
@@ -977,9 +1004,8 @@
                 document.getElementById('adminLink').style.display = 'none';
             }
 
-            // Show role tab for specific roles
             const roleTab = document.getElementById('roleTab');
-            if (['Собиратель', 'Банкир', 'Гадалка', 'Police', 'Bandit', 'Mayor'].includes(role)) {
+            if (['Собиратель', 'Банкир', 'Гадалка'].includes(role)) {
                 roleTab.style.display = 'inline-block';
                 loadRolePanel();
             } else {
@@ -1302,6 +1328,7 @@
                 container.innerHTML = '<div class="loading">💸 Нет транзакций</div>';
                 return;
             }
+            // Показываем ТОЛЬКО транзакции пользователя
             const userTxs = keys.filter(id => {
                 const tx = transactions[id];
                 return tx.from === window.currentUser.login || tx.to === window.currentUser.login;
@@ -1315,7 +1342,10 @@
                 const isIncoming = tx.to === window.currentUser.login;
                 const sign = isIncoming ? '+' : '-';
                 const color = isIncoming ? 'var(--success)' : 'var(--danger)';
-                return `<div class="transfer-item"><span class="t-from">${escapeHtml(tx.from)}</span> ${isIncoming ? '→' : '←'} <span class="t-to">${escapeHtml(tx.to)}</span> <span style="color:${color}; font-weight:bold;">${sign}${tx.amount} 🐟</span> <span class="t-time">${getTimeAgo(tx.timestamp)}</span></div>`;
+                // Скрываем отправителя/получателя если это "странный" перевод (можно позже добавить логику)
+                const fromDisplay = tx.from === 'БАНК' || tx.from === 'ЭМИССИЯ' ? tx.from : escapeHtml(tx.from);
+                const toDisplay = tx.to === 'БАНК' || tx.to === 'ЭМИССИЯ' ? tx.to : escapeHtml(tx.to);
+                return `<div class="transfer-item"><span class="t-from">${fromDisplay}</span> ${isIncoming ? '→' : '←'} <span class="t-to">${toDisplay}</span> <span style="color:${color}; font-weight:bold;">${sign}${tx.amount} 🐟</span> <span class="t-time">${getTimeAgo(tx.timestamp)}</span></div>`;
             }).join('');
         } catch(e) {
             container.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
@@ -1340,7 +1370,7 @@
                 const c = credits[id];
                 const isActive = c.paid !== true;
                 if (isActive) hasActive = true;
-                const daysLeft = Math.max(0, Math.ceil((c.dueDate - Date.now()) / (1000 * 60 * 15))); // 1 day = 15 min
+                const daysLeft = Math.max(0, Math.ceil((c.dueDate - Date.now()) / (1000 * 60 * 15)));
                 return `<div class="credit-card" style="border-color: ${isActive ? 'var(--credit)' : 'var(--success)'};">
                     <div class="credit-info"><span>💰 Сумма</span><span style="font-weight:bold;">${c.amount} 🐟</span></div>
                     <div class="credit-info"><span>📊 Процент</span><span style="font-weight:bold;">${c.interest}%</span></div>
@@ -1356,12 +1386,10 @@
                 document.getElementById('creditStatus').innerHTML = '<div class="error-box">⚠️ У вас есть активный кредит! Новый взять нельзя.</div>';
                 document.getElementById('creditAmount').disabled = true;
                 document.getElementById('creditDays').disabled = true;
-                document.querySelector('#creditArea button')?.setAttribute('disabled', '');
             } else {
                 document.getElementById('creditStatus').innerHTML = '<div class="success-box">✅ Вы можете взять кредит</div>';
                 document.getElementById('creditAmount').disabled = false;
                 document.getElementById('creditDays').disabled = false;
-                document.querySelector('#creditArea button')?.removeAttribute('disabled');
             }
         } catch(e) {
             container.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
@@ -1389,6 +1417,12 @@
                     return;
                 }
             }
+            // Проверяем баланс банка
+            const bankBalance = await apiFetch('bankBalance') || 0;
+            if (bankBalance < amount) {
+                showNotification(`❌ В банке недостаточно средств! Доступно: ${bankBalance} 🐟`, '❌');
+                return;
+            }
             const interest = 9;
             const totalToPay = Math.round(amount * (1 + interest / 100));
             const creditId = Date.now().toString();
@@ -1398,16 +1432,26 @@
                 interest: interest,
                 totalToPay: totalToPay,
                 takenDate: Date.now(),
-                dueDate: Date.now() + (days * 15 * 60 * 1000), // 1 day = 15 min
+                dueDate: Date.now() + (days * 15 * 60 * 1000),
                 paid: false
             };
             credits[creditId] = creditData;
             await apiPut(`users/${window.currentUser.login}/credits`, credits);
+            
+            // Списываем из банка
+            await apiPut('bankBalance', bankBalance - amount);
+            
+            // Начисляем игроку
             const balance = await getUserBalance(window.currentUser.login);
             await updateUserBalance(window.currentUser.login, balance + amount);
+            
+            const txId = Date.now().toString();
+            await apiPut(`transactions/${txId}`, { from: 'БАНК', to: window.currentUser.login, amount: amount, timestamp: Date.now() });
+            
             showNotification(`✅ Кредит ${amount} 🐟 на ${days} дней!`, '🏦');
             updateUserBalanceDisplay();
             loadCredits();
+            loadRolePanel();
         } catch(e) {
             showNotification(`❌ Ошибка: ${e.message}`);
         }
@@ -1429,13 +1473,23 @@
                 return;
             }
             await updateUserBalance(window.currentUser.login, balance - credit.totalToPay);
+            
+            // Возвращаем в банк
+            const bankBalance = await apiFetch('bankBalance') || 0;
+            await apiPut('bankBalance', bankBalance + credit.totalToPay);
+            
             credit.paid = true;
             credit.paidDate = Date.now();
             credits[creditId] = credit;
             await apiPut(`users/${window.currentUser.login}/credits`, credits);
+            
+            const txId = Date.now().toString();
+            await apiPut(`transactions/${txId}`, { from: window.currentUser.login, to: 'БАНК', amount: credit.totalToPay, timestamp: Date.now() });
+            
             showNotification(`✅ Кредит погашен! Спасибо!`, '🏦');
             updateUserBalanceDisplay();
             loadCredits();
+            loadRolePanel();
         } catch(e) {
             showNotification(`❌ Ошибка: ${e.message}`);
         }
@@ -1584,13 +1638,12 @@
     }
 
     function startFortuneTimer() {
-        // Check if user has fortune cooldown
         const checkTimer = async () => {
             if (!window.currentUser) return;
             try {
                 const user = await apiFetch(`users/${window.currentUser.login}`);
                 const lastFortune = user?.lastFortune || 0;
-                const cooldown = 15 * 60 * 1000; // 15 minutes
+                const cooldown = 15 * 60 * 1000;
                 const remaining = Math.max(0, cooldown - (Date.now() - lastFortune));
                 const minutes = Math.ceil(remaining / 60000);
                 
@@ -1617,7 +1670,6 @@
         const balance = await getUserBalance(window.currentUser.login);
         if (amount > balance) { showNotification(`Недостаточно 🐟! У вас ${balance}`, '❌'); return; }
 
-        // Check cooldown
         const user = await apiFetch(`users/${window.currentUser.login}`);
         const lastFortune = user?.lastFortune || 0;
         const cooldown = 15 * 60 * 1000;
@@ -1631,7 +1683,6 @@
         resultElement.innerHTML = '<div>🔮 Гадалка предсказывает...</div>';
         document.getElementById('fortuneBtn').disabled = true;
 
-        // 70% chance to win
         const win = Math.random() < 0.7;
         const winAmount = win ? amount * 2 : 0;
         const commission = win ? Math.round(winAmount * 0.2) : 0;
@@ -1641,15 +1692,8 @@
         await updateUserBalance(window.currentUser.login, newBalance);
         await apiPut(`users/${window.currentUser.login}/lastFortune`, Date.now());
 
-        // Save history
         if (!window.fortuneHistory) window.fortuneHistory = [];
-        window.fortuneHistory.push({ 
-            amount, 
-            win, 
-            winAmount: finalWin, 
-            commission, 
-            timestamp: Date.now() 
-        });
+        window.fortuneHistory.push({ amount, win, winAmount: finalWin, commission, timestamp: Date.now() });
         await apiPut(`fortuneHistory/${window.currentUser.login}`, window.fortuneHistory);
 
         setTimeout(() => {
@@ -1683,7 +1727,6 @@
         const container = document.getElementById('rolePanelContent');
         
         if (role === 'Собиратель') {
-            // Load collector data
             const user = await apiFetch(`users/${window.currentUser.login}`);
             const clicks = user?.clicks || 0;
             const balance = user?.balance || 0;
@@ -1704,6 +1747,9 @@
         } else if (role === 'Банкир') {
             const users = await apiFetch('users') || {};
             const transactions = await apiFetch('transactions') || {};
+            const bankBalance = await apiFetch('bankBalance') || 0;
+            
+            // Collect all salary requests
             const requests = {};
             for (const [login, data] of Object.entries(users)) {
                 if (data.salaryRequest) {
@@ -1725,9 +1771,9 @@
                         <strong>${escapeHtml(login)}</strong> — ${data.clicks} кликов × ${data.rate} 🐟 = <strong>${data.clicks * data.rate} 🐟</strong>
                     </div>
                     <div class="req-actions">
-                        <button class="approve" onclick="approveSalary('${login}')">✅</button>
-                        <button class="reject" onclick="rejectSalary('${login}')">❌</button>
-                        <button class="edit" onclick="editSalary('${login}')">✏️</button>
+                        <button class="approve" onclick="approveSalary('${login}')">✅ Одобрить</button>
+                        <button class="reject" onclick="rejectSalary('${login}')">❌ Отклонить</button>
+                        <button class="edit" onclick="editSalary('${login}')">✏️ Изменить</button>
                     </div>
                 </div>
             `).join('');
@@ -1735,6 +1781,7 @@
             let txHtml = Object.values(transactions).slice(-10).reverse().map(tx => `
                 <div style="font-size:0.8rem; padding:4px 0; border-bottom:1px solid var(--input-border);">
                     ${escapeHtml(tx.from)} → ${escapeHtml(tx.to)}: ${tx.amount} 🐟
+                    <span style="float:right; font-size:0.7rem; color:var(--text-light);">${getTimeAgo(tx.timestamp)}</span>
                 </div>
             `).join('');
             
@@ -1742,8 +1789,18 @@
                 <div class="banker-panel">
                     <div class="title">🏦 Банкир</div>
                     
-                    <div class="stat"><span>💰 БАНК</span><span id="bankBalance">${Object.values(users).reduce((sum, u) => sum + (u.balance || 0), 0)} 🐟</span></div>
-                    <div class="stat"><span>💳 Твои деньги</span><span>${window.currentUser.balance || 0} 🐟</span></div>
+                    <div class="stat"><span>💰 БАНК (касса)</span><span id="bankBalance">${bankBalance} 🐟</span></div>
+                    <div class="stat"><span>💳 Твой баланс</span><span>${window.currentUser.balance || 0} 🐟</span></div>
+                    
+                    <!-- Эмиссия -->
+                    <div class="emission-section">
+                        <div class="emission-title">💸 ЭМИССИЯ (пополнить банк из воздуха)</div>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                            <input type="number" id="emissionAmount" placeholder="Сколько добавить?" min="1" style="flex:2;">
+                            <button class="emission-btn" onclick="emissionMoney()" style="flex:1;">💰 Добавить в банк</button>
+                        </div>
+                        <div id="emissionStatus"></div>
+                    </div>
                     
                     <div style="margin:12px 0;">
                         <div style="font-weight:bold; margin-bottom:4px;">⚙️ Ставка за клик:</div>
@@ -1758,10 +1815,10 @@
                         <div style="font-size:0.8rem; color:var(--text-light);">Текущая ставка: <strong id="currentRateDisplay">${window.salaryRate} 🐟</strong></div>
                     </div>
                     
-                    <div style="margin:12px 0;">
+                    ${requestsHtml ? `<div style="margin:12px 0;">
                         <div style="font-weight:bold; margin-bottom:4px;">📋 Запросы на ЗП:</div>
-                        ${requestsHtml || '<div style="color:var(--text-light);">Нет запросов</div>'}
-                    </div>
+                        ${requestsHtml}
+                    </div>` : '<div style="color:var(--text-light); margin:12px 0;">📋 Нет запросов на ЗП</div>'}
                     
                     <div style="margin:12px 0;">
                         <div style="font-weight:bold; margin-bottom:4px;">👥 Все игроки:</div>
@@ -1769,14 +1826,14 @@
                     </div>
                     
                     <div style="margin:12px 0;">
-                        <div style="font-weight:bold; margin-bottom:4px;">💸 Последние транзакции:</div>
+                        <div style="font-weight:bold; margin-bottom:4px;">💸 Все транзакции:</div>
                         ${txHtml || '<div style="color:var(--text-light);">Нет транзакций</div>'}
                     </div>
                     
                     <div class="credit-section">
-                        <div class="credit-title">🏦 Выдать кредит</div>
+                        <div class="credit-title">🏦 Выдать кредит из банка</div>
                         <input type="text" id="creditUserInput" placeholder="Логин игрока">
-                        <input type="number" id="creditAmountInput" placeholder="Сумма" min="1" max="500">
+                        <input type="number" id="creditAmountInput" placeholder="Сумма (max 500)" min="1" max="500">
                         <button class="credit-btn" onclick="giveCredit()">💰 Выдать кредит</button>
                         <div id="creditResult"></div>
                     </div>
@@ -1819,12 +1876,10 @@
         const clicks = (user?.clicks || 0) + 1;
         await apiPut(`users/${window.currentUser.login}/clicks`, clicks);
         
-        // Update UI
         document.getElementById('collectorClicks').textContent = clicks;
         document.getElementById('collectorCash').textContent = `${clicks * 500} 🐟`;
         document.getElementById('requestSalaryBtn').textContent = `📤 ЗАПРОСИТЬ ЗП (${clicks} × ${window.salaryRate} = ${clicks * window.salaryRate} 🐟)`;
         
-        // Animation
         const btn = document.querySelector('.click-btn');
         btn.classList.add('pulse');
         setTimeout(() => btn.classList.remove('pulse'), 300);
@@ -1839,7 +1894,6 @@
             return;
         }
         
-        // Check if already has pending request
         if (user?.salaryRequest) {
             document.getElementById('collectorStatus').innerHTML = '<div class="error-box">⏳ У вас уже есть запрос на ЗП!</div>';
             return;
@@ -1862,12 +1916,43 @@
     };
 
     // ===== BANKER FUNCTIONS =====
+    window.emissionMoney = async function() {
+        if (!window.currentUser) { showNotification('Сначала войдите!', '❌'); return; }
+        const role = window.currentUser.passport?.role || '';
+        if (role !== 'Банкир') { showNotification('Только Банкир может пополнять банк!', '❌'); return; }
+        
+        const amount = parseInt(document.getElementById('emissionAmount').value);
+        if (isNaN(amount) || amount <= 0) {
+            document.getElementById('emissionStatus').innerHTML = '<div class="error-box">❌ Введите сумму</div>';
+            return;
+        }
+        
+        try {
+            const bankBalance = await apiFetch('bankBalance') || 0;
+            await apiPut('bankBalance', bankBalance + amount);
+            
+            const txId = Date.now().toString();
+            await apiPut(`transactions/${txId}`, { 
+                from: 'ЭМИССИЯ', 
+                to: 'БАНК', 
+                amount: amount, 
+                timestamp: Date.now() 
+            });
+            
+            document.getElementById('emissionStatus').innerHTML = `<div class="success-box">✅ ${amount} 🐟 добавлено в банк из воздуха!</div>`;
+            document.getElementById('emissionAmount').value = '';
+            loadRolePanel();
+            showNotification(`💰 Банк пополнен на ${amount} 🐟`, '🏦');
+        } catch(e) {
+            document.getElementById('emissionStatus').innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
+        }
+    };
+
     window.setSalaryRate = function(rate) {
         window.salaryRate = rate;
         document.querySelectorAll('.salary-setting button').forEach(b => b.classList.remove('active'));
         document.querySelector(`.salary-setting button:contains(${rate})`)?.classList.add('active');
         document.getElementById('currentRateDisplay').textContent = `${rate} 🐟`;
-        // Update collector rate display
         const rateEl = document.getElementById('collectorRate');
         if (rateEl) rateEl.textContent = `${rate} 🐟`;
     };
@@ -1884,12 +1969,22 @@
         if (!user?.salaryRequest) return;
         
         const amount = user.salaryRequest.amount;
+        const bankBalance = await apiFetch('bankBalance') || 0;
+        
+        if (bankBalance < amount) {
+            showNotification(`❌ В банке недостаточно средств! Доступно: ${bankBalance} 🐟`, '❌');
+            return;
+        }
+        
+        // Списываем из банка
+        await apiPut('bankBalance', bankBalance - amount);
+        
+        // Начисляем Собирателю
         const balance = await getUserBalance(login);
         await updateUserBalance(login, balance + amount);
         await apiPut(`users/${login}/clicks`, 0);
         await apiPut(`users/${login}/salaryRequest`, null);
         
-        // Log transaction
         const txId = Date.now().toString();
         await apiPut(`transactions/${txId}`, { 
             from: 'БАНК', 
@@ -1947,6 +2042,12 @@
                 }
             }
             
+            const bankBalance = await apiFetch('bankBalance') || 0;
+            if (bankBalance < amount) {
+                resultDiv.innerHTML = `<div class="error-box">❌ В банке недостаточно средств! Доступно: ${bankBalance} 🐟</div>`;
+                return;
+            }
+            
             const interest = 9;
             const totalToPay = Math.round(amount * (1 + interest / 100));
             const creditId = Date.now().toString();
@@ -1961,10 +2062,19 @@
             };
             
             await apiPut(`users/${login}/credits`, credits);
+            await apiPut('bankBalance', bankBalance - amount);
             const balance = await getUserBalance(login);
             await updateUserBalance(login, balance + amount);
             
-            resultDiv.innerHTML = `<div class="success-box">✅ Кредит ${amount} 🐟 выдан ${login}! К выплате: ${totalToPay} 🐟</div>`;
+            const txId = Date.now().toString();
+            await apiPut(`transactions/${txId}`, { 
+                from: 'БАНК', 
+                to: login, 
+                amount: amount, 
+                timestamp: Date.now() 
+            });
+            
+            resultDiv.innerHTML = `<div class="success-box">✅ Кредит ${amount} 🐟 выдан ${login} из банка! К выплате: ${totalToPay} 🐟</div>`;
             document.getElementById('creditUserInput').value = '';
             document.getElementById('creditAmountInput').value = '';
             showNotification(`💰 Кредит ${amount} 🐟 выдан ${login}`, '🏦');
@@ -1974,7 +2084,7 @@
         }
     };
 
-    // ===== FORTUNE FUNCTIONS (для роли Гадалка) =====
+    // ===== FORTUNE FUNCTIONS =====
     function startFortuneTimer2() {
         const checkTimer = async () => {
             if (!window.currentUser) return;
@@ -2093,7 +2203,6 @@
 
     function showNotification(message, icon = '🐟') {
         console.log(`${icon} ${message}`);
-        // Simple toast notification
         const toast = document.createElement('div');
         toast.style.cssText = `
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
@@ -2106,6 +2215,11 @@
         toast.textContent = `${icon} ${message}`;
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Add "contains" polyfill
+    if (!Element.prototype.matches) {
+        Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
     }
 
     // ===== AUTO LOGIN =====
@@ -2145,13 +2259,7 @@
         }
     }
 
-    // ===== INIT =====
     autoLogin();
-
-    // Add "contains" polyfill for older browsers
-    if (!Element.prototype.matches) {
-        Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
-    }
 </script>
 </body>
 </html>
