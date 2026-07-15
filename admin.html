@@ -126,10 +126,12 @@
         }
         .role-tag.collector { background: #2ecc71; }
         .role-tag.banker { background: #f39c12; }
-        .role-tag.fortune { background: #e84393; }
+        .role-tag.mayor { background: #8e44ad; }
         .role-tag.police { background: #2c3e50; }
         .role-tag.bandit { background: #e74c3c; }
-        .role-tag.mayor { background: #8e44ad; }
+        .role-tag.doctor { background: #1abc9c; }
+        .role-tag.delivery { background: #3498db; }
+        .role-tag.trader { background: #e67e22; }
         .role-tag.admin { background: #dc2626; }
         
         .warning {
@@ -236,16 +238,70 @@
             </div>
             <input type="text" id="newUserFullName" placeholder="Полное имя (паспорт)">
             <input type="text" id="newUserAddress" placeholder="Прописка">
-            <select id="newUserRole">
+            
+            <h3 style="margin-top:12px;">🏷️ Профессии</h3>
+            <select id="newUserRole1">
+                <option value="Без профессии">Без профессии</option>
                 <option value="Собиратель">🖨️ Собиратель</option>
                 <option value="Банкир">🏦 Банкир</option>
-                <option value="Гадалка">🔮 Гадалка</option>
+                <option value="Мэр">👑 Мэр</option>
                 <option value="Полиция">👮 Полиция</option>
                 <option value="Бандит">😈 Бандит</option>
-                <option value="Мэр">👑 Мэр</option>
+                <option value="Доктор">⚕️ Доктор</option>
+                <option value="Доставщик">🚚 Доставщик</option>
+                <option value="Барыга">💰 Барыга</option>
                 <option value="Админ">👑 Админ</option>
             </select>
-            <button onclick="window.createUser()" class="primary">👤 Создать пользователя с паспортом</button>
+            <select id="newUserRole2">
+                <option value="Без профессии">Без профессии</option>
+                <option value="Собиратель">🖨️ Собиратель</option>
+                <option value="Банкир">🏦 Банкир</option>
+                <option value="Мэр">👑 Мэр</option>
+                <option value="Полиция">👮 Полиция</option>
+                <option value="Бандит">😈 Бандит</option>
+                <option value="Доктор">⚕️ Доктор</option>
+                <option value="Доставщик">🚚 Доставщик</option>
+                <option value="Барыга">💰 Барыга</option>
+            </select>
+            <button onclick="window.createUser()" class="primary">👤 Создать пользователя</button>
+        </div>
+
+        <!-- Редактирование -->
+        <div class="card">
+            <h2>✏️ Редактировать пользователя</h2>
+            <div class="flex">
+                <input type="text" id="editUserLogin" placeholder="Логин для редактирования" style="flex:2">
+                <button onclick="window.loadUserForEdit()" class="primary">📥 Загрузить</button>
+            </div>
+            <div id="editUserPanel" style="display:none; margin-top:12px;">
+                <input type="text" id="editFullName" placeholder="Полное имя">
+                <input type="text" id="editAddress" placeholder="Прописка">
+                <select id="editRole1">
+                    <option value="Без профессии">Без профессии</option>
+                    <option value="Собиратель">🖨️ Собиратель</option>
+                    <option value="Банкир">🏦 Банкир</option>
+                    <option value="Мэр">👑 Мэр</option>
+                    <option value="Полиция">👮 Полиция</option>
+                    <option value="Бандит">😈 Бандит</option>
+                    <option value="Доктор">⚕️ Доктор</option>
+                    <option value="Доставщик">🚚 Доставщик</option>
+                    <option value="Барыга">💰 Барыга</option>
+                    <option value="Админ">👑 Админ</option>
+                </select>
+                <select id="editRole2">
+                    <option value="Без профессии">Без профессии</option>
+                    <option value="Собиратель">🖨️ Собиратель</option>
+                    <option value="Банкир">🏦 Банкир</option>
+                    <option value="Мэр">👑 Мэр</option>
+                    <option value="Полиция">👮 Полиция</option>
+                    <option value="Бандит">😈 Бандит</option>
+                    <option value="Доктор">⚕️ Доктор</option>
+                    <option value="Доставщик">🚚 Доставщик</option>
+                    <option value="Барыга">💰 Барыга</option>
+                </select>
+                <button onclick="window.saveUserEdit()" class="success">💾 Сохранить</button>
+                <div id="editStatus"></div>
+            </div>
         </div>
 
         <!-- Баланс -->
@@ -305,7 +361,7 @@
     (function() {
         const ADMIN_PASSWORD = "рыбнадзор";
         const DB_URL = 'https://karasik-talk-default-rtdb.europe-west1.firebasedatabase.app';
-        let db = { all: { users: {}, chats: {}, announcements: {}, transactions: {} } };
+        let db = { all: { users: {}, chats: {}, announcements: {}, transactions: {}, bankBalance: 0, mayorTaxCollected: 0, policeFines: 0 } };
         
         // ===== ЗАГРУЗКА =====
         window.loadFromFirebase = async function() {
@@ -313,7 +369,7 @@
                 document.getElementById('statusMsg').innerHTML = '<div class="loading-spinner">🔄 Загрузка из Firebase...</div>';
                 const res = await fetch(`${DB_URL}/all.json`);
                 const data = await res.json();
-                db.all = data || { users: {}, chats: {}, announcements: {}, transactions: {} };
+                db.all = data || { users: {}, chats: {}, announcements: {}, transactions: {}, bankBalance: 0, mayorTaxCollected: 0, policeFines: 0 };
                 renderAll();
                 document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Загружено из Firebase!</div>';
                 setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
@@ -344,7 +400,7 @@
             if (!confirm('ЕЩЁ РАЗ: ВСЁ БУДЕТ УДАЛЕНО!')) return;
             try {
                 await fetch(`${DB_URL}/all.json`, { method: 'DELETE' });
-                db.all = { users: {}, chats: {}, announcements: {}, transactions: {} };
+                db.all = { users: {}, chats: {}, announcements: {}, transactions: {}, bankBalance: 0, mayorTaxCollected: 0, policeFines: 0 };
                 renderAll();
                 document.getElementById('statusMsg').innerHTML = '<div class="success-msg">🗑️ ВСЁ УДАЛЕНО!</div>';
                 setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
@@ -401,15 +457,18 @@
             list.innerHTML = keys.map(login => {
                 const u = users[login];
                 const hasPassport = u.passport && u.passport.fullName;
-                const role = u.passport?.role || 'Собиратель';
-                const roleClass = role.toLowerCase();
+                const role1 = u.passport?.role1 || 'Без профессии';
+                const role2 = u.passport?.role2 || 'Без профессии';
+                const mainRole = role1 !== 'Без профессии' ? role1 : role2;
+                const roleClass = mainRole.toLowerCase();
                 
                 let passportHtml = '';
                 if (hasPassport) {
                     passportHtml = `
                         <div style="margin-top:4px;">
                             <span class="upassport">🎫 ${escapeHtml(u.passport.fullName)}</span>
-                            <span class="urole" style="background:${getRoleColor(role)}">${escapeHtml(role)}</span>
+                            <span class="urole" style="background:${getRoleColor(mainRole)}">${escapeHtml(mainRole)}</span>
+                            ${role2 !== 'Без профессии' ? `<span class="urole" style="background:${getRoleColor(role2)}">+ ${escapeHtml(role2)}</span>` : ''}
                             ${u.passport.address ? `<span style="font-size:0.7rem; color:#6b8a9a;">🏠 ${escapeHtml(u.passport.address)}</span>` : ''}
                             <span class="ubalance">🐟 ${u.balance || 0}</span>
                         </div>
@@ -429,8 +488,9 @@
                         <div style="font-size:0.8rem; color:#6b8a9a; margin-top:4px;">
                             💬 Чатов: ${u.chats ? u.chats.length : 0}
                             ${u.clicks ? `| 📊 Кликов: ${u.clicks}` : ''}
+                            ${u.inventory ? `| 💊 Аптечки: ${u.inventory.medkits || 0}` : ''}
                             ${u.createdAt ? `| 📅 ${new Date(u.createdAt).toLocaleDateString()}` : ''}
-                            <button class="secondary" onclick="window.editPassport('${login}')" style="font-size:10px; padding:2px 12px;">✏️ Редактировать</button>
+                            <button class="secondary" onclick="window.editUser('${login}')" style="font-size:10px; padding:2px 12px;">✏️ Редактировать</button>
                         </div>
                     </div>
                 `;
@@ -441,32 +501,49 @@
             const colors = {
                 'Собиратель': '#2ecc71',
                 'Банкир': '#f39c12',
-                'Гадалка': '#e84393',
+                'Мэр': '#8e44ad',
                 'Полиция': '#2c3e50',
                 'Бандит': '#e74c3c',
-                'Мэр': '#8e44ad',
+                'Доктор': '#1abc9c',
+                'Доставщик': '#3498db',
+                'Барыга': '#e67e22',
                 'Админ': '#dc2626'
             };
             return colors[role] || '#6b7280';
         }
         
-        window.editPassport = function(login) {
+        window.editUser = function(login) {
+            document.getElementById('editUserLogin').value = login;
+            window.loadUserForEdit();
+        };
+        
+        window.loadUserForEdit = function() {
+            const login = document.getElementById('editUserLogin').value.trim();
+            if (!login) { alert('Введите логин'); return; }
             const user = db.all.users[login];
-            if (!user) return;
+            if (!user) { alert('Пользователь не найден'); return; }
             
-            const fullName = prompt('Полное имя:', user.passport?.fullName || '');
-            const role = prompt('Роль (Собиратель, Банкир, Гадалка, Полиция, Бандит, Мэр, Админ):', user.passport?.role || 'Собиратель');
-            const address = prompt('Прописка:', user.passport?.address || 'Карасикославия, ул. Центральная, д. 1');
+            document.getElementById('editUserPanel').style.display = 'block';
+            document.getElementById('editFullName').value = user.passport?.fullName || '';
+            document.getElementById('editAddress').value = user.passport?.address || '';
+            document.getElementById('editRole1').value = user.passport?.role1 || 'Без профессии';
+            document.getElementById('editRole2').value = user.passport?.role2 || 'Без профессии';
+            document.getElementById('editStatus').innerHTML = '';
+        };
+        
+        window.saveUserEdit = function() {
+            const login = document.getElementById('editUserLogin').value.trim();
+            const user = db.all.users[login];
+            if (!user) { document.getElementById('editStatus').innerHTML = '<div class="warning">❌ Пользователь не найден</div>'; return; }
             
-            if (fullName !== null) {
-                if (!user.passport) user.passport = {};
-                user.passport.fullName = fullName || 'Неизвестный';
-                user.passport.role = role || 'Собиратель';
-                user.passport.address = address || '—';
-                renderAll();
-                document.getElementById('statusMsg').innerHTML = '<div class="success-msg">✅ Паспорт обновлён</div>';
-                setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
-            }
+            if (!user.passport) user.passport = {};
+            user.passport.fullName = document.getElementById('editFullName').value.trim() || 'Неизвестный';
+            user.passport.address = document.getElementById('editAddress').value.trim() || '—';
+            user.passport.role1 = document.getElementById('editRole1').value;
+            user.passport.role2 = document.getElementById('editRole2').value;
+            
+            renderAll();
+            document.getElementById('editStatus').innerHTML = '<div class="success-msg">✅ Пользователь обновлён!</div>';
         };
         
         window.deleteUser = function(login) {
@@ -482,7 +559,8 @@
             const password = document.getElementById('newUserPassword').value.trim();
             const fullName = document.getElementById('newUserFullName').value.trim();
             const address = document.getElementById('newUserAddress').value.trim() || 'Карасикославия, ул. Центральная, д. 1';
-            const role = document.getElementById('newUserRole').value;
+            const role1 = document.getElementById('newUserRole1').value;
+            const role2 = document.getElementById('newUserRole2').value;
             
             if (!login || !password) {
                 alert('❌ Заполните логин и пароль');
@@ -501,14 +579,17 @@
                 password: password,
                 passport: {
                     fullName: fullName,
-                    role: role,
+                    role1: role1,
+                    role2: role2,
                     address: address
                 },
                 createdAt: new Date().toISOString(),
                 chats: [],
                 balance: 100,
                 clicks: 0,
-                credits: {}
+                credits: {},
+                inventory: { medkits: 0, parts_digl: 0, parts_ak: 0 },
+                taxes: { paid: 0, debt: 0 }
             };
             
             document.getElementById('newUserLogin').value = '';
@@ -517,7 +598,7 @@
             document.getElementById('newUserAddress').value = '';
             
             renderAll();
-            document.getElementById('statusMsg').innerHTML = `<div class="success-msg">✅ Пользователь ${login} создан с паспортом!</div>`;
+            document.getElementById('statusMsg').innerHTML = `<div class="success-msg">✅ Пользователь ${login} создан!</div>`;
             setTimeout(() => document.getElementById('statusMsg').innerHTML = '', 3000);
         };
         
@@ -530,11 +611,13 @@
             
             if (keys.length === 0) {
                 stats.innerHTML = '🐟 Нет пользователей';
-                list.innerHTML = '<p style="text-align:center;">👤 Нет пользователей для отображения баланса</p>';
+                list.innerHTML = '<p style="text-align:center;">👤 Нет пользователей</p>';
                 return;
             }
             
-            stats.innerHTML = `🐟 Всего рыбок в системе: ${keys.reduce((sum, key) => sum + (users[key].balance || 0), 0)}`;
+            const totalBalance = keys.reduce((sum, key) => sum + (users[key].balance || 0), 0);
+            const bankBalance = db.all.bankBalance || 0;
+            stats.innerHTML = `🐟 Всего в системе: ${totalBalance + bankBalance} 🐟 (Банк: ${bankBalance} 🐟)`;
             
             list.innerHTML = keys.map(login => {
                 const u = users[login];
@@ -705,6 +788,7 @@
                         <strong>${escapeHtml(tx.from)} → ${escapeHtml(tx.to)}</strong>
                         <span style="float:right;">
                             <span style="font-weight:bold; color:#4a8a4a;">🐟 ${tx.amount}</span>
+                            ${tx.type ? `<span style="font-size:0.7rem; color:#6b8a9a;">${tx.type}</span>` : ''}
                             <button class="danger" onclick="window.deleteTransaction('${id}')" style="font-size:11px; padding:2px 12px;">🗑️</button>
                         </span>
                         <div style="font-size:0.8rem; color:#6b8a9a;">
