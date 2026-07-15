@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🐟 Karasik Talk · Casino</title>
+    <title>🐟 Карасикославия</title>
 
     <script type="importmap">
         {
@@ -32,13 +32,19 @@
             --msg-bg: #f8f0e8;
             --user-bg: #e8f5e8;
             --notification: #1a6a8a;
-            --notification-text: #ffffff;
             --success: #4a8a4a;
             --danger: #dc2626;
             --gold: #f5b342;
             --credit: #9b59b6;
             --collector: #2ecc71;
-            --fortune: #e84393;
+            --banker: #f39c12;
+            --mayor: #8e44ad;
+            --police: #2c3e50;
+            --bandit: #e74c3c;
+            --doctor: #1abc9c;
+            --delivery: #3498db;
+            --trader: #e67e22;
+            --role-bg: #faf6f0;
         }
 
         [data-theme="dark"] {
@@ -53,8 +59,7 @@
             --chat-bg: #22223a;
             --msg-bg: #2a2a42;
             --user-bg: #1a3a2a;
-            --notification: #f4a460;
-            --notification-text: #1a1a2e;
+            --role-bg: #22223a;
         }
 
         [data-color="blue"] { --border: #4a8ad4; --primary: #4a8ad4; --primary-dark: #3a7ac4; --notification: #4a8ad4; }
@@ -178,12 +183,14 @@
             color: white;
             font-weight: bold;
         }
-        .user-info .urole.collector { background: #2ecc71; }
-        .user-info .urole.banker { background: #f39c12; }
-        .user-info .urole.fortune { background: #e84393; }
-        .user-info .urole.police { background: #2c3e50; }
-        .user-info .urole.bandit { background: #e74c3c; }
-        .user-info .urole.mayor { background: #8e44ad; }
+        .user-info .urole.collector { background: var(--collector); }
+        .user-info .urole.banker { background: var(--banker); }
+        .user-info .urole.mayor { background: var(--mayor); }
+        .user-info .urole.police { background: var(--police); }
+        .user-info .urole.bandit { background: var(--bandit); }
+        .user-info .urole.doctor { background: var(--doctor); }
+        .user-info .urole.delivery { background: var(--delivery); }
+        .user-info .urole.trader { background: var(--trader); }
         .user-info .urole.admin { background: #dc2626; }
         
         .user-info .balance {
@@ -265,12 +272,14 @@
         .passport-card .detail { display: flex; justify-content: space-between; flex-wrap: wrap; border-bottom: 1px dashed var(--input-border); padding: 12px 0; }
         .passport-card .label { font-weight: 600; color: var(--text-light); }
         .passport-card .role-tag { padding: 2px 14px; border-radius: 20px; font-size: 0.8rem; color: white; font-weight: bold; }
-        .passport-card .role-tag.collector { background: #2ecc71; }
-        .passport-card .role-tag.banker { background: #f39c12; }
-        .passport-card .role-tag.fortune { background: #e84393; }
-        .passport-card .role-tag.police { background: #2c3e50; }
-        .passport-card .role-tag.bandit { background: #e74c3c; }
-        .passport-card .role-tag.mayor { background: #8e44ad; }
+        .passport-card .role-tag.collector { background: var(--collector); }
+        .passport-card .role-tag.banker { background: var(--banker); }
+        .passport-card .role-tag.mayor { background: var(--mayor); }
+        .passport-card .role-tag.police { background: var(--police); }
+        .passport-card .role-tag.bandit { background: var(--bandit); }
+        .passport-card .role-tag.doctor { background: var(--doctor); }
+        .passport-card .role-tag.delivery { background: var(--delivery); }
+        .passport-card .role-tag.trader { background: var(--trader); }
         .passport-card .role-tag.admin { background: #dc2626; }
 
         .announcement-item { background: var(--bg2); border-radius: 16px; padding: 16px; margin-bottom: 12px; border-left: 4px solid var(--border); }
@@ -282,352 +291,6 @@
         .transfer-item .t-to { font-weight: bold; color: var(--secondary); }
         .transfer-item .t-amount { font-weight: bold; color: var(--success); }
         .transfer-item .t-time { font-size: 0.7rem; color: var(--text-light); float: right; }
-
-        /* COLLECTOR */
-        .collector-panel {
-            background: var(--bg2);
-            border-radius: 24px;
-            padding: 20px;
-            border: 2px solid var(--collector);
-        }
-        .collector-panel .title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--collector);
-            text-align: center;
-            margin-bottom: 16px;
-        }
-        .collector-panel .stat {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--input-border);
-            font-size: 1.1rem;
-        }
-        .collector-panel .stat span:last-child { font-weight: bold; }
-        .collector-panel .click-btn {
-            width: 100%;
-            padding: 20px;
-            font-size: 2rem;
-            border: none;
-            border-radius: 16px;
-            background: var(--collector);
-            color: white;
-            cursor: pointer;
-            margin: 12px 0;
-            transition: 0.2s;
-        }
-        .collector-panel .click-btn:hover { transform: scale(1.02); }
-        .collector-panel .click-btn:active { transform: scale(0.95); }
-        .collector-panel .request-btn {
-            width: 100%;
-            padding: 14px;
-            font-size: 1.2rem;
-            border: none;
-            border-radius: 16px;
-            background: var(--gold);
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-        .collector-panel .request-btn:hover { transform: scale(1.02); }
-        .collector-panel .request-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        /* BANKER */
-        .banker-panel {
-            background: var(--bg2);
-            border-radius: 24px;
-            padding: 20px;
-            border: 2px solid var(--gold);
-        }
-        .banker-panel .title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--gold);
-            text-align: center;
-            margin-bottom: 16px;
-        }
-        .banker-panel .stat {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--input-border);
-        }
-        .banker-panel .stat span:last-child { font-weight: bold; }
-        .banker-panel .salary-setting {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin: 12px 0;
-        }
-        .banker-panel .salary-setting button {
-            flex: 1;
-            padding: 8px;
-            border: 2px solid var(--input-border);
-            border-radius: 12px;
-            background: var(--card);
-            color: var(--text);
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-            min-width: 60px;
-        }
-        .banker-panel .salary-setting button:hover { background: var(--primary); color: white; }
-        .banker-panel .salary-setting button.active { background: var(--primary); color: white; border-color: var(--primary); }
-        
-        .banker-panel .request-item {
-            background: var(--card);
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 8px;
-            border-left: 3px solid var(--gold);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .banker-panel .request-item .req-info { font-size: 0.9rem; }
-        .banker-panel .request-item .req-info strong { color: var(--text); }
-        .banker-panel .request-item .req-actions { display: flex; gap: 6px; flex-wrap: wrap; }
-        .banker-panel .request-item .req-actions button {
-            padding: 4px 14px;
-            border: none;
-            border-radius: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-        .banker-panel .request-item .req-actions .approve { background: var(--success); color: white; }
-        .banker-panel .request-item .req-actions .reject { background: var(--danger); color: white; }
-        .banker-panel .request-item .req-actions .edit { background: var(--gold); color: white; }
-
-        .banker-panel .player-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            border-bottom: 1px solid var(--input-border);
-            font-size: 0.9rem;
-        }
-        .banker-panel .player-item .p-name { font-weight: bold; }
-        .banker-panel .player-item .p-balance { color: var(--success); }
-        .banker-panel .player-item .p-clicks { color: var(--text-light); font-size: 0.8rem; }
-
-        .banker-panel .credit-section {
-            margin-top: 12px;
-            padding: 12px;
-            background: var(--card);
-            border-radius: 12px;
-            border: 2px solid var(--credit);
-        }
-        .banker-panel .credit-section .credit-title { font-weight: bold; color: var(--credit); margin-bottom: 8px; }
-        .banker-panel .credit-section input {
-            padding: 8px 12px;
-            border: 2px solid var(--input-border);
-            border-radius: 12px;
-            background: var(--input-bg);
-            color: var(--text);
-            width: 100%;
-            margin: 4px 0;
-        }
-        .banker-panel .credit-section .credit-btn {
-            width: 100%;
-            padding: 10px;
-            background: var(--credit);
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 4px;
-        }
-
-        .banker-panel .emission-section {
-            margin-top: 12px;
-            padding: 12px;
-            background: var(--card);
-            border-radius: 12px;
-            border: 2px solid var(--gold);
-        }
-        .banker-panel .emission-section .emission-title { font-weight: bold; color: var(--gold); margin-bottom: 8px; }
-        .banker-panel .emission-section input {
-            padding: 8px 12px;
-            border: 2px solid var(--input-border);
-            border-radius: 12px;
-            background: var(--input-bg);
-            color: var(--text);
-            width: 100%;
-            margin: 4px 0;
-        }
-        .banker-panel .emission-section .emission-btn {
-            width: 100%;
-            padding: 10px;
-            background: var(--gold);
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 4px;
-        }
-
-        /* FORTUNE TELLER */
-        .fortune-panel {
-            background: var(--bg2);
-            border-radius: 24px;
-            padding: 20px;
-            border: 2px solid var(--fortune);
-        }
-        .fortune-panel .title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--fortune);
-            text-align: center;
-            margin-bottom: 16px;
-        }
-        .fortune-panel .fortune-btn {
-            width: 100%;
-            padding: 20px;
-            font-size: 2rem;
-            border: none;
-            border-radius: 16px;
-            background: var(--fortune);
-            color: white;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .fortune-panel .fortune-btn:hover:not(:disabled) { transform: scale(1.02); }
-        .fortune-panel .fortune-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .fortune-panel .fortune-result {
-            text-align: center;
-            padding: 16px;
-            margin: 12px 0;
-            background: var(--card);
-            border-radius: 12px;
-            min-height: 60px;
-        }
-        .fortune-panel .fortune-result .win { color: var(--success); }
-        .fortune-panel .fortune-result .lose { color: var(--danger); }
-
-        /* CASINO */
-        .casino-game {
-            background: var(--bg2);
-            border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 16px;
-            border: 2px solid var(--gold);
-        }
-        .casino-game .game-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--gold);
-            text-align: center;
-            margin-bottom: 16px;
-        }
-        .casino-game .balance-display {
-            text-align: center;
-            font-size: 1.2rem;
-            margin-bottom: 16px;
-            color: var(--text);
-        }
-        .casino-game .balance-display span { font-weight: bold; color: var(--gold); }
-        .casino-game .bet-area {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 16px;
-        }
-        .casino-game .bet-area input {
-            padding: 12px 16px;
-            border: 2px solid var(--input-border);
-            border-radius: 30px;
-            font-size: 1rem;
-            background: var(--input-bg);
-            color: var(--text);
-            width: 150px;
-            text-align: center;
-        }
-        .casino-game .bet-area input:focus { outline: none; border-color: var(--gold); }
-        .casino-game .bet-area button {
-            padding: 12px 32px;
-            border: none;
-            border-radius: 30px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 1rem;
-        }
-        .casino-game .bet-area .bet-btn { background: var(--gold); color: white; }
-        .casino-game .bet-area .bet-btn:hover { transform: scale(1.05); }
-        .casino-game .bet-area .bet-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-        .casino-game .coinflip-result {
-            text-align: center;
-            font-size: 3rem;
-            padding: 20px;
-            margin: 16px 0;
-            background: var(--card);
-            border-radius: 16px;
-            border: 2px solid var(--gold);
-            min-height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-        .casino-game .coinflip-result .result-text { font-size: 1.2rem; color: var(--text); margin-top: 8px; }
-        .casino-game .coinflip-result .win { color: var(--success); }
-        .casino-game .coinflip-result .lose { color: var(--danger); }
-        .casino-game .history {
-            margin-top: 16px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        .casino-game .history-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 12px;
-            border-bottom: 1px solid var(--input-border);
-            font-size: 0.9rem;
-        }
-        .casino-game .history-item .win { color: var(--success); }
-        .casino-game .history-item .lose { color: var(--danger); }
-
-        .number-game {
-            background: var(--bg2);
-            border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 16px;
-            border: 2px solid var(--credit);
-        }
-        .number-game .game-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--credit);
-            text-align: center;
-            margin-bottom: 16px;
-        }
-        .number-game .number-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin: 16px 0;
-        }
-        .number-game .number-grid button {
-            padding: 16px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            border: 2px solid var(--input-border);
-            border-radius: 12px;
-            background: var(--card);
-            color: var(--text);
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .number-game .number-grid button:hover { transform: scale(1.05); background: var(--primary); color: white; }
-        .number-game .number-grid button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
 
         .credit-card {
             background: var(--bg2);
@@ -645,6 +308,173 @@
             border-bottom: 1px solid var(--input-border);
         }
 
+        /* ROLE PANELS */
+        .role-panel {
+            background: var(--role-bg);
+            border-radius: 20px;
+            padding: 20px;
+            border: 2px solid var(--border);
+            margin-bottom: 16px;
+        }
+        .role-panel .role-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+        }
+        .role-panel .role-title.collector { color: var(--collector); border-color: var(--collector); }
+        .role-panel .role-title.banker { color: var(--banker); border-color: var(--banker); }
+        .role-panel .role-title.mayor { color: var(--mayor); border-color: var(--mayor); }
+        .role-panel .role-title.police { color: var(--police); border-color: var(--police); }
+        .role-panel .role-title.bandit { color: var(--bandit); border-color: var(--bandit); }
+        .role-panel .role-title.doctor { color: var(--doctor); border-color: var(--doctor); }
+        .role-panel .role-title.delivery { color: var(--delivery); border-color: var(--delivery); }
+        .role-panel .role-title.trader { color: var(--trader); border-color: var(--trader); }
+
+        .role-panel .stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--input-border);
+        }
+        .role-panel .stat span:last-child { font-weight: bold; }
+
+        .role-panel .click-btn {
+            width: 100%;
+            padding: 20px;
+            font-size: 2rem;
+            border: none;
+            border-radius: 16px;
+            color: white;
+            cursor: pointer;
+            margin: 12px 0;
+            transition: 0.2s;
+        }
+        .role-panel .click-btn:hover { transform: scale(1.02); }
+        .role-panel .click-btn:active { transform: scale(0.95); }
+        .role-panel .click-btn.collector { background: var(--collector); }
+        .role-panel .click-btn.doctor { background: var(--doctor); }
+        .role-panel .click-btn.trader { background: var(--trader); }
+
+        .role-panel .action-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 16px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 8px 0;
+            transition: 0.2s;
+        }
+        .role-panel .action-btn:hover { transform: scale(1.02); }
+        .role-panel .action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .role-panel .action-btn.gold { background: var(--gold); }
+        .role-panel .action-btn.banker { background: var(--banker); }
+        .role-panel .action-btn.mayor { background: var(--mayor); }
+        .role-panel .action-btn.police { background: var(--police); }
+        .role-panel .action-btn.danger { background: var(--danger); }
+        .role-panel .action-btn.success { background: var(--success); }
+        .role-panel .action-btn.delivery { background: var(--delivery); }
+        .role-panel .action-btn.trader { background: var(--trader); }
+
+        .role-panel .request-item {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-left: 3px solid var(--gold);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .role-panel .request-item .req-info { font-size: 0.9rem; }
+        .role-panel .request-item .req-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+        .role-panel .request-item .req-actions button {
+            padding: 4px 14px;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .role-panel .request-item .req-actions .approve { background: var(--success); color: white; }
+        .role-panel .request-item .req-actions .reject { background: var(--danger); color: white; }
+
+        .role-panel .player-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--input-border);
+            font-size: 0.9rem;
+        }
+        .role-panel .player-item .p-name { font-weight: bold; }
+        .role-panel .player-item .p-balance { color: var(--success); }
+
+        .role-panel .input-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 8px 0;
+        }
+        .role-panel .input-group input, .role-panel .input-group select {
+            flex: 1;
+            padding: 10px 14px;
+            border: 2px solid var(--input-border);
+            border-radius: 16px;
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: 1rem;
+            min-width: 100px;
+        }
+        .role-panel .input-group input:focus, .role-panel .input-group select:focus {
+            outline: none;
+            border-color: var(--border);
+        }
+
+        .role-panel .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 8px;
+            margin: 12px 0;
+        }
+        .role-panel .inventory-item {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            border: 2px solid var(--input-border);
+        }
+        .role-panel .inventory-item .item-icon { font-size: 2rem; }
+        .role-panel .inventory-item .item-name { font-weight: bold; font-size: 0.9rem; }
+        .role-panel .inventory-item .item-count { color: var(--text-light); font-size: 0.8rem; }
+
+        .role-subtabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .role-subtab {
+            padding: 8px 18px;
+            border: 2px solid var(--input-border);
+            border-radius: 20px;
+            background: var(--card);
+            color: var(--text);
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .role-subtab:hover { background: var(--primary); color: white; }
+        .role-subtab.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .role-subcontent { display: none; }
+        .role-subcontent.active { display: block; }
+
         footer { text-align: center; color: var(--text-light); font-size: 0.7rem; margin-top: 28px; }
 
         @media (max-width: 500px) {
@@ -654,14 +484,12 @@
             .chat-input-area button { padding: 14px; }
             .tabs { gap: 6px; }
             .tab-btn { padding: 8px 14px; font-size: 0.8rem; }
-            .number-game .number-grid { grid-template-columns: repeat(3, 1fr); }
-            .banker-panel .request-item { flex-direction: column; align-items: stretch; }
+            .role-panel .input-group { flex-direction: column; }
+            .role-panel .request-item { flex-direction: column; align-items: stretch; }
+            .role-subtabs { gap: 4px; }
+            .role-subtab { padding: 6px 12px; font-size: 0.8rem; }
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
@@ -684,8 +512,8 @@
             <button class="color-btn" style="background:#e84393;" onclick="setColor('pink')" data-color="pink"></button>
         </div>
 
-        <h1>🐟 Karasik Talk</h1>
-        <div class="subtitle">🇺🇸 Карасикославия · Casino</div>
+        <h1>🐟 Карасикославия</h1>
+        <div class="subtitle">🇺🇸 Городская жизнь · Роли</div>
 
         <!-- LOGIN -->
         <div class="login-area" id="loginArea">
@@ -710,9 +538,9 @@
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('chats')">💬 Чаты</button>
             <button class="tab-btn" onclick="switchTab('passport')">📋 Паспорт</button>
-            <button class="tab-btn" onclick="switchTab('announcements')">📢 Новости</button>
             <button class="tab-btn" onclick="switchTab('transfers')">💸 Переводы</button>
             <button class="tab-btn" onclick="switchTab('credits')">🏦 Кредиты</button>
+            <button class="tab-btn" onclick="switchTab('announcements')">📢 Новости</button>
             <button class="tab-btn" onclick="switchTab('rolepanel')" id="roleTab" style="display:none;">🎭 Роль</button>
         </div>
 
@@ -748,72 +576,9 @@
             </div>
         </div>
 
-        <!-- CASINO -->
-        <div id="tab-casino" class="tab-content">
-            <!-- CoinFlip x2 -->
-            <div class="casino-game">
-                <div class="game-title">🪙 CoinFlip · x2</div>
-                <div class="balance-display">🐟 Баланс: <span id="casinoBalance">0</span></div>
-                <div class="bet-area">
-                    <input type="number" id="betAmount" placeholder="Ставка" min="1" value="10">
-                    <button class="bet-btn" onclick="placeBet('heads')">🪙 Орёл</button>
-                    <button class="bet-btn" onclick="placeBet('tails')">🪙 Решка</button>
-                </div>
-                <div class="coinflip-result" id="coinflipResult">
-                    <span style="font-size:4rem;">🪙</span>
-                    <div class="result-text">Сделай ставку!</div>
-                </div>
-                <div class="history" id="casinoHistory"><div style="text-align:center; color:var(--text-light);">История игр</div></div>
-            </div>
-
-            <!-- Number Game x5 -->
-            <div class="number-game">
-                <div class="game-title">🎯 Угадай номер · x5</div>
-                <div class="balance-display">🐟 Баланс: <span id="numberBalance">0</span></div>
-                <div class="bet-area">
-                    <input type="number" id="numberBetAmount" placeholder="Ставка" min="1" value="10">
-                </div>
-                <div class="number-grid" id="numberGrid">
-                    <button onclick="guessNumber(1)">1</button><button onclick="guessNumber(2)">2</button>
-                    <button onclick="guessNumber(3)">3</button><button onclick="guessNumber(4)">4</button>
-                    <button onclick="guessNumber(5)">5</button><button onclick="guessNumber(6)">6</button>
-                    <button onclick="guessNumber(7)">7</button><button onclick="guessNumber(8)">8</button>
-                    <button onclick="guessNumber(9)">9</button><button onclick="guessNumber(10)">10</button>
-                    <button onclick="guessNumber(11)">11</button><button onclick="guessNumber(12)">12</button>
-                </div>
-                <div class="coinflip-result" id="numberResult">
-                    <span style="font-size:4rem;">🎯</span>
-                    <div class="result-text">Выбери число!</div>
-                </div>
-                <div class="history" id="numberHistory"><div style="text-align:center; color:var(--text-light);">История игр</div></div>
-            </div>
-
-            <!-- Fortune Teller -->
-            <div class="fortune-panel" id="fortunePanel">
-                <div class="title">🔮 Гадалка</div>
-                <div style="text-align:center; margin-bottom:12px;">
-                    ⏳ Доступно через: <span id="fortuneTimer">--</span>
-                </div>
-                <div class="bet-area">
-                    <input type="number" id="fortuneBetAmount" placeholder="Ставка" min="1" value="50">
-                </div>
-                <button class="fortune-btn" id="fortuneBtn" onclick="useFortune()">🔮 Погадать (70% шанс)</button>
-                <div class="fortune-result" id="fortuneResult">
-                    <div style="color:var(--text-light);">Нажми "Погадать"</div>
-                </div>
-                <div class="history" id="fortuneHistory"><div style="text-align:center; color:var(--text-light);">История гаданий</div></div>
-            </div>
-        </div>
-
         <!-- PASSPORT -->
         <div id="tab-passport" class="tab-content">
             <div id="passportDisplay"></div>
-        </div>
-
-        <!-- ANNOUNCEMENTS -->
-        <div id="tab-announcements" class="tab-content">
-            <button onclick="loadAnnouncements()" style="background:var(--secondary); border:none; padding:10px 20px; border-radius:30px; color:white; font-weight:bold; cursor:pointer; margin-bottom:12px;">🔄 Загрузить новости</button>
-            <div id="announcementsResult"><div class="loading">📢 Нажми "Загрузить новости"</div></div>
         </div>
 
         <!-- TRANSFERS -->
@@ -849,6 +614,12 @@
             <div id="creditHistory"><div class="loading">🏦 Загрузка кредитов...</div></div>
         </div>
 
+        <!-- ANNOUNCEMENTS -->
+        <div id="tab-announcements" class="tab-content">
+            <button onclick="loadAnnouncements()" style="background:var(--secondary); border:none; padding:10px 20px; border-radius:30px; color:white; font-weight:bold; cursor:pointer; margin-bottom:12px;">🔄 Загрузить новости</button>
+            <div id="announcementsResult"><div class="loading">📢 Нажми "Загрузить новости"</div></div>
+        </div>
+
         <!-- ROLE PANEL -->
         <div id="tab-rolepanel" class="tab-content">
             <div id="rolePanelContent"></div>
@@ -880,10 +651,8 @@
     window.currentUser = null;
     window.currentChatId = null;
     window.updateInterval = null;
-    window.casinoHistory = [];
-    window.numberHistory = [];
-    window.fortuneHistory = [];
     window.salaryRate = 40;
+    window.roleSubtab = 'main';
 
     // ===== THEME =====
     window.toggleTheme = function() {
@@ -936,8 +705,6 @@
         if (!window.currentUser) return;
         const balance = await getUserBalance(window.currentUser.login);
         document.getElementById('userBalance').textContent = `🐟 ${balance}`;
-        document.getElementById('casinoBalance').textContent = balance;
-        document.getElementById('numberBalance').textContent = balance;
         if (window.currentUser.passport) showPassport();
     }
 
@@ -958,13 +725,15 @@
             }
             await apiPut(`users/${login}`, {
                 password: password,
-                passport: { fullName: login, role: 'Собиратель', address: 'Карасикославия, ул. Центральная, д. 1' },
+                passport: { fullName: login, role1: 'Без профессии', role2: 'Без профессии', address: 'Карасикославия, ул. Центральная, д. 1' },
                 createdAt: new Date().toISOString(),
                 chats: [],
                 balance: 100,
                 clicks: 0,
                 credits: {},
-                salaryRequest: null
+                salaryRequest: null,
+                inventory: { medkits: 0, parts_digl: 0, parts_ak: 0 },
+                taxes: { paid: 0, debt: 0 }
             });
             status.innerHTML = '<div class="success-box">✅ Регистрация успешна! Теперь войдите.</div>';
         } catch(e) {
@@ -993,18 +762,21 @@
             document.getElementById('loginArea').style.display = 'none';
             status.innerHTML = '';
 
-            const role = user.passport?.role || '';
-            const roleClass = role.toLowerCase();
+            const role1 = user.passport?.role1 || 'Без профессии';
+            const role2 = user.passport?.role2 || 'Без профессии';
+            const displayRole = role1 !== 'Без профессии' ? role1 : role2;
+            const roleClass = displayRole.toLowerCase();
             document.getElementById('userRole').className = `urole ${roleClass}`;
+            document.getElementById('userRole').textContent = displayRole;
             
-            if (role === 'Админ' || role === 'Admin') {
+            if (displayRole === 'Админ') {
                 document.getElementById('adminLink').style.display = 'inline-block';
             } else {
                 document.getElementById('adminLink').style.display = 'none';
             }
 
             const roleTab = document.getElementById('roleTab');
-            if (['Собиратель', 'Банкир', 'Гадалка'].includes(role)) {
+            if (displayRole !== 'Без профессии') {
                 roleTab.style.display = 'inline-block';
                 loadRolePanel();
             } else {
@@ -1016,10 +788,7 @@
             loadTransactions();
             loadCredits();
             updateUserBalanceDisplay();
-            loadCasinoHistory();
-            loadNumberHistory();
-            loadFortuneHistory();
-            startFortuneTimer();
+            checkTaxes();
         } catch(e) {
             status.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
         }
@@ -1038,11 +807,6 @@
         document.getElementById('roleTab').style.display = 'none';
         if (window.updateInterval) { clearInterval(window.updateInterval); window.updateInterval = null; }
         document.getElementById('transactionsList').innerHTML = '<div class="loading">💸 Войдите, чтобы видеть переводы</div>';
-        document.getElementById('casinoBalance').textContent = '0';
-        document.getElementById('numberBalance').textContent = '0';
-        document.getElementById('coinflipResult').innerHTML = `<span style="font-size:4rem;">🪙</span><div class="result-text">Войдите, чтобы играть</div>`;
-        document.getElementById('numberResult').innerHTML = `<span style="font-size:4rem;">🎯</span><div class="result-text">Войдите, чтобы играть</div>`;
-        document.getElementById('fortuneResult').innerHTML = '<div style="color:var(--text-light);">Войдите, чтобы гадать</div>';
         document.getElementById('rolePanelContent').innerHTML = '';
     };
 
@@ -1055,22 +819,28 @@
             container.innerHTML = `<div style="background:#fff3cd; border-radius:16px; padding:16px; color:#856404; border:1px solid #ffc107;">⚠️ У вас нет паспорта. Обратитесь к администратору.</div>`;
             return;
         }
-        const role = p.role || 'Собиратель';
-        const roleClass = role.toLowerCase();
+        const role1 = p.role1 || 'Без профессии';
+        const role2 = p.role2 || 'Без профессии';
+        const role1Class = role1.toLowerCase();
+        const role2Class = role2.toLowerCase();
+        
+        let rolesHtml = `<span class="role-tag ${role1Class}">${role1}</span>`;
+        if (role2 !== 'Без профессии') {
+            rolesHtml += ` + <span class="role-tag ${role2Class}">${role2}</span>`;
+        }
+        
         container.innerHTML = `
             <div class="passport-card">
                 <div class="badge">🇺🇸 УДОСТОВЕРЕНИЕ ЛИЧНОСТИ</div>
                 <div class="name">${escapeHtml(p.fullName)}</div>
                 <div class="detail"><span class="label">👤 Логин</span><span>${escapeHtml(window.currentUser.login)}</span></div>
-                <div class="detail"><span class="label">🏷️ Роль</span><span><span class="role-tag ${roleClass}">${escapeHtml(role)}</span></span></div>
+                <div class="detail"><span class="label">🏷️ Профессии</span><span>${rolesHtml}</span></div>
                 <div class="detail"><span class="label">🏠 Прописка</span><span>${escapeHtml(p.address || '—')}</span></div>
                 <div class="detail"><span class="label">🐟 Баланс</span><span style="font-weight:bold; color:var(--success);">${balance} 🐟</span></div>
                 <div style="margin-top:16px; text-align:center; font-size:0.8rem; color:var(--text-light);">🐟 Карасикославия</div>
             </div>
         `;
         document.getElementById('userName').textContent = p.fullName || window.currentUser.login;
-        document.getElementById('userRole').textContent = role;
-        document.getElementById('userLogin').textContent = `@${window.currentUser.login}`;
     }
 
     // ===== CHATS =====
@@ -1327,7 +1097,6 @@
                 container.innerHTML = '<div class="loading">💸 Нет транзакций</div>';
                 return;
             }
-            // Показываем ТОЛЬКО транзакции пользователя
             const userTxs = keys.filter(id => {
                 const tx = transactions[id];
                 return tx.from === window.currentUser.login || tx.to === window.currentUser.login;
@@ -1341,10 +1110,7 @@
                 const isIncoming = tx.to === window.currentUser.login;
                 const sign = isIncoming ? '+' : '-';
                 const color = isIncoming ? 'var(--success)' : 'var(--danger)';
-                // Скрываем отправителя/получателя если это "странный" перевод (можно позже добавить логику)
-                const fromDisplay = tx.from === 'БАНК' || tx.from === 'ЭМИССИЯ' ? tx.from : escapeHtml(tx.from);
-                const toDisplay = tx.to === 'БАНК' || tx.to === 'ЭМИССИЯ' ? tx.to : escapeHtml(tx.to);
-                return `<div class="transfer-item"><span class="t-from">${fromDisplay}</span> ${isIncoming ? '→' : '←'} <span class="t-to">${toDisplay}</span> <span style="color:${color}; font-weight:bold;">${sign}${tx.amount} 🐟</span> <span class="t-time">${getTimeAgo(tx.timestamp)}</span></div>`;
+                return `<div class="transfer-item"><span class="t-from">${escapeHtml(tx.from)}</span> ${isIncoming ? '→' : '←'} <span class="t-to">${escapeHtml(tx.to)}</span> <span style="color:${color}; font-weight:bold;">${sign}${tx.amount} 🐟</span> <span class="t-time">${getTimeAgo(tx.timestamp)}</span></div>`;
             }).join('');
         } catch(e) {
             container.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
@@ -1416,7 +1182,6 @@
                     return;
                 }
             }
-            // Проверяем баланс банка
             const bankBalance = await apiFetch('bankBalance') || 0;
             if (bankBalance < amount) {
                 showNotification(`❌ В банке недостаточно средств! Доступно: ${bankBalance} 🐟`, '❌');
@@ -1436,17 +1201,11 @@
             };
             credits[creditId] = creditData;
             await apiPut(`users/${window.currentUser.login}/credits`, credits);
-            
-            // Списываем из банка
             await apiPut('bankBalance', bankBalance - amount);
-            
-            // Начисляем игроку
             const balance = await getUserBalance(window.currentUser.login);
             await updateUserBalance(window.currentUser.login, balance + amount);
-            
             const txId = Date.now().toString();
             await apiPut(`transactions/${txId}`, { from: 'БАНК', to: window.currentUser.login, amount: amount, timestamp: Date.now() });
-            
             showNotification(`✅ Кредит ${amount} 🐟 на ${days} дней!`, '🏦');
             updateUserBalanceDisplay();
             loadCredits();
@@ -1472,19 +1231,14 @@
                 return;
             }
             await updateUserBalance(window.currentUser.login, balance - credit.totalToPay);
-            
-            // Возвращаем в банк
             const bankBalance = await apiFetch('bankBalance') || 0;
             await apiPut('bankBalance', bankBalance + credit.totalToPay);
-            
             credit.paid = true;
             credit.paidDate = Date.now();
             credits[creditId] = credit;
             await apiPut(`users/${window.currentUser.login}/credits`, credits);
-            
             const txId = Date.now().toString();
             await apiPut(`transactions/${txId}`, { from: window.currentUser.login, to: 'БАНК', amount: credit.totalToPay, timestamp: Date.now() });
-            
             showNotification(`✅ Кредит погашен! Спасибо!`, '🏦');
             updateUserBalanceDisplay();
             loadCredits();
@@ -1494,505 +1248,539 @@
         }
     };
 
-    // ===== CASINO =====
-    async function loadCasinoHistory() {
+    // ===== TAXES =====
+    async function checkTaxes() {
         if (!window.currentUser) return;
         try {
-            const history = await apiFetch(`casinoHistory/${window.currentUser.login}`) || [];
-            window.casinoHistory = history;
-            renderCasinoHistory();
-        } catch(e) {}
-    }
-
-    function renderCasinoHistory() {
-        const container = document.getElementById('casinoHistory');
-        if (!window.currentUser) { container.innerHTML = '<div style="text-align:center; color:var(--text-light);">Войдите, чтобы играть</div>'; return; }
-        if (window.casinoHistory.length === 0) { container.innerHTML = '<div style="text-align:center; color:var(--text-light);">🎰 Сделай первую ставку!</div>'; return; }
-        const recent = window.casinoHistory.slice(-20).reverse();
-        container.innerHTML = recent.map(item => `
-            <div class="history-item">
-                <span>${item.choice === 'heads' ? '🪙 Орёл' : '🪙 Решка'} → ${item.result === 'heads' ? '🪙 Орёл' : '🪙 Решка'}</span>
-                <span class="${item.win ? 'win' : 'lose'}">${item.win ? `+${item.amount} 🐟` : `-${item.amount} 🐟`}</span>
-            </div>
-        `).join('');
-    }
-
-    window.placeBet = async function(choice) {
-        if (!window.currentUser) { showNotification('Сначала войдите!', '❌'); return; }
-        const amountInput = document.getElementById('betAmount');
-        const amount = parseInt(amountInput.value);
-        if (isNaN(amount) || amount <= 0) { showNotification('Введите корректную сумму ставки', '❌'); return; }
-        const balance = await getUserBalance(window.currentUser.login);
-        if (amount > balance) { showNotification(`Недостаточно 🐟! У вас ${balance}`, '❌'); return; }
-
-        const resultElement = document.getElementById('coinflipResult');
-        resultElement.innerHTML = `<span style="font-size:4rem; animation: spin 0.5s linear infinite;">🪙</span><div class="result-text">Подбрасываем...</div>`;
-
-        const result = Math.random() > 0.5 ? 'heads' : 'tails';
-        const win = (result === choice);
-        const newBalance = win ? balance + amount : balance - amount;
-        await updateUserBalance(window.currentUser.login, newBalance);
-
-        window.casinoHistory.push({ choice, result, amount, win, timestamp: Date.now() });
-        await apiPut(`casinoHistory/${window.currentUser.login}`, window.casinoHistory);
-
-        setTimeout(() => {
-            resultElement.innerHTML = `
-                <span style="font-size:4rem;">${win ? '🎉' : '💸'}</span>
-                <div class="result-text ${win ? 'win' : 'lose'}">
-                    ${win ? `+${amount} 🐟! x2 🎉` : `-${amount} 🐟... 😢`}
-                    <br><span style="font-size:1rem;">${result === 'heads' ? '🪙 Орёл' : '🪙 Решка'}</span>
-                </div>
-            `;
-        }, 600);
-
-        updateUserBalanceDisplay();
-        renderCasinoHistory();
-        showNotification(win ? `🎉 Выигрыш ${amount} 🐟! x2` : `😢 Проигрыш ${amount} 🐟...`, win ? '🎉' : '💸');
-    };
-
-    // ===== NUMBER GAME =====
-    async function loadNumberHistory() {
-        if (!window.currentUser) return;
-        try {
-            const history = await apiFetch(`numberHistory/${window.currentUser.login}`) || [];
-            window.numberHistory = history;
-            renderNumberHistory();
-        } catch(e) {}
-    }
-
-    function renderNumberHistory() {
-        const container = document.getElementById('numberHistory');
-        if (!window.currentUser) { container.innerHTML = '<div style="text-align:center; color:var(--text-light);">Войдите, чтобы играть</div>'; return; }
-        if (!window.numberHistory || window.numberHistory.length === 0) { container.innerHTML = '<div style="text-align:center; color:var(--text-light);">🎯 Сделай первую ставку!</div>'; return; }
-        const recent = window.numberHistory.slice(-20).reverse();
-        container.innerHTML = recent.map(item => `
-            <div class="history-item">
-                <span>🎯 ${item.guess} → ${item.result}</span>
-                <span class="${item.win ? 'win' : 'lose'}">${item.win ? `+${item.amount * 5} 🐟` : `-${item.amount} 🐟`}</span>
-            </div>
-        `).join('');
-    }
-
-    window.guessNumber = async function(number) {
-        if (!window.currentUser) { showNotification('Сначала войдите!', '❌'); return; }
-        const amountInput = document.getElementById('numberBetAmount');
-        const amount = parseInt(amountInput.value);
-        if (isNaN(amount) || amount <= 0) { showNotification('Введите корректную сумму ставки', '❌'); return; }
-        const balance = await getUserBalance(window.currentUser.login);
-        if (amount > balance) { showNotification(`Недостаточно 🐟! У вас ${balance}`, '❌'); return; }
-
-        const resultElement = document.getElementById('numberResult');
-        resultElement.innerHTML = `<span style="font-size:4rem; animation: spin 0.5s linear infinite;">🎯</span><div class="result-text">Выпадает...</div>`;
-
-        const result = Math.floor(Math.random() * 12) + 1;
-        const win = (result === number);
-        const newBalance = win ? balance + (amount * 5) : balance - amount;
-        await updateUserBalance(window.currentUser.login, newBalance);
-
-        if (!window.numberHistory) window.numberHistory = [];
-        window.numberHistory.push({ guess: number, result, amount, win, timestamp: Date.now() });
-        await apiPut(`numberHistory/${window.currentUser.login}`, window.numberHistory);
-
-        setTimeout(() => {
-            resultElement.innerHTML = `
-                <span style="font-size:4rem;">${win ? '🎉' : '💸'}</span>
-                <div class="result-text ${win ? 'win' : 'lose'}">
-                    ${win ? `+${amount * 5} 🐟! x5 🎉` : `-${amount} 🐟... 😢`}
-                    <br><span style="font-size:1.5rem;">Выпало: ${result}</span>
-                    <br><span style="font-size:1rem;">Твой выбор: ${number}</span>
-                </div>
-            `;
-        }, 600);
-
-        document.querySelectorAll('#numberGrid button').forEach(b => b.disabled = true);
-        setTimeout(() => document.querySelectorAll('#numberGrid button').forEach(b => b.disabled = false), 1000);
-
-        updateUserBalanceDisplay();
-        renderNumberHistory();
-        showNotification(win ? `🎉 Выигрыш ${amount * 5} 🐟! x5` : `😢 Проигрыш ${amount} 🐟...`, win ? '🎉' : '💸');
-    };
-
-    // ===== FORTUNE TELLER =====
-    async function loadFortuneHistory() {
-        if (!window.currentUser) return;
-        try {
-            const history = await apiFetch(`fortuneHistory/${window.currentUser.login}`) || [];
-            window.fortuneHistory = history;
-            renderFortuneHistory();
-        } catch(e) {}
-    }
-
-    function renderFortuneHistory() {
-        const container = document.getElementById('fortuneHistory');
-        if (!window.currentUser) { container.innerHTML = '<div style="text-align:center; color:var(--text-light);">Войдите, чтобы гадать</div>'; return; }
-        if (!window.fortuneHistory || window.fortuneHistory.length === 0) { container.innerHTML = '<div style="text-align:center; color:var(--text-light);">🔮 История гаданий пуста</div>'; return; }
-        const recent = window.fortuneHistory.slice(-10).reverse();
-        container.innerHTML = recent.map(item => `
-            <div class="history-item">
-                <span>🔮 ${item.win ? '✅ Выигрыш' : '❌ Проигрыш'}</span>
-                <span class="${item.win ? 'win' : 'lose'}">${item.win ? `+${item.winAmount} 🐟` : `-${item.amount} 🐟`}</span>
-            </div>
-        `).join('');
-    }
-
-    function startFortuneTimer() {
-        const checkTimer = async () => {
-            if (!window.currentUser) return;
-            try {
-                const user = await apiFetch(`users/${window.currentUser.login}`);
-                const lastFortune = user?.lastFortune || 0;
-                const cooldown = 15 * 60 * 1000;
-                const remaining = Math.max(0, cooldown - (Date.now() - lastFortune));
-                const minutes = Math.ceil(remaining / 60000);
-                
-                if (remaining <= 0) {
-                    document.getElementById('fortuneTimer').textContent = 'Готово!';
-                    document.getElementById('fortuneBtn').disabled = false;
-                } else {
-                    document.getElementById('fortuneTimer').textContent = `${minutes} мин`;
-                    document.getElementById('fortuneBtn').disabled = true;
-                }
-            } catch(e) {}
-        };
-        checkTimer();
-        setInterval(checkTimer, 10000);
-    }
-
-    window.useFortune = async function() {
-        if (!window.currentUser) { showNotification('Сначала войдите!', '❌'); return; }
-        
-        const amountInput = document.getElementById('fortuneBetAmount');
-        const amount = parseInt(amountInput.value);
-        if (isNaN(amount) || amount <= 0) { showNotification('Введите сумму ставки', '❌'); return; }
-        
-        const balance = await getUserBalance(window.currentUser.login);
-        if (amount > balance) { showNotification(`Недостаточно 🐟! У вас ${balance}`, '❌'); return; }
-
-        const user = await apiFetch(`users/${window.currentUser.login}`);
-        const lastFortune = user?.lastFortune || 0;
-        const cooldown = 15 * 60 * 1000;
-        if (Date.now() - lastFortune < cooldown) {
-            const remaining = Math.ceil((cooldown - (Date.now() - lastFortune)) / 60000);
-            showNotification(`⏳ Подожди ${remaining} минут!`, '⏳');
-            return;
-        }
-
-        const resultElement = document.getElementById('fortuneResult');
-        resultElement.innerHTML = '<div>🔮 Гадалка предсказывает...</div>';
-        document.getElementById('fortuneBtn').disabled = true;
-
-        const win = Math.random() < 0.7;
-        const winAmount = win ? amount * 2 : 0;
-        const commission = win ? Math.round(winAmount * 0.2) : 0;
-        const finalWin = win ? winAmount - commission : 0;
-        const newBalance = win ? balance + finalWin : balance - amount;
-
-        await updateUserBalance(window.currentUser.login, newBalance);
-        await apiPut(`users/${window.currentUser.login}/lastFortune`, Date.now());
-
-        if (!window.fortuneHistory) window.fortuneHistory = [];
-        window.fortuneHistory.push({ amount, win, winAmount: finalWin, commission, timestamp: Date.now() });
-        await apiPut(`fortuneHistory/${window.currentUser.login}`, window.fortuneHistory);
-
-        setTimeout(() => {
-            if (win) {
-                resultElement.innerHTML = `
-                    <div class="win" style="font-size:1.2rem;">🎉 ВЫИГРЫШ!</div>
-                    <div>Ставка: ${amount} 🐟</div>
-                    <div>Выигрыш: ${winAmount} 🐟</div>
-                    <div>Комиссия Гадалки: ${commission} 🐟 (20%)</div>
-                    <div style="font-size:1.3rem; font-weight:bold; color:var(--success);">Твой выигрыш: +${finalWin} 🐟</div>
-                `;
-            } else {
-                resultElement.innerHTML = `
-                    <div class="lose" style="font-size:1.2rem;">😢 ПРОИГРЫШ</div>
-                    <div>Ставка: ${amount} 🐟</div>
-                    <div style="font-size:1.3rem; font-weight:bold; color:var(--danger);">-${amount} 🐟</div>
-                `;
+            const now = Date.now();
+            const user = await apiFetch(`users/${window.currentUser.login}`);
+            const lastTax = user?.lastTax || 0;
+            const taxInterval = 15 * 60 * 1000; // 15 минут
+            
+            if (now - lastTax > taxInterval) {
+                await collectTaxes();
             }
-            document.getElementById('fortuneBtn').disabled = false;
-            updateUserBalanceDisplay();
-            renderFortuneHistory();
-            startFortuneTimer();
-            showNotification(win ? `🎉 Гадалка принесла +${finalWin} 🐟!` : `😢 Гадалка проиграла ${amount} 🐟...`, win ? '🔮' : '💸');
-        }, 1500);
-    };
+        } catch(e) {}
+    }
+
+    async function collectTaxes() {
+        if (!window.currentUser) return;
+        try {
+            const users = await apiFetch('users') || {};
+            const mayor = Object.entries(users).find(([login, data]) => 
+                data.passport?.role1 === 'Мэр' || data.passport?.role2 === 'Мэр'
+            );
+            
+            if (!mayor) return;
+            
+            const [mayorLogin, mayorData] = mayor;
+            const taxAmount = 25;
+            
+            for (const [login, data] of Object.entries(users)) {
+                if (login === mayorLogin) continue;
+                const balance = data.balance || 0;
+                if (balance >= taxAmount) {
+                    await updateUserBalance(login, balance - taxAmount);
+                    const mayorBalance = await getUserBalance(mayorLogin);
+                    await updateUserBalance(mayorLogin, mayorBalance + taxAmount);
+                    const txId = Date.now().toString();
+                    await apiPut(`transactions/${txId}`, { 
+                        from: login, 
+                        to: mayorLogin, 
+                        amount: taxAmount, 
+                        timestamp: Date.now(),
+                        type: 'tax'
+                    });
+                } else {
+                    // Должник
+                    const userData = await apiFetch(`users/${login}`);
+                    const debt = (userData?.taxes?.debt || 0) + taxAmount;
+                    await apiPut(`users/${login}/taxes/debt`, debt);
+                }
+            }
+            
+            await apiPut(`users/${mayorLogin}/lastTax`, Date.now());
+        } catch(e) {
+            console.error('Tax error:', e);
+        }
+    }
 
     // ===== ROLE PANEL =====
     async function loadRolePanel() {
         if (!window.currentUser) return;
-        const role = window.currentUser.passport?.role || '';
         const container = document.getElementById('rolePanelContent');
         
-        if (role === 'Собиратель') {
-            const user = await apiFetch(`users/${window.currentUser.login}`);
-            const clicks = user?.clicks || 0;
-            const balance = user?.balance || 0;
-            
-            container.innerHTML = `
-                <div class="collector-panel">
-                    <div class="title">🖨️ Собиратель</div>
-                    <div class="stat"><span>💰 Наличка (накоплено)</span><span id="collectorCash">${clicks * 500} 🐟</span></div>
-                    <div class="stat"><span>📊 Кликов</span><span id="collectorClicks">${clicks}</span></div>
-                    <div class="stat"><span>💳 Ставка за клик</span><span id="collectorRate">${window.salaryRate} 🐟</span></div>
-                    <div class="stat"><span>🐟 Баланс</span><span>${balance} 🐟</span></div>
-                    <button class="click-btn" onclick="collectorClick()">🖨️ НАЖАТЬ (+500 🐟)</button>
-                    <button class="request-btn" onclick="requestSalary()" id="requestSalaryBtn">📤 ЗАПРОСИТЬ ЗП (${clicks} × ${window.salaryRate} = ${clicks * window.salaryRate} 🐟)</button>
-                    <div id="collectorStatus"></div>
+        const role1 = window.currentUser.passport?.role1 || 'Без профессии';
+        const role2 = window.currentUser.passport?.role2 || 'Без профессии';
+        
+        if (role1 === 'Без профессии' && role2 === 'Без профессии') {
+            container.innerHTML = '<div class="loading">🎭 У вас нет профессии. Обратитесь к администратору.</div>';
+            return;
+        }
+        
+        let html = `<div class="role-subtabs">`;
+        html += `<button class="role-subtab active" onclick="switchRoleSubtab('main')">📋 Профиль</button>`;
+        
+        if (role1 !== 'Без профессии') {
+            html += `<button class="role-subtab" onclick="switchRoleSubtab('role1')">${getRoleEmoji(role1)} ${role1}</button>`;
+        }
+        if (role2 !== 'Без профессии') {
+            html += `<button class="role-subtab" onclick="switchRoleSubtab('role2')">${getRoleEmoji(role2)} ${role2}</button>`;
+        }
+        html += `</div>`;
+        
+        html += `<div id="roleSubContent">`;
+        html += await getRoleSubContent('main');
+        if (role1 !== 'Без профессии') {
+            html += await getRoleSubContent('role1');
+        }
+        if (role2 !== 'Без профессии') {
+            html += await getRoleSubContent('role2');
+        }
+        html += `</div>`;
+        
+        container.innerHTML = html;
+        
+        // Показываем только активный сабтаб
+        document.querySelectorAll('.role-subcontent').forEach(el => el.style.display = 'none');
+        document.querySelector('.role-subcontent.active')?.style.setProperty('display', 'block');
+    }
+
+    function getRoleEmoji(role) {
+        const emojis = {
+            'Собиратель': '🖨️',
+            'Банкир': '🏦',
+            'Мэр': '👑',
+            'Полиция': '👮',
+            'Бандит': '😈',
+            'Доктор': '⚕️',
+            'Доставщик': '🚚',
+            'Барыга': '💰'
+        };
+        return emojis[role] || '🎭';
+    }
+
+    async function getRoleSubContent(type) {
+        if (type === 'main') {
+            const role1 = window.currentUser.passport?.role1 || 'Без профессии';
+            const role2 = window.currentUser.passport?.role2 || 'Без профессии';
+            const balance = window.currentUser.balance || 0;
+            return `
+                <div class="role-subcontent active" data-subtab="main">
+                    <div class="role-panel">
+                        <div class="role-title" style="color:var(--text); border-color:var(--border);">📋 Профиль</div>
+                        <div class="stat"><span>👤 Логин</span><span>${escapeHtml(window.currentUser.login)}</span></div>
+                        <div class="stat"><span>🏷️ Основная профессия</span><span>${role1}</span></div>
+                        <div class="stat"><span>🏷️ Дополнительная профессия</span><span>${role2}</span></div>
+                        <div class="stat"><span>🐟 Баланс</span><span>${balance} 🐟</span></div>
+                        <div class="stat"><span>🏠 Прописка</span><span>${escapeHtml(window.currentUser.passport?.address || '—')}</span></div>
+                    </div>
                 </div>
             `;
-            
-        } else if (role === 'Банкир') {
-            const users = await apiFetch('users') || {};
-            const transactions = await apiFetch('transactions') || {};
-            const bankBalance = await apiFetch('bankBalance') || 0;
-            
-            // Collect all salary requests
-            const requests = {};
-            for (const [login, data] of Object.entries(users)) {
-                if (data.salaryRequest) {
-                    requests[login] = data.salaryRequest;
+        }
+        
+        const role = type === 'role1' ? window.currentUser.passport?.role1 : window.currentUser.passport?.role2;
+        if (!role || role === 'Без профессии') return '';
+        
+        let html = `<div class="role-subcontent" data-subtab="${type}" style="display:none;">`;
+        html += await getRolePanel(role, type);
+        html += `</div>`;
+        return html;
+    }
+
+    window.switchRoleSubtab = function(tab) {
+        document.querySelectorAll('.role-subtab').forEach(el => el.classList.remove('active'));
+        document.querySelector(`.role-subtab[onclick="switchRoleSubtab('${tab}')"]`)?.classList.add('active');
+        document.querySelectorAll('.role-subcontent').forEach(el => el.style.display = 'none');
+        document.querySelector(`.role-subcontent[data-subtab="${tab}"]`)?.style.setProperty('display', 'block');
+    };
+
+    // ===== ROLE PANELS =====
+    async function getRolePanel(role, type) {
+        const user = await apiFetch(`users/${window.currentUser.login}`);
+        const balance = user?.balance || 0;
+        const clicks = user?.clicks || 0;
+        const inventory = user?.inventory || { medkits: 0, parts_digl: 0, parts_ak: 0 };
+        
+        switch(role) {
+            case 'Собиратель':
+                return `
+                    <div class="role-panel">
+                        <div class="role-title collector">🖨️ Собиратель</div>
+                        <div class="stat"><span>💰 Наличка</span><span>${clicks * 500} 🐟</span></div>
+                        <div class="stat"><span>📊 Кликов</span><span id="collectorClicks_${type}">${clicks}</span></div>
+                        <div class="stat"><span>💳 Ставка за клик</span><span>${window.salaryRate} 🐟</span></div>
+                        <div class="stat"><span>🐟 Баланс</span><span>${balance} 🐟</span></div>
+                        <button class="click-btn collector" onclick="collectorClick('${type}')">🖨️ НАЖАТЬ (+500 🐟)</button>
+                        <button class="action-btn gold" onclick="requestSalary('${type}')" id="requestSalaryBtn_${type}">📤 ЗАПРОСИТЬ ЗП (${clicks} × ${window.salaryRate} = ${clicks * window.salaryRate} 🐟)</button>
+                        <div id="collectorStatus_${type}"></div>
+                    </div>
+                `;
+                
+            case 'Банкир':
+                const bankBalance = await apiFetch('bankBalance') || 0;
+                const users = await apiFetch('users') || {};
+                const transactions = await apiFetch('transactions') || {};
+                
+                let playersHtml = Object.entries(users).map(([login, data]) => `
+                    <div class="player-item">
+                        <span class="p-name">${escapeHtml(login)}</span>
+                        <span class="p-balance">🐟 ${data.balance || 0}</span>
+                        ${data.clicks ? `<span style="font-size:0.8rem; color:var(--text-light);">📊 ${data.clicks} кликов</span>` : ''}
+                    </div>
+                `).join('');
+                
+                // Запросы на ЗП
+                let requestsHtml = '';
+                for (const [login, data] of Object.entries(users)) {
+                    if (data.salaryRequest) {
+                        requestsHtml += `
+                            <div class="request-item">
+                                <div class="req-info">
+                                    <strong>${escapeHtml(login)}</strong> — ${data.salaryRequest.clicks} кликов × ${data.salaryRequest.rate} 🐟 = <strong>${data.salaryRequest.clicks * data.salaryRequest.rate} 🐟</strong>
+                                </div>
+                                <div class="req-actions">
+                                    <button class="approve" onclick="approveSalary('${login}')">✅</button>
+                                    <button class="reject" onclick="rejectSalary('${login}')">❌</button>
+                                </div>
+                            </div>
+                        `;
+                    }
                 }
-            }
-            
-            let playersHtml = Object.entries(users).map(([login, data]) => `
-                <div class="player-item">
-                    <span class="p-name">${escapeHtml(login)}</span>
-                    <span class="p-balance">🐟 ${data.balance || 0}</span>
-                    ${data.clicks ? `<span class="p-clicks">📊 ${data.clicks} кликов</span>` : ''}
-                </div>
-            `).join('');
-            
-            let requestsHtml = Object.entries(requests).map(([login, data]) => `
-                <div class="request-item">
-                    <div class="req-info">
-                        <strong>${escapeHtml(login)}</strong> — ${data.clicks} кликов × ${data.rate} 🐟 = <strong>${data.clicks * data.rate} 🐟</strong>
+                
+                let txHtml = Object.values(transactions).slice(-10).reverse().map(tx => `
+                    <div style="font-size:0.8rem; padding:4px 0; border-bottom:1px solid var(--input-border);">
+                        ${escapeHtml(tx.from)} → ${escapeHtml(tx.to)}: ${tx.amount} 🐟
+                        <span style="float:right; font-size:0.7rem; color:var(--text-light);">${getTimeAgo(tx.timestamp)}</span>
                     </div>
-                    <div class="req-actions">
-                        <button class="approve" onclick="approveSalary('${login}')">✅ Одобрить</button>
-                        <button class="reject" onclick="rejectSalary('${login}')">❌ Отклонить</button>
-                        <button class="edit" onclick="editSalary('${login}')">✏️ Изменить</button>
-                    </div>
-                </div>
-            `).join('');
-            
-            let txHtml = Object.values(transactions).slice(-10).reverse().map(tx => `
-                <div style="font-size:0.8rem; padding:4px 0; border-bottom:1px solid var(--input-border);">
-                    ${escapeHtml(tx.from)} → ${escapeHtml(tx.to)}: ${tx.amount} 🐟
-                    <span style="float:right; font-size:0.7rem; color:var(--text-light);">${getTimeAgo(tx.timestamp)}</span>
-                </div>
-            `).join('');
-            
-            container.innerHTML = `
-                <div class="banker-panel">
-                    <div class="title">🏦 Банкир</div>
-                    
-                    <div class="stat"><span>💰 БАНК (касса)</span><span id="bankBalance">${bankBalance} 🐟</span></div>
-                    <div class="stat"><span>💳 Твой баланс</span><span>${window.currentUser.balance || 0} 🐟</span></div>
-                    
-                    <!-- Эмиссия -->
-                    <div class="emission-section">
-                        <div class="emission-title">💸 ЭМИССИЯ (пополнить банк из воздуха)</div>
-                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                            <input type="number" id="emissionAmount" placeholder="Сколько добавить?" min="1" style="flex:2;">
-                            <button class="emission-btn" onclick="emissionMoney()" style="flex:1;">💰 Добавить в банк</button>
+                `).join('');
+                
+                return `
+                    <div class="role-panel">
+                        <div class="role-title banker">🏦 Банкир</div>
+                        <div class="stat"><span>💰 БАНК (касса)</span><span>${bankBalance} 🐟</span></div>
+                        <div class="stat"><span>💳 Твой баланс</span><span>${balance} 🐟</span></div>
+                        
+                        <div style="margin:12px 0; padding:12px; background:var(--card); border-radius:12px; border:2px solid var(--gold);">
+                            <div style="font-weight:bold; margin-bottom:8px; color:var(--gold);">💸 ЭМИССИЯ</div>
+                            <div class="input-group">
+                                <input type="number" id="emissionAmount_${type}" placeholder="Сумма" min="1">
+                                <button class="action-btn banker" onclick="emissionMoney('${type}')">💰 Добавить в банк</button>
+                            </div>
+                            <div id="emissionStatus_${type}"></div>
                         </div>
-                        <div id="emissionStatus"></div>
-                    </div>
-                    
-                    <div style="margin:12px 0;">
-                        <div style="font-weight:bold; margin-bottom:4px;">⚙️ Ставка за клик:</div>
-                        <div class="salary-setting">
-                            <button onclick="setSalaryRate(10)">10 🐟</button>
-                            <button onclick="setSalaryRate(40)" class="active">40 🐟</button>
-                            <button onclick="setSalaryRate(100)">100 🐟</button>
-                            <button onclick="setSalaryRate(200)">200 🐟</button>
-                            <button onclick="setSalaryRate(500)">500 🐟</button>
-                            <button onclick="customSalaryRate()">✏️ Своя</button>
+                        
+                        <div style="margin:12px 0;">
+                            <div style="font-weight:bold; margin-bottom:4px;">⚙️ Ставка за клик:</div>
+                            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                                <button onclick="setSalaryRate(10)" style="padding:6px 14px; border:2px solid var(--input-border); border-radius:12px; background:var(--card); cursor:pointer; font-weight:bold;">10 🐟</button>
+                                <button onclick="setSalaryRate(40)" style="padding:6px 14px; border:2px solid var(--input-border); border-radius:12px; background:var(--primary); color:white; cursor:pointer; font-weight:bold;">40 🐟</button>
+                                <button onclick="setSalaryRate(100)" style="padding:6px 14px; border:2px solid var(--input-border); border-radius:12px; background:var(--card); cursor:pointer; font-weight:bold;">100 🐟</button>
+                                <button onclick="setSalaryRate(200)" style="padding:6px 14px; border:2px solid var(--input-border); border-radius:12px; background:var(--card); cursor:pointer; font-weight:bold;">200 🐟</button>
+                                <button onclick="setSalaryRate(500)" style="padding:6px 14px; border:2px solid var(--input-border); border-radius:12px; background:var(--card); cursor:pointer; font-weight:bold;">500 🐟</button>
+                            </div>
+                            <div style="font-size:0.8rem; color:var(--text-light); margin-top:4px;">Текущая: <strong id="currentRateDisplay">${window.salaryRate} 🐟</strong></div>
                         </div>
-                        <div style="font-size:0.8rem; color:var(--text-light);">Текущая ставка: <strong id="currentRateDisplay">${window.salaryRate} 🐟</strong></div>
+                        
+                        ${requestsHtml ? `<div style="margin:12px 0;"><div style="font-weight:bold; margin-bottom:4px;">📋 Запросы на ЗП:</div>${requestsHtml}</div>` : '<div style="color:var(--text-light); margin:12px 0;">📋 Нет запросов</div>'}
+                        
+                        <div style="margin:12px 0;">
+                            <div style="font-weight:bold; margin-bottom:4px;">👥 Все игроки:</div>
+                            ${playersHtml}
+                        </div>
+                        
+                        <div style="margin:12px 0;">
+                            <div style="font-weight:bold; margin-bottom:4px;">💸 Транзакции:</div>
+                            ${txHtml || '<div style="color:var(--text-light);">Нет транзакций</div>'}
+                        </div>
+                        
+                        <div style="margin:12px 0; padding:12px; background:var(--card); border-radius:12px; border:2px solid var(--credit);">
+                            <div style="font-weight:bold; margin-bottom:8px; color:var(--credit);">🏦 Выдать деньги</div>
+                            <div class="input-group">
+                                <input type="text" id="giveMoneyUser_${type}" placeholder="Логин">
+                                <input type="number" id="giveMoneyAmount_${type}" placeholder="Сумма" min="1">
+                                <button class="action-btn success" onclick="giveMoney('${type}')">💰 Выдать</button>
+                            </div>
+                            <div id="giveMoneyStatus_${type}"></div>
+                        </div>
                     </div>
-                    
-                    ${requestsHtml ? `<div style="margin:12px 0;">
-                        <div style="font-weight:bold; margin-bottom:4px;">📋 Запросы на ЗП:</div>
-                        ${requestsHtml}
-                    </div>` : '<div style="color:var(--text-light); margin:12px 0;">📋 Нет запросов на ЗП</div>'}
-                    
-                    <div style="margin:12px 0;">
-                        <div style="font-weight:bold; margin-bottom:4px;">👥 Все игроки:</div>
-                        ${playersHtml}
+                `;
+                
+            case 'Мэр':
+                const allUsers = await apiFetch('users') || {};
+                let debtorsHtml = '';
+                for (const [login, data] of Object.entries(allUsers)) {
+                    if (data.taxes?.debt > 0) {
+                        debtorsHtml += `<div class="player-item"><span class="p-name">${escapeHtml(login)}</span><span style="color:var(--danger);">долг: ${data.taxes.debt} 🐟</span><span style="font-size:0.8rem; color:var(--text-light);">🏠 ${escapeHtml(data.passport?.address || '—')}</span></div>`;
+                    }
+                }
+                
+                let playersHtml2 = Object.entries(allUsers).map(([login, data]) => `
+                    <div class="player-item">
+                        <span class="p-name">${escapeHtml(login)}</span>
+                        <span style="font-size:0.8rem; color:var(--text-light);">🏠 ${escapeHtml(data.passport?.address || '—')}</span>
                     </div>
-                    
-                    <div style="margin:12px 0;">
-                        <div style="font-weight:bold; margin-bottom:4px;">💸 Все транзакции:</div>
-                        ${txHtml || '<div style="color:var(--text-light);">Нет транзакций</div>'}
+                `).join('');
+                
+                return `
+                    <div class="role-panel">
+                        <div class="role-title mayor">👑 Мэр</div>
+                        <div class="stat"><span>💰 Собрано налогов</span><span>${(await apiFetch('mayorTaxCollected')) || 0} 🐟</span></div>
+                        <div class="stat"><span>🐟 Твой баланс</span><span>${balance} 🐟</span></div>
+                        
+                        <button class="action-btn mayor" onclick="collectTaxesManually()">💰 СОБРАТЬ НАЛОГИ (25 🐟 с каждого)</button>
+                        <div id="taxStatus"></div>
+                        
+                        <div style="margin:12px 0;">
+                            <div style="font-weight:bold; margin-bottom:4px;">📋 Должники:</div>
+                            ${debtorsHtml || '<div style="color:var(--text-light);">Нет должников</div>'}
+                        </div>
+                        
+                        <div style="margin:12px 0;">
+                            <div style="font-weight:bold; margin-bottom:4px;">👥 Все жители (ники + прописка):</div>
+                            ${playersHtml2}
+                        </div>
+                        
+                        <button class="action-btn gold" onclick="toggleTaxHoliday()">⚖️ НАЛОГОВЫЕ КАНИКУЛЫ</button>
+                        <div id="taxHolidayStatus"></div>
                     </div>
-                    
-                    <div class="credit-section">
-                        <div class="credit-title">🏦 Выдать кредит из банка</div>
-                        <input type="text" id="creditUserInput" placeholder="Логин игрока">
-                        <input type="number" id="creditAmountInput" placeholder="Сумма (max 500)" min="1" max="500">
-                        <button class="credit-btn" onclick="giveCredit()">💰 Выдать кредит</button>
-                        <div id="creditResult"></div>
+                `;
+                
+            case 'Полиция':
+                const allUsers2 = await apiFetch('users') || {};
+                let playersHtml3 = Object.entries(allUsers2).map(([login, data]) => `
+                    <div class="player-item">
+                        <span class="p-name">${escapeHtml(login)}</span>
+                        <button onclick="finePlayer('${login}')" style="padding:4px 12px; background:var(--danger); color:white; border:none; border-radius:12px; cursor:pointer;">👮 Оштрафовать</button>
                     </div>
-                </div>
-            `;
-        } else if (role === 'Гадалка') {
-            container.innerHTML = `
-                <div class="fortune-panel">
-                    <div class="title">🔮 Гадалка</div>
-                    <div style="text-align:center; margin-bottom:12px;">
-                        ⏳ Доступно через: <span id="fortuneTimer2">--</span>
+                `).join('');
+                
+                return `
+                    <div class="role-panel">
+                        <div class="role-title police">👮 Полиция</div>
+                        <div class="stat"><span>💰 Штрафов выписано</span><span>${(await apiFetch('policeFines')) || 0} 🐟</span></div>
+                        <div class="stat"><span>💳 Твоя доля (20%)</span><span>${Math.round(((await apiFetch('policeFines')) || 0) * 0.2)} 🐟</span></div>
+                        <div class="stat"><span>🐟 Твой баланс</span><span>${balance} 🐟</span></div>
+                        
+                        <div style="margin:12px 0;">
+                            <div style="font-weight:bold; margin-bottom:4px;">👥 Игроки:</div>
+                            ${playersHtml3}
+                        </div>
+                        
+                        <div style="margin:12px 0; padding:12px; background:var(--card); border-radius:12px; border:2px solid var(--police);">
+                            <div style="font-weight:bold; margin-bottom:8px; color:var(--police);">⛓️ Арестовать</div>
+                            <div class="input-group">
+                                <input type="text" id="arrestUser_${type}" placeholder="Логин">
+                                <button class="action-btn police" onclick="arrestPlayer('${type}')">⛓️ Арестовать (10 мин)</button>
+                            </div>
+                            <div id="arrestStatus_${type}"></div>
+                        </div>
                     </div>
-                    <div class="stat"><span>🐟 Твой баланс</span><span>${window.currentUser.balance || 0} 🐟</span></div>
-                    <div class="stat"><span>💳 Комиссия</span><span>20% от выигрыша</span></div>
-                    <div class="stat"><span>🎯 Шанс</span><span>70%</span></div>
-                    <div style="margin-top:12px;">
-                        <input type="number" id="fortuneBetAmount2" placeholder="Ставка" min="1" value="50" style="width:100%; padding:10px; border:2px solid var(--input-border); border-radius:30px; background:var(--input-bg); color:var(--text);">
-                        <button class="fortune-btn" onclick="useFortune2()" style="width:100%; margin-top:8px;">🔮 Погадать</button>
+                `;
+                
+            case 'Бандит':
+                return `
+                    <div class="role-panel">
+                        <div class="role-title bandit">😈 Бандит</div>
+                        <div class="stat"><span>🐟 Твой баланс</span><span>${balance} 🐟</span></div>
+                        <div style="text-align:center; padding:20px; color:var(--text-light);">
+                            🔫 Роль для РЛ (реальной жизни)<br>
+                            На сайте ничего не делает
+                        </div>
                     </div>
-                    <div class="fortune-result" id="fortuneResult2">
-                        <div style="color:var(--text-light);">Нажми "Погадать"</div>
+                `;
+                
+            case 'Доктор':
+                return `
+                    <div class="role-panel">
+                        <div class="role-title doctor">⚕️ Доктор</div>
+                        <div class="stat"><span>🐟 Твой баланс</span><span>${balance} 🐟</span></div>
+                        <div class="stat"><span>💊 Аптечек в инвентаре</span><span>${inventory.medkits || 0} шт</span></div>
+                        <div class="stat"><span>💰 Цена закупки</span><span>50 🐟 за 1 шт</span></div>
+                        
+                        <button class="click-btn doctor" onclick="buyMedkit('${type}')">💊 КУПИТЬ АПТЕЧКУ (50 🐟)</button>
+                        <div id="medkitStatus_${type}"></div>
+                        
+                        <div style="margin:12px 0; padding:12px; background:var(--card); border-radius:12px; border:2px solid var(--doctor);">
+                            <div style="font-weight:bold; margin-bottom:8px; color:var(--doctor);">📦 МОЙ ИНВЕНТАРЬ</div>
+                            <div class="inventory-grid">
+                                <div class="inventory-item">
+                                    <div class="item-icon">💊</div>
+                                    <div class="item-name">Аптечки</div>
+                                    <div class="item-count">${inventory.medkits || 0} шт</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div id="fortuneHistory2"></div>
-                </div>
-            `;
-            startFortuneTimer2();
-        } else {
-            container.innerHTML = `
-                <div style="text-align:center; padding:40px; color:var(--text-light);">
-                    🎭 Для вашей роли (${escapeHtml(role)}) пока нет специальной панели
-                </div>
-            `;
+                `;
+                
+            case 'Доставщик':
+                const orders = await apiFetch('deliveryOrders') || {};
+                let ordersHtml = Object.entries(orders).map(([id, order]) => `
+                    <div class="request-item">
+                        <div class="req-info">
+                            <strong>${escapeHtml(order.from)}</strong> → ${escapeHtml(order.to)}<br>
+                            📦 ${escapeHtml(order.item)} | 💰 ${order.price} 🐟
+                        </div>
+                        <div class="req-actions">
+                            ${order.status === 'pending' ? `
+                                <button class="approve" onclick="acceptOrder('${id}')">✅ Принять</button>
+                                <button class="reject" onclick="rejectOrder('${id}')">❌ Отклонить</button>
+                            ` : `<span style="font-weight:bold; color:var(--text-light);">${order.status === 'delivered' ? '✅ Доставлено' : '❌ Отклонено'}</span>`}
+                        </div>
+                    </div>
+                `).join('');
+                
+                return `
+                    <div class="role-panel">
+                        <div class="role-title delivery">🚚 Доставщик</div>
+                        <div class="stat"><span>🐟 Твой баланс</span><span>${balance} 🐟</span></div>
+                        <div class="stat"><span>📦 Доставок выполнено</span><span>${(await apiFetch('deliveryCount')) || 0}</span></div>
+                        
+                        <div style="margin:12px 0;">
+                            <div style="font-weight:bold; margin-bottom:4px;">📦 ЗАКАЗЫ:</div>
+                            ${ordersHtml || '<div style="color:var(--text-light);">Нет заказов</div>'}
+                        </div>
+                        
+                        <div style="margin:12px 0; padding:12px; background:var(--card); border-radius:12px; border:2px solid var(--delivery);">
+                            <div style="font-weight:bold; margin-bottom:8px; color:var(--delivery);">📋 ИСТОРИЯ ДОСТАВОК</div>
+                            <div id="deliveryHistory"></div>
+                        </div>
+                    </div>
+                `;
+                
+            case 'Барыга':
+                return `
+                    <div class="role-panel">
+                        <div class="role-title trader">💰 Барыга</div>
+                        <div class="stat"><span>🐟 Твой баланс</span><span>${balance} 🐟</span></div>
+                        <div class="stat"><span>🔫 Запчастей (Дигл)</span><span>${inventory.parts_digl || 0} шт</span></div>
+                        <div class="stat"><span>🔫 Запчастей (АК)</span><span>${inventory.parts_ak || 0} шт</span></div>
+                        
+                        <div style="margin:12px 0;">
+                            <div style="font-weight:bold; margin-bottom:8px;">💰 Цены закупки:</div>
+                            <div class="stat"><span>🔫 Дигл</span><span>250 🐟</span></div>
+                            <div class="stat"><span>🔫 АК</span><span>500 🐟</span></div>
+                        </div>
+                        
+                        <button class="click-btn trader" onclick="buyParts('digl', '${type}')">🔫 КУПИТЬ ДИГЛ (250 🐟)</button>
+                        <button class="click-btn trader" onclick="buyParts('ak', '${type}')">🔫 КУПИТЬ АК (500 🐟)</button>
+                        <div id="partsStatus_${type}"></div>
+                        
+                        <div style="margin:12px 0; padding:12px; background:var(--card); border-radius:12px; border:2px solid var(--trader);">
+                            <div style="font-weight:bold; margin-bottom:8px; color:var(--trader);">📦 МОЙ ИНВЕНТАРЬ</div>
+                            <div class="inventory-grid">
+                                <div class="inventory-item">
+                                    <div class="item-icon">🔫</div>
+                                    <div class="item-name">Дигл</div>
+                                    <div class="item-count">${inventory.parts_digl || 0} шт</div>
+                                </div>
+                                <div class="inventory-item">
+                                    <div class="item-icon">🔫</div>
+                                    <div class="item-name">АК</div>
+                                    <div class="item-count">${inventory.parts_ak || 0} шт</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+            default:
+                return `<div class="loading">🎭 Роль "${role}" не имеет панели</div>`;
         }
     }
 
     // ===== COLLECTOR FUNCTIONS =====
-    window.collectorClick = async function() {
+    window.collectorClick = async function(type) {
         if (!window.currentUser) return;
         const user = await apiFetch(`users/${window.currentUser.login}`);
         const clicks = (user?.clicks || 0) + 1;
         await apiPut(`users/${window.currentUser.login}/clicks`, clicks);
         
-        document.getElementById('collectorClicks').textContent = clicks;
-        document.getElementById('collectorCash').textContent = `${clicks * 500} 🐟`;
-        document.getElementById('requestSalaryBtn').textContent = `📤 ЗАПРОСИТЬ ЗП (${clicks} × ${window.salaryRate} = ${clicks * window.salaryRate} 🐟)`;
+        const el = document.getElementById(`collectorClicks_${type}`);
+        if (el) el.textContent = clicks;
         
-        const btn = document.querySelector('.click-btn');
-        btn.classList.add('pulse');
-        setTimeout(() => btn.classList.remove('pulse'), 300);
+        const btn = document.querySelector('.click-btn.collector');
+        if (btn) {
+            btn.classList.add('pulse');
+            setTimeout(() => btn.classList.remove('pulse'), 300);
+        }
+        
+        updateCollectorUI(type);
     };
 
-    window.requestSalary = async function() {
+    async function updateCollectorUI(type) {
+        const user = await apiFetch(`users/${window.currentUser.login}`);
+        const clicks = user?.clicks || 0;
+        const btn = document.getElementById(`requestSalaryBtn_${type}`);
+        if (btn) {
+            btn.textContent = `📤 ЗАПРОСИТЬ ЗП (${clicks} × ${window.salaryRate} = ${clicks * window.salaryRate} 🐟)`;
+        }
+    }
+
+    window.requestSalary = async function(type) {
         if (!window.currentUser) return;
         const user = await apiFetch(`users/${window.currentUser.login}`);
         const clicks = user?.clicks || 0;
         if (clicks === 0) {
-            document.getElementById('collectorStatus').innerHTML = '<div class="error-box">❌ Нет кликов! Нажми сначала.</div>';
+            document.getElementById(`collectorStatus_${type}`).innerHTML = '<div class="error-box">❌ Нет кликов!</div>';
             return;
         }
-        
         if (user?.salaryRequest) {
-            document.getElementById('collectorStatus').innerHTML = '<div class="error-box">⏳ У вас уже есть запрос на ЗП!</div>';
+            document.getElementById(`collectorStatus_${type}`).innerHTML = '<div class="error-box">⏳ У вас уже есть запрос!</div>';
             return;
         }
-        
         const amount = clicks * window.salaryRate;
         await apiPut(`users/${window.currentUser.login}/salaryRequest`, {
             clicks: clicks,
             rate: window.salaryRate,
             amount: amount,
-            timestamp: Date.now(),
-            status: 'pending'
+            timestamp: Date.now()
         });
-        
-        document.getElementById('collectorStatus').innerHTML = `<div class="success-box">✅ Запрос на ${amount} 🐟 отправлен! Жди Банкира.</div>`;
-        document.getElementById('requestSalaryBtn').disabled = true;
-        setTimeout(() => {
-            document.getElementById('requestSalaryBtn').disabled = false;
-        }, 5000);
+        document.getElementById(`collectorStatus_${type}`).innerHTML = `<div class="success-box">✅ Запрос на ${amount} 🐟 отправлен!</div>`;
     };
 
     // ===== BANKER FUNCTIONS =====
-    window.emissionMoney = async function() {
-        if (!window.currentUser) { showNotification('Сначала войдите!', '❌'); return; }
-        const role = window.currentUser.passport?.role || '';
-        if (role !== 'Банкир') { showNotification('Только Банкир может пополнять банк!', '❌'); return; }
-        
-        const amount = parseInt(document.getElementById('emissionAmount').value);
+    window.emissionMoney = async function(type) {
+        if (!window.currentUser) return;
+        const amount = parseInt(document.getElementById(`emissionAmount_${type}`).value);
         if (isNaN(amount) || amount <= 0) {
-            document.getElementById('emissionStatus').innerHTML = '<div class="error-box">❌ Введите сумму</div>';
+            document.getElementById(`emissionStatus_${type}`).innerHTML = '<div class="error-box">❌ Введите сумму</div>';
             return;
         }
-        
-        try {
-            const bankBalance = await apiFetch('bankBalance') || 0;
-            await apiPut('bankBalance', bankBalance + amount);
-            
-            const txId = Date.now().toString();
-            await apiPut(`transactions/${txId}`, { 
-                from: 'ЭМИССИЯ', 
-                to: 'БАНК', 
-                amount: amount, 
-                timestamp: Date.now() 
-            });
-            
-            document.getElementById('emissionStatus').innerHTML = `<div class="success-box">✅ ${amount} 🐟 добавлено в банк из воздуха!</div>`;
-            document.getElementById('emissionAmount').value = '';
-            loadRolePanel();
-            showNotification(`💰 Банк пополнен на ${amount} 🐟`, '🏦');
-        } catch(e) {
-            document.getElementById('emissionStatus').innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
-        }
+        const bankBalance = await apiFetch('bankBalance') || 0;
+        await apiPut('bankBalance', bankBalance + amount);
+        const txId = Date.now().toString();
+        await apiPut(`transactions/${txId}`, { from: 'ЭМИССИЯ', to: 'БАНК', amount: amount, timestamp: Date.now() });
+        document.getElementById(`emissionStatus_${type}`).innerHTML = `<div class="success-box">✅ ${amount} 🐟 добавлено в банк!</div>`;
+        document.getElementById(`emissionAmount_${type}`).value = '';
+        loadRolePanel();
     };
 
     window.setSalaryRate = function(rate) {
         window.salaryRate = rate;
-        document.querySelectorAll('.salary-setting button').forEach(b => b.classList.remove('active'));
-        document.querySelector(`.salary-setting button:contains(${rate})`)?.classList.add('active');
         document.getElementById('currentRateDisplay').textContent = `${rate} 🐟`;
-        const rateEl = document.getElementById('collectorRate');
-        if (rateEl) rateEl.textContent = `${rate} 🐟`;
-    };
-
-    window.customSalaryRate = function() {
-        const rate = prompt('Введите новую ставку за клик:', window.salaryRate);
-        if (rate !== null && !isNaN(rate) && Number(rate) > 0) {
-            window.setSalaryRate(Number(rate));
-        }
+        document.querySelectorAll('.salary-setting button').forEach(b => b.style.background = 'var(--card)');
+        document.querySelector(`.salary-setting button:contains(${rate})`)?.style.setProperty('background', 'var(--primary)');
     };
 
     window.approveSalary = async function(login) {
         const user = await apiFetch(`users/${login}`);
         if (!user?.salaryRequest) return;
-        
         const amount = user.salaryRequest.amount;
         const bankBalance = await apiFetch('bankBalance') || 0;
-        
         if (bankBalance < amount) {
-            showNotification(`❌ В банке недостаточно средств! Доступно: ${bankBalance} 🐟`, '❌');
+            showNotification(`❌ В банке недостаточно! Доступно: ${bankBalance} 🐟`, '❌');
             return;
         }
-        
-        // Списываем из банка
         await apiPut('bankBalance', bankBalance - amount);
-        
-        // Начисляем Собирателю
         const balance = await getUserBalance(login);
         await updateUserBalance(login, balance + amount);
         await apiPut(`users/${login}/clicks`, 0);
         await apiPut(`users/${login}/salaryRequest`, null);
-        
         const txId = Date.now().toString();
-        await apiPut(`transactions/${txId}`, { 
-            from: 'БАНК', 
-            to: login, 
-            amount: amount, 
-            timestamp: Date.now() 
-        });
-        
-        showNotification(`✅ Выплачено ${amount} 🐟 пользователю ${login}`, '🏦');
+        await apiPut(`transactions/${txId}`, { from: 'БАНК', to: login, amount: amount, timestamp: Date.now() });
+        showNotification(`✅ Выплачено ${amount} 🐟 ${login}`, '🏦');
         loadRolePanel();
     };
 
@@ -2002,171 +1790,180 @@
         loadRolePanel();
     };
 
-    window.editSalary = async function(login) {
+    window.giveMoney = async function(type) {
+        const login = document.getElementById(`giveMoneyUser_${type}`).value.trim();
+        const amount = parseInt(document.getElementById(`giveMoneyAmount_${type}`).value);
+        const statusDiv = document.getElementById(`giveMoneyStatus_${type}`);
+        if (!login || isNaN(amount) || amount <= 0) {
+            statusDiv.innerHTML = '<div class="error-box">❌ Введите логин и сумму</div>';
+            return;
+        }
+        const bankBalance = await apiFetch('bankBalance') || 0;
+        if (bankBalance < amount) {
+            statusDiv.innerHTML = `<div class="error-box">❌ В банке недостаточно! Доступно: ${bankBalance} 🐟</div>`;
+            return;
+        }
+        await apiPut('bankBalance', bankBalance - amount);
+        const balance = await getUserBalance(login);
+        await updateUserBalance(login, balance + amount);
+        const txId = Date.now().toString();
+        await apiPut(`transactions/${txId}`, { from: 'БАНК', to: login, amount: amount, timestamp: Date.now() });
+        statusDiv.innerHTML = `<div class="success-box">✅ ${amount} 🐟 выдано ${login}</div>`;
+        document.getElementById(`giveMoneyUser_${type}`).value = '';
+        document.getElementById(`giveMoneyAmount_${type}`).value = '';
+        loadRolePanel();
+    };
+
+    // ===== MAYOR FUNCTIONS =====
+    window.collectTaxesManually = async function() {
+        if (!window.currentUser) return;
+        const users = await apiFetch('users') || {};
+        const mayorLogin = window.currentUser.login;
+        const taxAmount = 25;
+        let collected = 0;
+        let debtors = 0;
+        
+        for (const [login, data] of Object.entries(users)) {
+            if (login === mayorLogin) continue;
+            const balance = data.balance || 0;
+            if (balance >= taxAmount) {
+                await updateUserBalance(login, balance - taxAmount);
+                const mayorBalance = await getUserBalance(mayorLogin);
+                await updateUserBalance(mayorLogin, mayorBalance + taxAmount);
+                collected++;
+                const txId = Date.now().toString();
+                await apiPut(`transactions/${txId}`, { from: login, to: mayorLogin, amount: taxAmount, timestamp: Date.now(), type: 'tax' });
+            } else {
+                const userData = await apiFetch(`users/${login}`);
+                const debt = (userData?.taxes?.debt || 0) + taxAmount;
+                await apiPut(`users/${login}/taxes/debt`, debt);
+                debtors++;
+            }
+        }
+        
+        const total = await apiFetch('mayorTaxCollected') || 0;
+        await apiPut('mayorTaxCollected', total + (collected * taxAmount));
+        await apiPut(`users/${mayorLogin}/lastTax`, Date.now());
+        
+        document.getElementById('taxStatus').innerHTML = `<div class="success-box">✅ Собрано с ${collected} игроков! Должников: ${debtors}</div>`;
+        loadRolePanel();
+    };
+
+    window.toggleTaxHoliday = async function() {
+        const current = await apiFetch('taxHoliday') || false;
+        await apiPut('taxHoliday', !current);
+        document.getElementById('taxHolidayStatus').innerHTML = `<div class="success-box">${!current ? '✅ Налоговые каникулы ВКЛЮЧЕНЫ!' : '❌ Налоговые каникулы ВЫКЛЮЧЕНЫ!'}</div>`;
+    };
+
+    // ===== POLICE FUNCTIONS =====
+    window.finePlayer = async function(login) {
+        const amount = prompt(`Введите сумму штрафа для ${login} (100-500 🐟):`, '100');
+        if (!amount) return;
+        const fine = parseInt(amount);
+        if (isNaN(fine) || fine < 100 || fine > 500) {
+            showNotification('❌ Штраф должен быть от 100 до 500', '❌');
+            return;
+        }
         const user = await apiFetch(`users/${login}`);
-        if (!user?.salaryRequest) return;
-        
-        const newAmount = prompt('Введите новую сумму ЗП:', user.salaryRequest.amount);
-        if (newAmount !== null && !isNaN(newAmount) && Number(newAmount) > 0) {
-            const amount = Number(newAmount);
-            user.salaryRequest.amount = amount;
-            await apiPut(`users/${login}/salaryRequest`, user.salaryRequest);
-            showNotification(`✏️ ЗП изменена на ${amount} 🐟 для ${login}`, '✏️');
-            loadRolePanel();
-        }
-    };
-
-    window.giveCredit = async function() {
-        const login = document.getElementById('creditUserInput')?.value.trim();
-        const amount = parseInt(document.getElementById('creditAmountInput')?.value);
-        const resultDiv = document.getElementById('creditResult');
-        
-        if (!login || isNaN(amount) || amount < 1 || amount > 500) {
-            resultDiv.innerHTML = '<div class="error-box">❌ Введите логин и сумму (1-500)</div>';
+        if (!user) { showNotification('❌ Пользователь не найден', '❌'); return; }
+        const balance = user.balance || 0;
+        if (balance < fine) {
+            showNotification(`❌ У ${login} недостаточно денег!`, '❌');
             return;
         }
         
-        try {
-            const user = await apiFetch(`users/${login}`);
-            if (!user) {
-                resultDiv.innerHTML = `<div class="error-box">❌ Пользователь "${login}" не найден</div>`;
-                return;
-            }
-            
-            const credits = user.credits || {};
-            for (const id of Object.keys(credits)) {
-                if (credits[id].paid !== true) {
-                    resultDiv.innerHTML = `<div class="error-box">❌ У ${login} уже есть активный кредит!</div>`;
-                    return;
-                }
-            }
-            
-            const bankBalance = await apiFetch('bankBalance') || 0;
-            if (bankBalance < amount) {
-                resultDiv.innerHTML = `<div class="error-box">❌ В банке недостаточно средств! Доступно: ${bankBalance} 🐟</div>`;
-                return;
-            }
-            
-            const interest = 9;
-            const totalToPay = Math.round(amount * (1 + interest / 100));
-            const creditId = Date.now().toString();
-            credits[creditId] = {
-                amount: amount,
-                days: 7,
-                interest: interest,
-                totalToPay: totalToPay,
-                takenDate: Date.now(),
-                dueDate: Date.now() + (7 * 15 * 60 * 1000),
-                paid: false
-            };
-            
-            await apiPut(`users/${login}/credits`, credits);
-            await apiPut('bankBalance', bankBalance - amount);
-            const balance = await getUserBalance(login);
-            await updateUserBalance(login, balance + amount);
-            
-            const txId = Date.now().toString();
-            await apiPut(`transactions/${txId}`, { 
-                from: 'БАНК', 
-                to: login, 
-                amount: amount, 
-                timestamp: Date.now() 
-            });
-            
-            resultDiv.innerHTML = `<div class="success-box">✅ Кредит ${amount} 🐟 выдан ${login} из банка! К выплате: ${totalToPay} 🐟</div>`;
-            document.getElementById('creditUserInput').value = '';
-            document.getElementById('creditAmountInput').value = '';
-            showNotification(`💰 Кредит ${amount} 🐟 выдан ${login}`, '🏦');
-            loadRolePanel();
-        } catch(e) {
-            resultDiv.innerHTML = `<div class="error-box">❌ ${e.message}</div>`;
-        }
+        const policeLogin = window.currentUser.login;
+        const policeShare = Math.round(fine * 0.2);
+        const bankShare = fine - policeShare;
+        
+        await updateUserBalance(login, balance - fine);
+        const policeBalance = await getUserBalance(policeLogin);
+        await updateUserBalance(policeLogin, policeBalance + policeShare);
+        const bankBalance = await apiFetch('bankBalance') || 0;
+        await apiPut('bankBalance', bankBalance + bankShare);
+        
+        const totalFines = await apiFetch('policeFines') || 0;
+        await apiPut('policeFines', totalFines + fine);
+        
+        const txId = Date.now().toString();
+        await apiPut(`transactions/${txId}`, { from: login, to: 'ПОЛИЦИЯ', amount: fine, timestamp: Date.now(), type: 'fine' });
+        
+        showNotification(`✅ Штраф ${fine} 🐟 с ${login}! Полиции: ${policeShare} 🐟, Банку: ${bankShare} 🐟`, '👮');
+        loadRolePanel();
     };
 
-    // ===== FORTUNE FUNCTIONS =====
-    function startFortuneTimer2() {
-        const checkTimer = async () => {
-            if (!window.currentUser) return;
-            try {
-                const user = await apiFetch(`users/${window.currentUser.login}`);
-                const lastFortune = user?.lastFortune || 0;
-                const cooldown = 15 * 60 * 1000;
-                const remaining = Math.max(0, cooldown - (Date.now() - lastFortune));
-                const minutes = Math.ceil(remaining / 60000);
-                
-                const timerEl = document.getElementById('fortuneTimer2');
-                if (timerEl) {
-                    if (remaining <= 0) {
-                        timerEl.textContent = 'Готово!';
-                    } else {
-                        timerEl.textContent = `${minutes} мин`;
-                    }
-                }
-            } catch(e) {}
-        };
-        checkTimer();
-        setInterval(checkTimer, 10000);
-    }
+    window.arrestPlayer = async function(type) {
+        const login = document.getElementById(`arrestUser_${type}`).value.trim();
+        if (!login) {
+            document.getElementById(`arrestStatus_${type}`).innerHTML = '<div class="error-box">❌ Введите логин</div>';
+            return;
+        }
+        await apiPut(`arrested/${login}`, { arrested: true, until: Date.now() + 10 * 60 * 1000 });
+        document.getElementById(`arrestStatus_${type}`).innerHTML = `<div class="success-box">✅ ${login} арестован на 10 минут!</div>`;
+        document.getElementById(`arrestUser_${type}`).value = '';
+        showNotification(`⛓️ ${login} арестован на 10 минут!`, '⛓️');
+    };
 
-    window.useFortune2 = async function() {
-        if (!window.currentUser) { showNotification('Сначала войдите!', '❌'); return; }
-        
-        const amountInput = document.getElementById('fortuneBetAmount2');
-        const amount = parseInt(amountInput?.value);
-        if (isNaN(amount) || amount <= 0) { showNotification('Введите сумму ставки', '❌'); return; }
-        
+    // ===== DOCTOR FUNCTIONS =====
+    window.buyMedkit = async function(type) {
+        if (!window.currentUser) return;
+        const price = 50;
         const balance = await getUserBalance(window.currentUser.login);
-        if (amount > balance) { showNotification(`Недостаточно 🐟! У вас ${balance}`, '❌'); return; }
-
-        const user = await apiFetch(`users/${window.currentUser.login}`);
-        const lastFortune = user?.lastFortune || 0;
-        const cooldown = 15 * 60 * 1000;
-        if (Date.now() - lastFortune < cooldown) {
-            const remaining = Math.ceil((cooldown - (Date.now() - lastFortune)) / 60000);
-            showNotification(`⏳ Подожди ${remaining} минут!`, '⏳');
+        if (balance < price) {
+            document.getElementById(`medkitStatus_${type}`).innerHTML = `<div class="error-box">❌ Недостаточно 🐟! Нужно ${price}</div>`;
             return;
         }
+        await updateUserBalance(window.currentUser.login, balance - price);
+        const user = await apiFetch(`users/${window.currentUser.login}`);
+        const inventory = user?.inventory || { medkits: 0, parts_digl: 0, parts_ak: 0 };
+        inventory.medkits = (inventory.medkits || 0) + 1;
+        await apiPut(`users/${window.currentUser.login}/inventory`, inventory);
+        document.getElementById(`medkitStatus_${type}`).innerHTML = `<div class="success-box">✅ Аптечка куплена! (-${price} 🐟)</div>`;
+        loadRolePanel();
+    };
 
-        const resultElement = document.getElementById('fortuneResult2');
-        if (resultElement) resultElement.innerHTML = '<div>🔮 Гадалка предсказывает...</div>';
+    // ===== TRADER FUNCTIONS =====
+    window.buyParts = async function(type, panelType) {
+        if (!window.currentUser) return;
+        const prices = { digl: 250, ak: 500 };
+        const price = prices[type];
+        const balance = await getUserBalance(window.currentUser.login);
+        if (balance < price) {
+            document.getElementById(`partsStatus_${panelType}`).innerHTML = `<div class="error-box">❌ Недостаточно 🐟! Нужно ${price}</div>`;
+            return;
+        }
+        await updateUserBalance(window.currentUser.login, balance - price);
+        const user = await apiFetch(`users/${window.currentUser.login}`);
+        const inventory = user?.inventory || { medkits: 0, parts_digl: 0, parts_ak: 0 };
+        if (type === 'digl') {
+            inventory.parts_digl = (inventory.parts_digl || 0) + 1;
+        } else {
+            inventory.parts_ak = (inventory.parts_ak || 0) + 1;
+        }
+        await apiPut(`users/${window.currentUser.login}/inventory`, inventory);
+        document.getElementById(`partsStatus_${panelType}`).innerHTML = `<div class="success-box">✅ Запчасти куплены! (-${price} 🐟)</div>`;
+        loadRolePanel();
+    };
 
-        const win = Math.random() < 0.7;
-        const winAmount = win ? amount * 2 : 0;
-        const commission = win ? Math.round(winAmount * 0.2) : 0;
-        const finalWin = win ? winAmount - commission : 0;
-        const newBalance = win ? balance + finalWin : balance - amount;
+    // ===== DELIVERY FUNCTIONS =====
+    window.acceptOrder = async function(orderId) {
+        const orders = await apiFetch('deliveryOrders') || {};
+        if (!orders[orderId]) return;
+        orders[orderId].status = 'delivered';
+        await apiPut('deliveryOrders', orders);
+        const count = await apiFetch('deliveryCount') || 0;
+        await apiPut('deliveryCount', count + 1);
+        showNotification(`✅ Заказ #${orderId} доставлен!`, '🚚');
+        loadRolePanel();
+    };
 
-        await updateUserBalance(window.currentUser.login, newBalance);
-        await apiPut(`users/${window.currentUser.login}/lastFortune`, Date.now());
-
-        if (!window.fortuneHistory) window.fortuneHistory = [];
-        window.fortuneHistory.push({ amount, win, winAmount: finalWin, commission, timestamp: Date.now() });
-        await apiPut(`fortuneHistory/${window.currentUser.login}`, window.fortuneHistory);
-
-        setTimeout(() => {
-            if (resultElement) {
-                if (win) {
-                    resultElement.innerHTML = `
-                        <div class="win" style="font-size:1.2rem;">🎉 ВЫИГРЫШ!</div>
-                        <div>Ставка: ${amount} 🐟</div>
-                        <div>Выигрыш: ${winAmount} 🐟</div>
-                        <div>Комиссия Гадалки: ${commission} 🐟 (20%)</div>
-                        <div style="font-size:1.3rem; font-weight:bold; color:var(--success);">Твой выигрыш: +${finalWin} 🐟</div>
-                    `;
-                } else {
-                    resultElement.innerHTML = `
-                        <div class="lose" style="font-size:1.2rem;">😢 ПРОИГРЫШ</div>
-                        <div>Ставка: ${amount} 🐟</div>
-                        <div style="font-size:1.3rem; font-weight:bold; color:var(--danger);">-${amount} 🐟</div>
-                    `;
-                }
-            }
-            updateUserBalanceDisplay();
-            renderFortuneHistory();
-            startFortuneTimer2();
-            loadRolePanel();
-            showNotification(win ? `🎉 Гадалка принесла +${finalWin} 🐟!` : `😢 Гадалка проиграла ${amount} 🐟...`, win ? '🔮' : '💸');
-        }, 1500);
+    window.rejectOrder = async function(orderId) {
+        const orders = await apiFetch('deliveryOrders') || {};
+        if (!orders[orderId]) return;
+        orders[orderId].status = 'rejected';
+        await apiPut('deliveryOrders', orders);
+        showNotification(`❌ Заказ #${orderId} отклонён`, '❌');
+        loadRolePanel();
     };
 
     // ===== TABS =====
@@ -2179,6 +1976,7 @@
         if (tab === 'transfers' && window.currentUser) loadTransactions();
         if (tab === 'credits' && window.currentUser) loadCredits();
         if (tab === 'rolepanel' && window.currentUser) loadRolePanel();
+        if (tab === 'passport' && window.currentUser) showPassport();
     };
 
     // ===== UTILS =====
@@ -2201,7 +1999,6 @@
     }
 
     function showNotification(message, icon = '🐟') {
-        console.log(`${icon} ${message}`);
         const toast = document.createElement('div');
         toast.style.cssText = `
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
@@ -2232,27 +2029,29 @@
                     window.currentUser = { login: saved, ...user };
                     document.getElementById('userInfo').style.display = 'flex';
                     document.getElementById('loginArea').style.display = 'none';
+                    
+                    const role1 = user.passport?.role1 || 'Без профессии';
+                    const role2 = user.passport?.role2 || 'Без профессии';
+                    const displayRole = role1 !== 'Без профессии' ? role1 : role2;
+                    const roleClass = displayRole.toLowerCase();
+                    document.getElementById('userRole').className = `urole ${roleClass}`;
+                    document.getElementById('userRole').textContent = displayRole;
+                    
+                    if (displayRole === 'Админ') {
+                        document.getElementById('adminLink').style.display = 'inline-block';
+                    }
+                    
+                    if (displayRole !== 'Без профессии') {
+                        document.getElementById('roleTab').style.display = 'inline-block';
+                        loadRolePanel();
+                    }
+                    
                     showPassport();
                     loadChats();
                     loadTransactions();
                     loadCredits();
                     updateUserBalanceDisplay();
-                    loadCasinoHistory();
-                    loadNumberHistory();
-                    loadFortuneHistory();
-                    startFortuneTimer();
-                    
-                    const role = user.passport?.role || '';
-                    const roleClass = role.toLowerCase();
-                    document.getElementById('userRole').className = `urole ${roleClass}`;
-                    
-                    if (['Собиратель', 'Банкир', 'Гадалка'].includes(role)) {
-                        document.getElementById('roleTab').style.display = 'inline-block';
-                        loadRolePanel();
-                    }
-                    if (role === 'Админ' || role === 'Admin') {
-                        document.getElementById('adminLink').style.display = 'inline-block';
-                    }
+                    checkTaxes();
                 }
             } catch(e) {}
         }
